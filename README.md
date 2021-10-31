@@ -2,21 +2,20 @@
 
 ## BA4 EPFL
 
-* [Probabilities and Statistics](Probalities_and_Statistics/Probalities_and_Statistics.md)
-* [Signals and Systems](Signals_and_Systems/Signals_and_Systems.md)
-* [Theory of Computation](Theory_of_Computation/Theory_of_Computation.md)
+* [Probabilities and Statistics](Probalities_and_Statistics/Probalities_and_Statistics.pdf)
+* [Signals and Systems](Signals_and_Systems/Signals_and_Systems.pdf)
+* [Theory of Computation](Theory_of_Computation/Theory_of_Computation.pdf)
 
 ## BA5-6 KTH 
 
-* [Computer security](Computer_security/Computer_security.md)
-* [Database Technology](Database_Technology/Database_Technology.md)
-* [Machine Learning](Machine_Learning/Machine_Learning.md)
-* [Operating System](Operating_System/Operating_System.md)
-* [Queing](Queing/Queing.md)
+* [Computer security](Computer_security/Computer_security.pdf)
+* [Database Technology](Database_Technology/Database_Technology.pdf)
+* [Machine Learning](Machine_Learning/Machine_Learning.pdf)
+* [Operating System](Operating_System/Operating_System.pdf)
+* [Queing](Queing/Queing.pdf)
 
 ## MA1 EPFL
 
-> BA4 EPFL
-* [Introduction to multiprocessor architecture](Introduction_to_multiprocessor_architecture/Introduction_to_multiprocessor_architecture.md)
+* [Introduction to multiprocessor architecture (BA5 EPFL)](Introduction_to_multiprocessor_architecture/Introduction_to_multiprocessor_architecture.pdf)
 
 
