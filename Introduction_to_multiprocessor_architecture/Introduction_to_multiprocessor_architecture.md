@@ -83,7 +83,11 @@ nd only send it to the nodes that are interested in this single block.
 ## Synchronzation
 
 * Mutual exclusion
-  * Locks
+  * **Locks**
+    * Test and set (**TS**): need to write and read in one operation to acquire the lock => bus overload
+    * Test and Test and Set (**TTS**) : Do a read before doing the TS => no trafic while waiting
+    * Exponential back off : add a delay before re-testing
+    * Load lock & Store Conditional (**LL/SC**)
 * Point to point synchronization
-  * Flags, bariers
+  * Flags, **barriers** (uses lock, counter and flag)
 * Sowftare methods
