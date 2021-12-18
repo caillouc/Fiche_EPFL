@@ -3,6 +3,9 @@ title: Probalities and Statistics
 author: Pierre Colson
 ---
 
+Markdown version on
+[*github*](https://github.com/caillouc/Fiche_EPFL/blob/main/Probalities_and_Statistics/Probalities_and_Statistics.md)
+
 ## General Stuff
 
 * Given $n$ distinct objects, the number of different **permutation** (without repetition) of length $r \leq n$ is : 

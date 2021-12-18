@@ -3,6 +3,9 @@ title: Theory of Computation fiche
 author: Pierre Colson
 ---
 
+Markdown version on
+[*github*](https://github.com/caillouc/Fiche_EPFL/blob/main/Theory_of_Computation/Theory_of_Computation.md)
+
 ## Cours
 
 ### Automata and Languages
