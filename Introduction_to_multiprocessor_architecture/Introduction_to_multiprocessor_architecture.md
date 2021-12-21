@@ -88,15 +88,26 @@ nd only send it to the nodes that are interested in this single block.
     * Exponential back off : add a delay before re-testing
     * Load lock & Store Conditional (**LL/SC**) $\Rightarrow$ simple way to build a test and set $\Rightarrow$ relies on
 atomicity
+* **Lock** Caracteristics
+  * Low latency
+  * Low traffic
+  * Scalability
+  * Low storage cost
+  * Fairness
 * Point to point synchronization
   * Flags, **barriers** (uses lock, counter and flag)
 * Sowftare methods
+* **Coarse grained lock** $\Rightarrow$ lock an entire list for example
 * **Fine-grained lock** $\Rightarrow$ a lock by element
 * **Hardware Lock Elision**
 * **Atomicity**
   * Upon transaction commit, all writes take affect at once
   * On transaction abort, no writes take effect
 * **Isolation** : not other processor can observe writes before commit
+* **Serialazability**
+  * Transactions seem to commit in a single serial order
+  * The exact order is not guaranteed though
+* **Transactional memory** HLE whitout lock (software atomic section)
 
 ## Multithreading
 
@@ -108,6 +119,8 @@ atomicity
 * **Blocked (Coarse Grain) Multithreading** (CGMT) : Switch to a new thread on a long latency event
 * **Fine grained Multithreading** (FGMT) : Cycle between threads periodicall (every cycle for ex)
 * **Simultaneous Multithreading** (SMT) : Instructions from multiple threads in same cycle
+  * Thread with fewest instructions in pipe has priority
+* $IPC = \frac{\#instructions}{\#cycles}$
 
 ## GPUs
 
