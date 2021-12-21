@@ -155,6 +155,7 @@ atomicity
   * For memory intensive code, reduce excess instructions
   * Consider work division per thread
 * Optimization
+  * Reduce thread divergence by grouping thread from the same wrap in condition
   * Shared memory
   * Thread indexing $\Rightarrow$ threads that are working are now in the same wrap
   * Sequencial mapping of accesses to the banks guarenties that we don't have bank conflict ??
