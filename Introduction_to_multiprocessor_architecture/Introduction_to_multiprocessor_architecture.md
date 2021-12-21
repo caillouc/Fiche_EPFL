@@ -66,7 +66,6 @@ nd only send it to the nodes that are interested in this single block.
   * Write After Read (WAR)
   * Write After Write (WAW)
 * **Load Store Queue** (LSQ)
-  * Load Store Queue
   * Hold all store operations until they retire
 * **Store buffer** buffer for store operations ^^
 * **Sequencial consistency** : Exucute things in program order
@@ -84,10 +83,66 @@ nd only send it to the nodes that are interested in this single block.
 
 * Mutual exclusion
   * **Locks**
-    * Test and set (**TS**): need to write and read in one operation to acquire the lock => bus overload
-    * Test and Test and Set (**TTS**) : Do a read before doing the TS => no trafic while waiting
+    * Test and set (**TS**): need to write and read in one operation to acquire the lock $\Rightarrow$ bus overload
+    * Test and Test and Set (**TTS**) : Do a read before doing the TS $\Rightarrow$ no trafic while waiting
     * Exponential back off : add a delay before re-testing
-    * Load lock & Store Conditional (**LL/SC**)
+    * Load lock & Store Conditional (**LL/SC**) $\Rightarrow$ simple way to build a test and set $\Rightarrow$ relies on
+atomicity
 * Point to point synchronization
   * Flags, **barriers** (uses lock, counter and flag)
 * Sowftare methods
+* **Fine-grained lock** $\Rightarrow$ a lock by element
+* **Hardware Lock Elision**
+* **Atomicity**
+  * Upon transaction commit, all writes take affect at once
+  * On transaction abort, no writes take effect
+* **Isolation** : not other processor can observe writes before commit
+
+## Multithreading
+
+* Out of order pipeline $\Rightarrow$ Misses do not block pipeline
+* **Vertical waste** : whole cycle empty, nothing issued
+  * Most common after long latency events
+* **Horizontal waste** : unable to use the full issue width
+  * Software not exposing enough ILP for hardware
+* **Blocked (Coarse Grain) Multithreading** (CGMT) : Switch to a new thread on a long latency event
+* **Fine grained Multithreading** (FGMT) : Cycle between threads periodicall (every cycle for ex)
+* **Simultaneous Multithreading** (SMT) : Instructions from multiple threads in same cycle
+
+## GPUs
+
+* **GPU** has Processing clusters
+* **Processing cluster** has Streaming Multiprocessors
+* **Streaming multiprocessor** has Thread block
+* **Thread block** has wrap
+* **Wrap** has threads
+* CUDA programming : Create a Kernel, copy memory, invoke, copy back
+* **Control flow Divergence** : Thread in a wrap might execute different path (branch condition for ex)
+* Memory System
+  * **Global memory**  
+    * Shared by all threads
+    * GPU main memory
+    * Hight bandwith
+  * **Shared memory**
+    * Shared within a thread block
+    * Manage by programmer
+    * very fast
+    * Inter thread communication
+    * Several bancks (ideal one per thread)
+  * **Registers**
+    * Stack variable declared in kernels
+    * Fastest access to data
+  * Constant and texture : mainly for graphic
+* Highly divergent code leads to poor performance
+* Optimizing code
+  * **Coalesced memory access** :
+    * multiple memory access in one memory transaction
+    * Threads in a wrap access the same cache line
+  * Eliminate wrap divergence
+  * For memory intensive code, reduce excess instructions
+  * Consider work division per thread
+* Optimization
+  * Shared memory
+  * Thread indexing $\Rightarrow$ threads that are working are now in the same wrap
+  * Sequencial mapping of accesses to the banks guarenties that we don't have bank conflict ??
+  * Reduce during load from global memory
