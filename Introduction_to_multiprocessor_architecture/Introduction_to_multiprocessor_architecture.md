@@ -6,7 +6,7 @@ output: pdf_document
 ---
 
 **Markdown** version on
-[*github*](https://github.com/caillouc/Fiche_EPFL/blob/main/Introduction_to_multiprocessor_architecture/Introduction_to_multiprocessor_architecture.md)
+[*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/Introduction_to_multiprocessor_architecture/Introduction_to_multiprocessor_architecture.md)
 
 ## General
 
