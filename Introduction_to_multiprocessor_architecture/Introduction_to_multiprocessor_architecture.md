@@ -5,7 +5,7 @@ date: Saturday 30 October
 output: pdf_document
 ---
 
-Markdown version on
+**Markdown** version on
 [*github*](https://github.com/caillouc/Fiche_EPFL/blob/main/Introduction_to_multiprocessor_architecture/Introduction_to_multiprocessor_architecture.md)
 
 ## General

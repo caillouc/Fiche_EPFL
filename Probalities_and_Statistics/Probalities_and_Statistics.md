@@ -3,12 +3,12 @@ title: Probalities and Statistics
 author: Pierre Colson
 ---
 
-Markdown version on
+**Markdown** version on
 [*github*](https://github.com/caillouc/Fiche_EPFL/blob/main/Probalities_and_Statistics/Probalities_and_Statistics.md)
 
 ## General Stuff
 
-* Given $n$ distinct objects, the number of different **permutation** (without repetition) of length $r \leq n$ is : 
+* Given $n$ distinct objects, the number of different **permutation** (without repetition) of length $r \leq n$ is :
 
     $$n(n-1)(n-2)...(n-r+1) = \frac{n!}{(n-r)!}$$
 
@@ -16,11 +16,11 @@ Markdown version on
 
     $$ {n \choose k} = \frac{n!}{k!(n-k)!}$$
 
-* **Geometric Series** : 
+* **Geometric Series** :
 
     $$
     \sum_{i = 0}^{n} a \theta^i =
-    \left\{ 
+    \left\{
         \begin{array}{ll}
             a \frac{1 - \theta^{n+1}}{1 - \theta}, & \theta \neq 1 \\
             a(n+1), & \theta = 1
@@ -41,13 +41,12 @@ Markdown version on
 
 * A random variable that takes onmy the values 0 and 1 is called an **indicator variable** or a **Bernouilli random variable**, or a **bernouilli trial**.
 * **Probability mass function** (PMF) is $f_X(x) = P(X = x) = P(A_x)$
-* **Binomial** random variable is used when we are considering the number of 'sucesses' of a trial which is independently repeated a fixed number of times, and where each trial has the same probability of sucecess. $X$ has PMF : 
+* **Binomial** random variable is used when we are considering the number of 'sucesses' of a trial which is independently repeated a fixed number of times, and where each trial has the same probability of sucecess. $X$ has PMF :
 
     $$ f(x) = {n \choose x}p^x(1-p)^{n-x}, \quad x = 0, 1, ..., n, \quad n \in \mathbb{N}, \quad 0 \leq p \leq 1 $$
 
-    * $E(X \mid N = n) = np$  
-    
-    * $var(X \mid N = n) = np(1-p)$
+  * $E(X \mid N = n) = np$  
+  * $var(X \mid N = n) = np(1-p)$
 
 * **Geometric** random variable models the waiting time until a first event, in a series of independant trials having the same sucess porbability. $X$ has PMF :
 
@@ -56,12 +55,11 @@ Markdown version on
     We write $X \sim Geom(p)$
     $E(X) = \frac{1}{p}$ and $var(X) = \frac{1-p}{p^2}$
 
-
 * **Negative Binomial** random variable models the wainting time until the $n$th sucess in a series of independant trials having the same sucess probability. $X$ has PMF :
 
     $$ f_X(x) = { x - 1 \choose n - 1}p^n(1-p)^{x - n}, \quad x = n, n+1, n+2, ..., \quad 0 \leq p \leq 1 $$
 
-* **Hypergeometric** random variable, independant draw, without replacement from a finite population of size $N$ We draw a sample of $m$ balls without replacement from an urn containing $w$ white balls and $b$ black balls. Let $X$ be the number of white balls drawn : 
+* **Hypergeometric** random variable, independant draw, without replacement from a finite population of size $N$ We draw a sample of $m$ balls without replacement from an urn containing $w$ white balls and $b$ black balls. Let $X$ be the number of white balls drawn :
 
     $$ f_X(x) = \frac{{w \choose x}{b \choose m-x}}{{w+b \choose m}}, \quad x = max(0, m-b), ..., min(w, m) $$
 
@@ -73,16 +71,16 @@ Markdown version on
 >
 > * if  **Yes**, is the total number of trials $n$ fixed, so $X \in \{1, ..., n \}$ ?
 >   * if **Yes**:  use the *binomial* distribution, $X \sim B(n,p)$ (and use the *bernouilli* distribution is $n = 1$).
-> 
+>
 >        $\triangleright$ if $n \approx \infty$ or $n \gg np$, we can use the *poisson* distribution $X \sim P(np)$
 >   * if **No**, then $X \in \{n, n+1, ...\}$, and we use the *geometric* (if $X$ is the number of trials until one sucesses) or *negative binomial* (if $X$ is the number of trials until the last of several successes) ditribution.
 >* if **No**, then if the draw is independant but without replacement from a finite population, then $X \sim$ *hypergeometric* distribution.  
 
-* **Cumulative distribution function** (CDF) of a random variable is : $F_X(x) = P(X \leq x), \quad x \in \mathbb{R}$ if $X$ is discrete we can write 
+* **Cumulative distribution function** (CDF) of a random variable is : $F_X(x) = P(X \leq x), \quad x \in \mathbb{R}$ if $X$ is discrete we can write
 
     $$F_X(x) = \sum_{\{x_i   \in D_X:x_i \leq x\}}P(P=x_i)$$
 
-* The **Expectation** (or **expected value** or **mean**) of $X$ is 
+* The **Expectation** (or **expected value** or **mean**) of $X$ is
 
     $$ E\{g(X)\} = \sum_{x \in D_X} g(x) P(X = x) = \sum_{x \in D_X} g(x) f_X(x) $$
 
@@ -112,13 +110,13 @@ Markdown version on
 
     $$ P(X \leq x) = F(x) = \int_{-\infty}^{x} f(u)du, \quad x \in \mathbb{R}$$
 
-    The porperties of $F$ imply that $(i) f(x) \geq 0$ and $(ii) \int_{-\infty}^{\infty} f(x)dx = 1$    
+    The porperties of $F$ imply that $(i) f(x) \geq 0$ and $(ii) \int_{-\infty}^{\infty} f(x)dx = 1$  
 
 * **Uniform distribution**. The random variable $U$ having density :
 
     $$
     f(u) =
-    \left\{ 
+    \left\{
         \begin{array}{ll}
             \frac{1}{b-a}, \quad a \leq u \leq b \\
             0, \quad otherwise
@@ -130,7 +128,7 @@ Markdown version on
 
     $$
     F(u) =
-    \left\{ 
+    \left\{
         \begin{array}{ll}
             \frac{u}{b-a}, \quad a \leq u \leq b \\
             0, \quad otherwise
@@ -144,7 +142,7 @@ Markdown version on
 
     $$
     f(x) =
-    \left\{ 
+    \left\{
         \begin{array}{ll}
             \lambda e^{-\lambda x}, \quad x > 0 \\
             0, \quad otherwise
@@ -156,7 +154,7 @@ Markdown version on
 
     $$
     F(x) =
-    \left\{ 
+    \left\{
         \begin{array}{ll}
             1 - e^{-\lambda x}, \quad x > 0 \\
             0, \quad otherwise
@@ -164,16 +162,16 @@ Markdown version on
     \right.
     $$
 
-    is called and **exponential random variable** wiht parameter $\lambda > 0$. 
-    * We write $X \sim exp(\lambda)$
+    is called and **exponential random variable** wiht parameter $\lambda > 0$.
+  * We write $X \sim exp(\lambda)$
 
-    * We $E(x) = \frac{1}{\lambda}$ 
+  * We $E(x) = \frac{1}{\lambda}$
 
 * **Gamma distribution**. The random variable $X$ having density !
 
     $$
     f(x) =
-    \left\{ 
+    \left\{
         \begin{array}{ll}
             \frac{\beta^{\alpha}}{\Gamma(\alpha)}x^{\alpha-1}e^{-\beta x} \quad x > 0 \\
             0, \quad otherwise
@@ -183,9 +181,8 @@ Markdown version on
 
     is called a **gamma random variable** with parameters $\alpha, \lambda > 0$. We write $X \sim Gamma(\alpha, \lambda)$
 
-    * $E(X) = \frac{\alpha}{\beta}$ 
-    
-    * $var(X) = \frac{\alpha}{\beta^2}$ 
+  * $E(X) = \frac{\alpha}{\beta}$
+  * $var(X) = \frac{\alpha}{\beta^2}$
 
 * **Laplace**. The random variable $X$ having density :
 
@@ -198,15 +195,14 @@ Markdown version on
 
     $$
     F(x) =
-    \left\{ 
+    \left\{
         \begin{array}{ll}
             O, \quad x < \beta \\
             1 - (\frac{\beta}{x})^{\alpha}, \quad x \geq \beta,
         \end{array}
     \right.
     $$
-   
-   is called a **Pareto random variable** 
+   is called a **Pareto random variable**
 
 * We define the **expectation** of $g(X)$ to be :
 
@@ -230,15 +226,15 @@ Markdown version on
 
     $$ x_p = inf\{x: F(x) \geq p\} $$
 
-    For most continuous random variable, $x_p$ is unique and equals $x_p = F^{-1}(p)$, where $F^{-1}$ is the inverse function $F$. Then $x_p$ is the value for which $P(X \leq x_p) = p$. 
+    For most continuous random variable, $x_p$ is unique and equals $x_p = F^{-1}(p)$, where $F^{-1}$ is the inverse function $F$. Then $x_p$ is the value for which $P(X \leq x_p) = p$.
 
-    The $p$ quantile of $Y$ is the value $y_p$ that solves $F_Y(y_p) = p$. 
+    The $p$ quantile of $Y$ is the value $y_p$ that solves $F_Y(y_p) = p$.
 
 * A random variable $X$ having density :
 
-    $$ f(x) = \frac{1}{(2\pi)^{1/2}\sigma}exp\{-\frac{(x - \mu)^2}{2\sigma^2}\}, \quad x \in \mathbb{R}, \mu \in \mathbb{R}, \sigma > 0$$ 
+    $$ f(x) = \frac{1}{(2\pi)^{1/2}\sigma}exp\{-\frac{(x - \mu)^2}{2\sigma^2}\}, \quad x \in \mathbb{R}, \mu \in \mathbb{R}, \sigma > 0$$
 
-    is a **normal random variable** with the expectation $\mu$ and variance $\sigma^2$: we write $X \sim N(\mu, \sigma^2)$. 
+    is a **normal random variable** with the expectation $\mu$ and variance $\sigma^2$: we write $X \sim N(\mu, \sigma^2)$.
     When $\mu = 0, \sigma^2 = 1$ the corresponding variable $Z$ is **standard normal**, $Z \sim n(0, 1)$ with density :
 
     $$ \phi(z) = (2\pi)^{-1/2}e^{-z^2/2}, \quad z \in \mathbb{R} $$
@@ -247,13 +243,13 @@ Markdown version on
 
     $$ F_Z(x) = P(Z \leq x) = \Phi(x) = \int_{-\infty}^{\infty}\phi(z) = \frac{1}{(2\pi)^{1/2}} \int_{-\infty}^{\infty} e^{-z^2/z}dz $$
 
-    The **normal distribution** is often called the **Gaussian distribution**. 
+    The **normal distribution** is often called the **Gaussian distribution**.
 
     $Z \sim N(0, 1)$ :
 
     1) Then density os symmetric with respect to $z = 0$ i.e. $\phi(z) = \phi(-z)$
     2) $P(Z \leq z) = \phi(z) = 1 - \phi(-z) = 1 - P(Z \geq z)$
-    3) We have : 
+    3) We have :
 
         $$ \phi'(z) = -z\phi(z), \quad \phi''(z) = (z^2-1)\phi(z), \quad \phi'''(z) = -(z^3-3z)\phi(z), ... $$
         
@@ -263,13 +259,13 @@ Markdown version on
 
     MGF of Normal law : $e^{\mu t + \sigma^2 t^2/2}$
 
-* **Moivre-Laplace** Let $X_n \sim B(n, p)$, let : 
+* **Moivre-Laplace** Let $X_n \sim B(n, p)$, let :
 
     $$ \mu_n = E(X_n) = np, \quad \sigma^2_n = var(X_n) = np(1-p) $$
 
     When $n \rightarrow \infty$ we can approximate : $X_n \sim N\{np, np(1-p\}$
 
-    This gives us : 
+    This gives us :
 
     $$ P(X_n \leq r) = P(\frac{X_n - \mu_n}{\sigma_n} \leq \frac{r - \mu_n}{\sigma_n}) = \Phi(\frac{r - \mu_n}{\sigma_n}) $$
 

@@ -4,7 +4,10 @@ author: Pierre Colson
 output: pdf_document
 ---
 
-## General 
+**Markdown** version on
+[*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/Cryptography_and_security/Cryptography_and_security.md)
+
+## General
 
 * $b \in \mathbb{Z}^*_p$ has a quare root if and only if $b^{\frac{p-1}{2}} \mod p = 1$
 
@@ -13,10 +16,10 @@ output: pdf_document
 * We check that $X$ and $Y$ are in $\langle g \rangle$
 * Use a KDF to fix bad distribution of $g^{xy}$
 * We wheck the lower order $X \neq 1$, $X^2 \neq 1$
-* If $n = pq$ then $\mathbb{Z}_n$ ring is isomorphic to $\mathbb{Z}_p \times \mathbb{Z}_q$ and 
+* If $n = pq$ then $\mathbb{Z}_n$ ring is isomorphic to $\mathbb{Z}_p \times \mathbb{Z}_q$ and
 $\mathbb{Z}_n^*$ ring is isomorphic to $\mathbb{Z}_p^* \times  \mathbb{Z}_q^*$
 
-## RSA 
+## RSA
 
 * Square and multiply algorothm to compute $x^e$ or $x^d$
 * Primality test : Verify that a number os prime
