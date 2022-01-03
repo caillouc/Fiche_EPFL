@@ -4,7 +4,7 @@ author: Pierre Colson
 ---
 
 **Markdown** version on
-[*github*](https://github.com/caillouc/Fiche_EPFL/blob/main/Probalities_and_Statistics/Probalities_and_Statistics.md)
+[*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/Probalities_and_Statistics/Probalities_and_Statistics.md)
 
 ## General Stuff
 
