@@ -19,3 +19,6 @@
 * [Introduction to multiprocessor architecture (BA5 EPFL)](Introduction_to_multiprocessor_architecture/Introduction_to_multiprocessor_architecture.pdf)
 * [Cryptography and security](Cryptography_and_security/Cryptography_and_security.pdf)
 * [Information security and privacy](Information_security_and_privacy/Information_security_and_privacy.pdf)
+* [Distributed algorithms](Distributed_algorithms/Distributed_algorithms.pdf)
+
+> Compiled using pandoc and my [`gpdf` script](https://github.com/caillouc/dotfile/blob/linux/gpdf.sh)

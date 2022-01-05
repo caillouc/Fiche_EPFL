@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<language name="da" version="1" kateversion="2.4" section="Sources" extensions="*.da">
+    <highlighting>
+    <list name="keyword">
+      <item>trigger</item>
+      <item>Implements</item>
+      <item>Uses</item>
+      <item>upon</item>
+      <item>event</item>
+    </list>
+	<list name="code">
+      <item>do</item>
+      <item>while</item>
+	</list>
+    <contexts>
+      <context attribute="Normal Text" lineEndContext="#pop" name="Normal Text" >
+        <keyword attribute="Keyword" context="#stay" String="keyword" />
+        <keyword attribute="Code" context="#stay" String="code" />
+	  	<DetectChar attribute="event" context="event" char="&lt;" />
+      </context>
+	  <context attribute="event" lineEndContext="#stay" name="event" >
+        <DetectChar attribute="event" context="#pop" char="&gt;" />
+      </context>
+    </contexts>
+    <itemDatas>
+      <itemData name="Normal Text" defStyleNum="dsNormal" />
+      <itemData name="Keyword" defStyleNum="dsKeyword" />
+      <itemData name="Code" defStyleNum="dsString" />
+      <itemData name="event" defStyleNum="dsAttribute" />
+    </itemDatas>
+  </highlighting>
+  <general>
+    <comments>
+      <comment name="singleLine" start="#"/>
+      <comment name="multiLine" start="###" end="###" region="CommentFolding"/>
+    </comments>
+    <keywords casesensitive="1"/>
+  </general>
+</language>
