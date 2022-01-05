@@ -5,7 +5,8 @@ date: mercredi 05 janvier
 ---
 
 **Markdown** verion on
-[*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/Distributed_algorithms/Distributed_algorithms.md)
+[*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/Distributed_algorithms/Distributed_algorithms.md)  
+Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf_da` script*](https://github.com/caillouc/Fiche_EPFL/blob/main/Distributed_algorithms/gpdf_da.sh)
 
 ## General
 

@@ -6,7 +6,8 @@ output: pdf_document
 ---
 
 **Markdown** verion on
-[*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/Information_security_and_privacy/Information_security_and_privacy.md)
+[*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/Information_security_and_privacy/Information_security_and_privacy.md)  
+Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://github.com/caillouc/dotfile/blob/linux/gpdf.sh)
 
 ## Vocabulary
 

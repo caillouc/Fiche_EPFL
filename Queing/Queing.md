@@ -4,7 +4,8 @@ author: Pierre Colson
 ---
 
 **Markdown** verion on
-[*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/Queing/Queing.md)
+[*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/Queing/Queing.md)  
+Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://github.com/caillouc/dotfile/blob/linux/gpdf.sh)
 
 ## M/M/1
 

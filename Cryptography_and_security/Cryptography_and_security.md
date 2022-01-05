@@ -5,7 +5,8 @@ output: pdf_document
 ---
 
 **Markdown** version on
-[*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/Cryptography_and_security/Cryptography_and_security.md)
+[*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/Cryptography_and_security/Cryptography_and_security.md)  
+Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://github.com/caillouc/dotfile/blob/linux/gpdf.sh)
 
 ## General
 

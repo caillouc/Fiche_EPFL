@@ -4,7 +4,8 @@ author: Pierre Colson
 ---
 
 **Markdown** version on
-[*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/Operating_System/Operating_System.md)
+[*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/Operating_System/Operating_System.md)  
+Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://github.com/caillouc/dotfile/blob/linux/gpdf.sh)
 
 ## Fork
 
