@@ -3,11 +3,13 @@ title: Probalities and Statistics
 author: Pierre Colson
 ---
 
+---
+
 **Markdown** version on
 [*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/Probalities_and_Statistics/Probalities_and_Statistics.md)  
 Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://github.com/caillouc/dotfile/blob/linux/gpdf.sh)
 
-## General Stuff
+# General Stuff
 
 * Given $n$ distinct objects, the number of different **permutation** (without repetition) of length $r \leq n$ is :
 
@@ -29,7 +31,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     \right.
     $$
 
-## Probability
+# Probability
 
 * $P(A^c) = 1 - P(A)$
 * $P(A \cup B) = P(A) + P(B) - P(A \cap B)$
@@ -38,7 +40,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
 * $P(A_1 \cap A_2 \cap A_3) = P(A_3 \mid A_1 \cap A_2)P(A_2 \mid A_1)P(A_1)$
 * $A$ and $B$ are **independant** iff $P(A \cap B) = P(A)P(B)$
 
-## Random Variable
+# Random Variable
 
 * A random variable that takes onmy the values 0 and 1 is called an **indicator variable** or a **Bernouilli random variable**, or a **bernouilli trial**.
 * **Probability mass function** (PMF) is $f_X(x) = P(X = x) = P(A_x)$
@@ -105,7 +107,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
 
 * **Law of small numbers** Let $X_n \sim B(n, p_n)$, and suppose that $np_n \rightarrow \lambda > à$ when $n \to \infty$. Then $X_n \xrightarrow{D} X$, where $X \sim P(\lambda)$
 
-## Continuous Random Variable
+# Continuous Random Variable
 
 * A random variable $X$ is **continuous** if ther exist a function $f(x)$, called the **probability density function** (PDF) of $X$, such that :
 
@@ -281,7 +283,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
 > * **Normal** variables lie in $\mathbb{R}$ and are used to model quantities that arise (or might arise) through averaging of many small effects (e.g, height and weight, which are influenced by many genetic factors), or where measurements are subject to error.
 > * **Laplace** variables lie in $\mathbb{R}$. the Laplace distribution can be used in place of the normal in situations where outliers might be present.
 
-## Several random variable
+# Several random variable
 
 * Let $(X, Y)$ be an discrete random variable: the set :
     
@@ -472,7 +474,7 @@ Let $\mu_{\mathcal{A}}, \Omega_{\mathcal{A}}$ and $\Omega_{\mathcal{A}\mathcal{B
         * $P(X_{(1)} \leq x) = 1 - \{1 - F(x)\}^n$ 
         * $$ f_{X_{(r)}(x)} = \frac{n!}{(r-1)!(n-r)!}F(x)^{r-1}f(x)\{1-F(x)\}^{n-r}, \quad r = 1, \dots, n $$ 
 
-## Approximation and Convergence 
+# Approximation and Convergence 
 
 * Inequalities 
 
@@ -567,7 +569,7 @@ Let $\mu_{\mathcal{A}}, \Omega_{\mathcal{A}}$ and $\Omega_{\mathcal{A}\mathcal{B
 
 * Might need to add Sample quantiles 
 
-## Statistical Inference 
+# Statistical Inference 
 
 * The **Method of moments estimate** of a parameters $\theta$ is the value ${\theta}$ that matches the theorical and empirical moments.
     

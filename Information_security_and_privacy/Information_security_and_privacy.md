@@ -5,11 +5,13 @@ date: Monday 03 January
 output: pdf_document
 ---
 
+---
+
 **Markdown** verion on
 [*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/Information_security_and_privacy/Information_security_and_privacy.md)  
 Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://github.com/caillouc/dotfile/blob/linux/gpdf.sh)
 
-## Vocabulary
+# Vocabulary
 
 * **Virus** : a malware that infects a file and replicates by infecting other files
 * **Worm** : a piece of malware that propagate automatically
@@ -25,9 +27,9 @@ system (bugs)
 * Vulnerability can be fixed by **patching** a system
 * **Zero day** exploit : exploit for which no patch exists yet
 
-## Basic properties
+# Basic properties
 
-### Security
+## Security
 
 * Protects the data of data owners against attacks
 
@@ -56,7 +58,7 @@ system (bugs)
   * prevent denial of a statement
   * tool : add a signature as proof of origin
 
-### Privacy
+## Privacy
 
 * Protects the data *subject* against abuse
 
@@ -76,7 +78,7 @@ system (bugs)
   * work on encrypted information
   * tools : homomorphic encryption, private information retrieval, zero knowledge proofs
 
-## Cyber Threats
+# Cyber Threats
 
 * A **threat** is a potential unwanted action that creates impact
 
@@ -97,7 +99,7 @@ system (bugs)
   * Politically motivated hacking
   * Variant of (anarchic) civil disobediance
 
-## Web application vulnerabilities
+# Web application vulnerabilities
 
 * **OWASP** : **O**pen **W**eb **A**pplication **S**ecurity **P**roject
   * Documentation on the top 10 critical security risk of web application
@@ -113,7 +115,7 @@ context
 * **Direct object reference** : When a user-submitted parameters is a direct
 reference to a resource, a user may try to change it to access other resources
 
-## Software vulnerabilities
+# Software vulnerabilities
 
 * **Buffers overflows** : while writing data to a buffer, overruns the buffer's
 boundary and overwrites adjacent memory location
@@ -128,7 +130,7 @@ while the program is running
     * Every time the program is started, it is load at a random address
     * Every time the system boot, the OS is load at random address
 
-## Crypto
+# Crypto
 
 * **Symmetric Crypto** : Encryption and decryption is done with the same key
   * Solve the problem os transferring large amount of confidential data
@@ -193,7 +195,7 @@ has to be authentic (e.g. man in the middle atk)
     * The public key of the subject
     * The signature by the CA
 
-## TLS and HTTPS
+# TLS and HTTPS
 
 * **TLS** Transport layer Security : provide a secure channel between two
 communicating peers
@@ -208,7 +210,7 @@ with its private key
 certificates
 * HSTS and Certificate transparency protect against MITM and fraudulent CAs
 
-## Dtatabase Security
+# Dtatabase Security
 
 * **Access control** : Least privilege
 * Granularity at the row level can be achieved by defining *views*
@@ -228,7 +230,7 @@ certificates
   * sort, compare or aggregate data
   * $\Rightarrow$ the BD is pretty useless
 
-## Password Storage
+# Password Storage
 
 * Classic way : use **salt** and **iterations**
 * Modern way : use a **memory hard function**
@@ -261,7 +263,7 @@ certificates
   * intermediate steps results are stored in memory
   * each step depends on results from previous steps
 
-## Access Control
+# Access Control
 
 * **Access control** defines and enforce the operations that can do an objects
 * Principle of **least privilege**
@@ -296,7 +298,7 @@ certificates
   * Using groups to implement RBAC
   * Mac for protectiond the integrity of a system
 
-## Authentication
+# Authentication
 
 * Access control only makes sense if we can *authenticate* subjects
 * **Password**

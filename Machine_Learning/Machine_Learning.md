@@ -3,11 +3,13 @@ title: Fiche Machine Learning
 author: Pierre Colson
 ---
 
+---
+
 **Markdown** version on
 [*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/Machine_Learning/Machine_Learning.md)  
 Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://github.com/caillouc/dotfile/blob/linux/gpdf.sh)
 
-## General Stuff
+# General Stuff
 
 * **Supervised learning**, learning from humain supervision
 
@@ -18,7 +20,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * **Trainig phase**: to give the concept of classes to a machine using labeled data
   * **Testing phase**: to determine the calss of new unseen (unlabeled) data
 
-## Nearest Neighbour
+# Nearest Neighbour
 
 * Binary classification
 
@@ -42,7 +44,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     * Costly to compute distances to search for the nearest
     * Memory requirement: must store all the training set
 
-## Decision Trees
+# Decision Trees
 
 * Test the attributes (features) sequentially
 
@@ -74,7 +76,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
 
 * To avoid overfitting we can use validation set and pruning. Pruning means simplifying/compressing and optimizing a decision tree by removing sections of the tree that are uncritical and redundant to calssify instances.
 
-## Challenge in machine learning
+# Challenge in machine learning
 
 * The missclasification of a model $f$ rate on a training data $D$:
 
@@ -103,7 +105,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
 
 * $MSE = Variance + Bias^2$
 
-## Regression
+# Regression
 
 * Regression = Real valued output
 
@@ -158,7 +160,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
 
     $$ RSS + \lambda \sum_{i=1}^d|w_i| $$
 
-## Learning as Inference
+# Learning as Inference
 
 * Classification: $Y$ is discrete
 
@@ -196,7 +198,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
 
 * Maximum Likehood Estimate
 
-## Other
+# Other
 
 * Classification is discrete
 

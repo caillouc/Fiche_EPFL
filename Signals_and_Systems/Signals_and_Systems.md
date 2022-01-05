@@ -3,11 +3,13 @@ title: Signal and System fiche
 author: Pierre Colson
 ---
 
+---
+
 **Markdown** version on
 [*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/Signals_and_Systems/Signals_and_Systems.md)  
 Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://github.com/caillouc/dotfile/blob/linux/gpdf.sh)
 
-## General Stuff
+# General Stuff
 
 * **Euler formula**
 
@@ -23,9 +25,9 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * Transfer function $= H(s)$
   * Frequency response $= H(j\omega)$
 
-## Signals and Systems
+# Signals and Systems
 
-### Signals
+## Signals
 
 * A continuous-time signal $x(t)$ is called **periodic** with priod $T$ if for all times $t$ we have : $x(t) = x(t+T)$ (idem for discrete time)
 
@@ -37,7 +39,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * Continuous time: $\mathcal{P} = \lim_{T \to \infty}\frac{1}{2T}\int_{-T}^T |x(t)|^2dt$
   * Discrete time: $\mathcal{P} = \lim_{N \to \infty}\frac{1}{2N+1}\sum_{n=-N}^N |x[n]|^2$
 
-### Systems
+## Systems
 
 * A **System** takes a signal as input and outputs a new signal. It is express as : $y(t) = \mathcal{H}\{x(t)\}$ or $y[n] = \mathcal{H}\{x[n]\}$
 
@@ -49,7 +51,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * **Causality**: A System is causal if its output signal only depends on present and past inputs, but not on future inputs (idem for discrete time)
   * **Stability**: A system $\mathcal{H}$ is *stable* if for all *bounded* input signals $x(t)$, the corresponding output signal $y(t) = \mathcal{H}\{x(t)\}$ is also bounded. (idem for discrete time)
 
-## Linear Time Invariant Systems (LTI)
+# Linear Time Invariant Systems (LTI)
 
 * *Kronecker-delta fucntion*:
 
@@ -91,11 +93,11 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * **Causality**: An LTI system is *causal* if and only if the impulse response function is indetically zero for negative lags: $h(t) = 0$ for $t < 0$ (idem for discrete time)
   * **Stability**: An LTI system is *stable* if and only if the impulse response function absolutely integrable (or summable), i.e., if and only if: $\int_{-\infty}^{\infty} |h(t)|dt < \infty$ or $\sum_{k=-\infty}^{\infty}|h[k]| < \infty$
 
-## Fourier Methods for Stable LTI Systems
+# Fourier Methods for Stable LTI Systems
 
 @import "Fourier_Appendix.pdf"
 
-## Frequency Response of Stable LTI Systems
+# Frequency Response of Stable LTI Systems
 
 * **Frequency response** Let us suppose that the input to our stable LTI system is given by $x(t) = e^{jw_0t} \text{ or } x[n] = e^{jw_0t}$. Then the output is given by :
   
@@ -133,7 +135,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
 
   $$ X_r(\omega) = X_p(\omega)H(\omega) $$
 
-## The Transfer Function and The $Z$-Transform
+# The Transfer Function and The $Z$-Transform
 
 * We define the $Z$-transform as :
 
@@ -157,7 +159,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
 
 @import "Z-transform_Appendix.pdf"
 
-## Transfer Fucntion an The Laplace Transform
+# Transfer Fucntion an The Laplace Transform
 
 * **The Transfer Fucntion** Let us suppoe thath input to out LTI system is gievn by $x(t) = e^{st}$ for an arbitrary *complex-valued* constant $s$. Then, the output is givent by :
 
@@ -187,7 +189,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
 
 @import "Laplace_Appendix.pdf"
 
-## Example
+# Example
 
 * **Non time invariant** :
 

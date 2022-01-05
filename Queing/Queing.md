@@ -3,11 +3,13 @@ title: Fiche Queuing
 author: Pierre Colson
 ---
 
+---
+
 **Markdown** verion on
 [*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/Queing/Queing.md)  
 Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://github.com/caillouc/dotfile/blob/linux/gpdf.sh)
 
-## M/M/1
+# M/M/1
 
 * Offered load : $a = \lambda * \bar{x} = \frac{\lambda}{\mu}$
 
@@ -41,7 +43,7 @@ $$ N_{q} = \lambda W \implies W = \frac{1}{\mu - \lambda} - \frac{1}{\mu} = \fra
 
 * Waiting time distribution : $w(t) = 1 - \rho e^{-(\mu - \lambda)t}$
 
-## M/M/1/K
+# M/M/1/K
 
 * Offered load : $\rho = \frac{\lambda}{\mu}$
 
@@ -59,7 +61,7 @@ $$ N_{q} = \lambda W \implies W = \frac{1}{\mu - \lambda} - \frac{1}{\mu} = \fra
 
 * $\bar{N} = \frac{\rho}{1 - \rho}(1 - (K + 1) p_K)$
 
-## M/M/m/m - Erland loss system
+# M/M/m/m - Erland loss system
 
 * $a = \lambda \bar{x} = \frac{\lambda}{\mu}$
 
@@ -77,7 +79,7 @@ $$ N_{q} = \lambda W \implies W = \frac{1}{\mu - \lambda} - \frac{1}{\mu} = \fra
 
 * $p_m = \frac{\frac{a^m}{m!}}{\sum \frac{a^i}{i!}} = E_m(a) = B(m, a)$ : blocking probability Erlang B form
 
-## M/M/m - Erlang wait system
+# M/M/m - Erlang wait system
 
 * Offered load : $a = \frac{\lambda}{\mu}$
 
@@ -110,7 +112,7 @@ $$ D_m(a) = \frac{m E_m(a)}{m - a\big(1-E_m(a)\big)} $$
   * $\mathcal{L}(f_w(t\mid k)) = \big(\frac{m\mu}{s + m\mu}\big)^{k-(m-1))} \quad k \geq m$
   * $\mathcal{L}(f_w(t\mid k)) = \int_0^{\infty} \delta(t) e^{-st} = 1 \quad k \leq m$
 
-## M/M/m/m/C - Engset loss System
+# M/M/m/m/C - Engset loss System
 
 * A customer does not generate a nex request while under service
 
@@ -140,7 +142,7 @@ $$ N = N_{s} = \frac{\lambda_{eff}}{\mu} $$
 
 * We consider a system as finite population when $C < 10m$
 
-## Erlang-r server ($E_r$)
+# Erlang-r server ($E_r$)
 
 * For each exponential stage : $b(x_i) = r \mu e^{-r\mu x_i}$
 
@@ -156,7 +158,7 @@ $$ N = N_{s} = \frac{\lambda_{eff}}{\mu} $$
 
 * Little and pasta hold
 
-## Hyper-exponential server ($H_r$)
+# Hyper-exponential server ($H_r$)
 
 * For each server : $b(x_i) = \mu_i e^{-\mu_i x}$
 
@@ -166,7 +168,7 @@ $$ N = N_{s} = \frac{\lambda_{eff}}{\mu} $$
 
 * $C_x^2 = \frac{E[X^2]}{E[X]^2} - 1 \geq 1$
 
-## M/G/1
+# M/G/1
 
 * Arrival process memoryless (Poisson($\lambda$))
 
@@ -188,13 +190,13 @@ $$ N = N_{s} = \frac{\lambda_{eff}}{\mu} $$
 
 * For M/M/1 : $C_x^2 = 1$, for M/D/1 : $C_x^2 = 0$, Hyper-Exp : $C_x^2 = 4$ and Erlang-4 : $C_x^2 = 1/4$
 
-### With vacation
+## With vacation
 
 * Waiting time : $W = \frac{\lambda E[X^2]}{2(1 - \rho)} + \frac{E[V^2]}{2E[V]}$
 
-### With priority
+## With priority
 
-#### Non-preemptive
+## Non-preemptive
 
 * The service is completed even if higher priority customer arrives
 
@@ -204,11 +206,11 @@ $$ N = N_{s} = \frac{\lambda_{eff}}{\mu} $$
 
 * Average waiting time : $W = \sum p_i W_i = \sum \frac{\lambda_i}{\lambda} W_i$
 
-#### Preemptive
+## Preemptive
 
 * The service is interrupted if higher priority customer arrives
 
-## Other
+# Other
 
 * kendall's notation A/S/m/c/p/O
   * A: Arrival process (distribution of interarrival times)

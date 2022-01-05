@@ -3,11 +3,13 @@ title: Fiche Operating System
 author: Pierre Colson
 ---
 
+---
+
 **Markdown** version on
 [*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/Operating_System/Operating_System.md)  
 Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://github.com/caillouc/dotfile/blob/linux/gpdf.sh)
 
-## Fork
+# Fork
 
 * After creating a new process using `fork()` the two porcesses will share open files but **not** the stack, the heap, globla memory, and code area
 
@@ -29,20 +31,20 @@ int main () {
 }
 ```
 
-## Stack
+# Stack
 
 * On the stack :
   * ESP = current stack pointer
   * EBP = base pointer for the current stack frame
   * under the base stack pointer : previous EBP, return IP, lacation for returned element, arguments.
 
-## Pipes
+# Pipes
 
 * When you read from or write to a pipe you will use the regular library procedures that are used for files
 
 * Pipes have built in flow control. If the consumer does not read from the pipe the producer will be suspended when tries to write the filled pipe.
 
-## Scheduling
+# Scheduling
 
 * State diagram for scheduling processes :
 
@@ -60,7 +62,7 @@ int main () {
 
 * Round robin : give a time slice for each task
 
-## Sockets
+# Sockets
 
 * SOCK DGRAM : A one way, medium oriented, unreliable disorderd socket
 
@@ -75,7 +77,7 @@ If the messages are of limited size it is almost always better to use SOCK DGRAM
 The order is however not guaranteed not that messges actually arrive.
 If this is important one has to implement a protocol to keep the order and request resending.
 
-## File System
+# File System
 
 * We represent files using an inode with pointers to data blocks with the contents of the files.
 The inode also contains metedata for the file but can be reprensented with e.g 256 bytes.
@@ -95,7 +97,7 @@ A structuure CR (Checking point region) is in a fixed posotion and holdes a poin
 
 ![](logfilesystem_schema.png)
 
-## Other
+# Other
 
 * Don't forget to free the memory after allocating on the heap.
 

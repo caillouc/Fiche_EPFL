@@ -3,11 +3,13 @@ title: Fiche Database
 author: Pierre Colson
 ---
 
+---
+
 **Markdown** version on
 [*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/Database_Technology/Database_Technology.md)  
 Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://github.com/caillouc/dotfile/blob/linux/gpdf.sh)
 
-## General
+# General
 
 * A database should allow the user to specify thery schemas usiong a **data definition language**, and allow to query and modify data using a **query/data manipualtion language**
 
@@ -32,7 +34,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
 
 * A **key** is a sets of attributes that determine all other attributes if a tuple
 
-## Algebra
+# Algebra
 
 * **Relational Algebra**
 
@@ -78,7 +80,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * $A$ OR $B = max(A, B)$
   * NOT $A = 1 - A$
 
-## SQL
+# SQL
 
 * Create a realtion
 
@@ -208,7 +210,7 @@ WHERE A.attribute = 'smthg'
 
 * `EXISTS(sbuquery)` evaluates to true if subquery is not empty
 
-## Have a good database
+# Have a good database
 
 * $K$ is a **superkey** for a realation if $K$ functionally determines all of $R$
 
@@ -278,7 +280,7 @@ WHERE A.attribute = 'smthg'
   * 3NF is lossless
   * 3NF is dependency preserving
 
-## Concurrency and Transactions
+# Concurrency and Transactions
 
 * **ACID** transactions enforce
 
@@ -339,7 +341,7 @@ WHERE A.attribute = 'smthg'
 > * Non-repeatable read: The A row that user A has queried has a different value the second time.
 > * Phantom read: All the rows in the query have the same value before and after, but different rows are being selected (because B has deleted or inserted some). Example: select sum(x) from table; will return a different result even if none of the affected rows themselves have been updated, if rows have been added or deleted.
 
-## View, Constraints, Assertions, Trigger
+# View, Constraints, Assertions, Trigger
 
 * A **View** is a relation defined in terms of stored tables and toher views
 
@@ -380,7 +382,7 @@ CREATE TRIGGER triggerName
 * Row level trigger: execute once for each modified tuple
 * Statement-level triggers: execute once for an SQL statement
 
-## Schema design in the real world
+# Schema design in the real world
 
 * Entity/Realtion Models, this model allows us to sketch database schema designs
 
@@ -405,7 +407,7 @@ CREATE TRIGGER triggerName
   * E/R Style: one reation for each subclass with key attributes and attributes of that subclass
   * Object oriented: One relation per subtree of subclasses with all relevant attributes
 
-## Semistructured-Data Model
+# Semistructured-Data Model
 
 * A database of semistructured data is a collection of nodes. Each node is either interior or a leaf
 
@@ -516,7 +518,7 @@ CREATE TRIGGER triggerName
 </xs:element>
 ```
 
-## Query Languages for XML : Xpath and Xquery
+# Query Languages for XML : Xpath and Xquery
 
 * XPath
 

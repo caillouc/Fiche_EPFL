@@ -7,10 +7,31 @@
       <item>Uses</item>
       <item>upon</item>
       <item>event</item>
+      <item>procedure</item>
+      <item>is</item>
     </list>
 	<list name="code">
       <item>do</item>
       <item>while</item>
+      <item>if</item>
+      <item>then</item>
+      <item>else</item>
+      <item>not</item>
+      <item>in</item>
+      <item>wait</item>
+      <item>until</item>
+      <item>return</item>
+      <item>for</item>
+      <item>either</item>
+      <item>when</item>
+      <item>from</item>
+      <item>or</item>
+      <item>true</item>
+      <item>false</item>
+      <item>forall</item>
+      <item>emptySet</item>
+      <item>and</item>
+	  <item>to</item>
 	</list>
     <contexts>
       <context attribute="Normal Text" lineEndContext="#pop" name="Normal Text" >
@@ -25,15 +46,11 @@
     <itemDatas>
       <itemData name="Normal Text" defStyleNum="dsNormal" />
       <itemData name="Keyword" defStyleNum="dsKeyword" />
-      <itemData name="Code" defStyleNum="dsString" />
-      <itemData name="event" defStyleNum="dsAttribute" />
+      <itemData name="Code" defStyleNum="dsAttribute" />
+      <itemData name="event" defStyleNum="dsString" />
     </itemDatas>
   </highlighting>
   <general>
-    <comments>
-      <comment name="singleLine" start="#"/>
-      <comment name="multiLine" start="###" end="###" region="CommentFolding"/>
-    </comments>
     <keywords casesensitive="1"/>
   </general>
 </language>

@@ -5,11 +5,13 @@ date: Saturday 30 October
 output: pdf_document
 ---
 
+---
+
 **Markdown** version on
 [*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/Introduction_to_multiprocessor_architecture/Introduction_to_multiprocessor_architecture.md)  
 Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://github.com/caillouc/dotfile/blob/linux/gpdf.sh)
 
-## General
+# General
 
 * $P = CV^2f$ P = **Power**; V = Operating voltages; f = Operating voltages; C = Capacitance
 * **Dennard’s Law** Voltages used to go down
@@ -23,14 +25,14 @@ Rather than a law of physics, it is an empirical relationship linked to gains fr
 * Each board can have multiple chips
 * Each platform can have multiple boards
 
-## Parallelism
+# Parallelism
 
 * **Amdahl’s law** : if you speed up only a small fraction of the execution time of a computation,
 the speedup you achieve on the whole computation is limited!
 
 $$ speedup = \frac{1}{\frac{Fraction_{enhanced}}{Speedup_{enhanced}} + (1 - Fraction_{enhanced})} $$
 
-## Coherence
+# Coherence
 
 * Cache coherence makes sure all copies of one address have the same value
 * Cache set = cache line
@@ -49,7 +51,7 @@ of each block includes in which cache coherence "state" that block is, and which
 that block at that time, which can be used to eliminate the need to broadcast all the signals to all nodes,
 nd only send it to the nodes that are interested in this single block.
 
-## Optimization
+# Optimization
 
 * **Coherence** misses when a block is removed due to coherence messages from another core
 * **True sharing** when processors modify a same cache block (same data); To optimize we can :
@@ -60,7 +62,7 @@ nd only send it to the nodes that are interested in this single block.
   * Problem: Bad page replacement policies led to swapping and unusable machines
   * Solution: Design memory to prioritize the “working set” of the currently executing applications
 
-## Consistency
+# Consistency
 
 * Types of Memory Dependences
   * Read After Write (RAW)
@@ -80,7 +82,7 @@ nd only send it to the nodes that are interested in this single block.
     * Enforces program order for operations before/after
 * Basic consistency models: SC, PC, Weak
 
-## Synchronzation
+# Synchronzation
 
 * Mutual exclusion
   * **Locks**
@@ -110,7 +112,7 @@ atomicity
   * The exact order is not guaranteed though
 * **Transactional memory** HLE whitout lock (software atomic section)
 
-## Multithreading
+# Multithreading
 
 * Out of order pipeline $\Rightarrow$ Misses do not block pipeline
 * **Vertical waste** : whole cycle empty, nothing issued
@@ -123,7 +125,7 @@ atomicity
   * Thread with fewest instructions in pipe has priority
 * $IPC = \frac{\#instructions}{\#cycles}$
 
-## GPUs
+# GPUs
 
 * **GPU** has Processing clusters
 * **Processing cluster** has Streaming Multiprocessors

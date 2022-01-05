@@ -3,22 +3,24 @@ title: Computer security fiche
 author: Pierre Colson
 ---
 
+---
+
 **Markdown** version on
 [*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/Computer_security/Computer_security.md)  
 Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://github.com/caillouc/dotfile/blob/linux/gpdf.sh)
 
-## CIA
+# CIA
 
 * **CIA** : Confidentiality, Integrity, Availability
   * Confidentiality : The recsource is protected from unauthorized read access. (ex of mesure for protection : encryption)
   * Intergrity : The resource is protected from unauthorized write (change or delete) access. (ex of mesure for protection : message authentication code)
   * Availability : The resource can be accessed by authorized subjects in an unaltered way. (ex of mesure for protection : firewall)
 
-## Cryptography
+# Cryptography
 
 * **RSA** is based on the hardness of factorization of large number into two prime number.
 
-## Digital signature and MAC
+# Digital signature and MAC
 
 * **Message  Authenticaton Code (MAC)** is used to guarantees integrity. The schema assumes that twos parties $A$ and $B$ agree on a common secret $K_{AB}$.
 If party $A$ wants to send a message $M$ to $B$, $A$ computes $mac = F(K_{AB}, M)$, appends this code to the message and sends the result to $B$. The other party extract the message $M$ and the code *mac* from the same received data, computes its own code using the message and the same key and compares the results with the code *mac*.
@@ -30,7 +32,7 @@ If the match successes then the receiver is assured that
 The sender signs the message by encrypting the ahsh of the message with his private key.
 The recipient can verify by decrypting this with the sender's public key and check that the resulting hash is indeed the same as one obtained by hashing the message.
 
-## Digital envelopes
+# Digital envelopes
 
 * **Digital envelopes** : Preapare a message. Generate a random symmetric key.
 Encrypt the message with the symmetric key.
@@ -38,7 +40,7 @@ Encrypt the symmetric key unsing public key encryption with re recipients public
 Attach the encrypted symmetric key to the end of the message and send it to the recipient.
 They are use to use symmetric key encryption for performance when sending a message, without having to agree on a secret first.
 
-## Intrusion detection
+# Intrusion detection
 
 * A **host based instruction detection system** monitors the activities and the events occuring on a single host.
 Usaually a host based instruction detection system is interact with the host OS to intercept the events.
@@ -49,7 +51,7 @@ Usaually a host based instruction detection system is interact with the host OS 
 
 * Signature-based intrusion detection can only detect intrusions that are already identified as such in the IDS.
 
-## Firewalls
+# Firewalls
 
 * A **firewall** must be a *statefull* inspection firewall to keep track of the opened TCP connections.
 
@@ -59,7 +61,7 @@ Usaually a host based instruction detection system is interact with the host OS 
 
 * **application level firewall** can take application-specific information into account, slower, no end-to-end encryption.
 
-## Principles
+# Principles
 
 * The **principe of secure/fail-safe defaults** : The default, i.e., when no other specific rule exists, should be safe.
 
@@ -68,7 +70,7 @@ Usaually a host based instruction detection system is interact with the host OS 
 * The **principle of psychological acceptability** states that security mechanisms should not make the resource more difficult to access than if the security mechanisms were not present.
 Configuring and executing a program should be as easy and as intuitive as possible, and any output should be clear, direct, and useful.
 
-## Authentication
+# Authentication
 
 * There are two parts to authentication : identification and verification. To see who is doing the request and making sure it's really them using identifier (username) and credential (password, dongle, biometrics).
 
@@ -76,7 +78,7 @@ Configuring and executing a program should be as easy and as intuitive as possib
 
 * Kerberos provides mutual authentication between a user and a server, i.e., not only is the user authenticated to the server but the user can be sure that the server is authentic as well.
 
-## Malware
+# Malware
 
 * **Viruses** spread by attacking their executable code to other executable programs.
 To spread among different host one of the affected program msut be copied by some other mechanism (e.g. the user itelf).
@@ -108,13 +110,13 @@ properties that make then sucesssful :
   * once a large number of documents have been encrypted, the malware requires a payment to disclose the public key.  
 A simpel counter mesure is to ensure that important files are backed up on a different computer.
 
-## Buffer Overflow
+# Buffer Overflow
 
 * To prevent buffer offerflow we should use safe libraries that check bounds and do other buffer management or use random canaries that are put in the buffer and if they are changed, it means there was a buffer overflow.
 
 * Guard Pages are used to detect buffer overflows and buffer over-reads.
 
-## Social Engineering
+# Social Engineering
 
 * Typical strategies for social engineering are :
   * Stress victims by pleading urgency and dire consequences.
@@ -124,7 +126,7 @@ This works because the pressure of reciprocity increase
 
 * Social engineering exploits often positive human traits, not lack of intelligence.
 
-## Access control
+# Access control
 
 * In discretionary access control, the owner of a resource can give access rights to others.
 
@@ -147,7 +149,7 @@ There are two main rules to respect :
     * the subject can read the object and
     * the subject can not read objects outside the dataset of $O$
 
-## Denial of service
+# Denial of service
 
 * **SYN-spoofing attack** : The attacker sends a SYN with a spoofed source address to a Server.
 The server sends a SYN-ACK to the cleint according to the spoofed and keeps re-sending SYN-ACKs after time-outs until is assume a failed connection request.
@@ -158,7 +160,7 @@ The same filter is not efficient in other routers since they can not validate if
 
 * DOS that does not saturate the network : infinite zip for example.
 
-## Secure hash functions
+# Secure hash functions
 
 * Requirements :
   * can be efficiently applied to data of any size,
@@ -167,6 +169,6 @@ The same filter is not efficient in other routers since they can not validate if
   * is one-way,
   * is strong collision resistant.
 
-## Privacy
+# Privacy
 
 * **GDPR** is a regulation of EU menber countries for how to change their privacy laws.

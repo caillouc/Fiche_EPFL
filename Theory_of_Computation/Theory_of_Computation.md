@@ -3,13 +3,15 @@ title: Theory of Computation fiche
 author: Pierre Colson
 ---
 
+---
+
 **Markdown** version on
 [*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/Theory_of_Computation/Theory_of_Computation.md)  
 Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://github.com/caillouc/dotfile/blob/linux/gpdf.sh)
 
-## Cours
+# Cours
 
-### Automata and Languages
+## Automata and Languages
 
 * A **deterministic finite automaton (DFA)** is a 5-tuples $(Q, \Sigma, \delta, q_0, F)$, where :
     1) $Q$ is a finite set called the *states*
@@ -58,7 +60,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     2) $|y| > 0$, and
     3) $|xy| \leq p$
 
-### Turing Machine
+## Turing Machine
 
 * A **Turing Machine** is a 7-tuples, $(Q, \Sigma, \Gamma, \delta, q_0, q_{accept}, q_{reject})$, where $Q$, $\Sigma$, $\Gamma$ are all finite set and :
   1) $Q$ is the set of *states*,
@@ -81,7 +83,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
 
 * Every nondeterministic Turing machine has an equivalent deterministic Turing machine
 
-### Decidable languages
+## Decidable languages
 
 * $A_{DFA} = \{ \langle B, w \rangle \mid B$ is a DFA that accpets input string $w \}$. $A_{DFA}$ is a decidable language.
 
@@ -115,7 +117,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
 
 * If $B \leq_m \bar{B}$ then $\bar{B} \leq_m B$
 
-### Time complexity
+## Time complexity
 
 * $P$ is the calss of languages that are *decidable* in *polynomial time* on a *deterministic* Turing machine :
 
@@ -175,7 +177,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
 
 * If $B$ is $NP-complete$ and $B \leq_p C$ for $C$ in $NP$, then $C$ is $NP-complete$
 
-## Example
+# Example
 
 * **Pumping Lemma** : Let $B$ be the languages $\{ 0^n1^n \mid n \geq 0\}$. We use the pumping lemma to prove that $B$ is not regular. The proof is by contradiction. Assume to the contrary that $B$ is regular. Let $p$ be the pumping length given by the pumping lemma. Choose $s$ to be the string $0^p1^p$. Because $s$ is a member of $B$ and $s$ has length more than $p$, the pumping lemma guarantees that $s$ can be split into three pieces, $s = xyz$ where $|xy| \leq p, |y| \geq 1$ and for any $i \geq 0$ the string $xy^iz$ is in $B$. We consider three cases to show that this result is impossible:
   1) The string $y$ consists only of $0$s. In this case, the string $xyyz$ has more $0$s than $1$s and so is not a member of $B$, violating condition $1$ of the pumping lemma. This case is a contradiction.
