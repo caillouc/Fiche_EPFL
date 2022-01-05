@@ -4,6 +4,8 @@ author: Pierre Colson
 date: mercredi 05 janvier
 ---
 
+---
+
 **Markdown** verion on
 [*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/Distributed_algorithms/Distributed_algorithms.md)  
 Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf_da` script*](https://github.com/caillouc/Fiche_EPFL/blob/main/Distributed_algorithms/gpdf_da.sh)
@@ -311,11 +313,11 @@ upon event <Decide, decided>sn do
 * Provides *strong* guarantees when there is no concurrent operations
 * When some operations are concurrent, the register provides *minimal*
   guarantees
-* `Read()` returns : 
-  * *The last value* writtne if there is no concurrent or failed operations
+* `Read()` returns :
+  * *The last value* written if there is no concurrent or failed operations
   * Otherwise the last value written on *any* value concurrently written i.e.
     the input parameter of some `Write()`
-      
+
 * We assume **fail-stop** model
   * Process can fail by crashing (no recovery)
   * Channels are reliable
@@ -328,7 +330,7 @@ upon event <Decide, decided>sn do
 ```da
 Write(v) at pi
   send [W, w] to all
-  for every pj, wait until either 
+  forall pj, wait until either 
     receive [ack] or
     detect [pj]
   return ok
@@ -346,11 +348,11 @@ At pi
     send [ack] to pj
 ```
 
-* We assume while failure detection is not perfect 
-  * $P_1$ is the writter and any process can be reader
+* We assume while failure detection is not perfect
+  * $P_1$ is the writer and any process can be reader
   * A mojority of the process is correct
   * Channels are reliable
-* We implement a **regular** register 
+* We implement a **regular** register
   * Every process $p_i$ maintains a local copy of the register $v_i$, as well as
     a sequence number $sn_i$ and a read timestamp $rs_i$
   * Process $p_1$ maintains in addition a timestamp $ts_1$
@@ -385,4 +387,104 @@ At pi
 
 ## Atomic Register
 
-* An **Atomic Register**
+* An **Atomic Register** provides strong guarantees event when there is
+  concurrency and failures : the execution is equivalent to a sequencial and
+  failure-free execution
+* Every failed (write) operation appears to be either complete or not to have
+  been invoked at all
+* Every complete operation appears to be executed at some instant between its
+  invocation and reply time events
+
+* We implement a **fail-stop** 1-N **atomic register**
+  * Every process maintais a local value of the register as well as a sequence
+    number 
+  * The writer, $p_1$, maintains, in addition a timestamp $ts_1$
+  * Any process can read in the register
+
+```da
+Write(v) at p1
+  ts1++
+  send [W, ts1, v] to all
+  forall pi wait until either
+    receive [ack] or
+    detect [pi]
+  return ok
+```
+
+```da
+Read() at pi
+  send [W, sni, vi] to all
+  forall pi wait until either 
+    receive [ack] or 
+    suspect [pj]
+  return vi
+```
+
+```da
+At pi
+  When pi receive [W, ts, v] from pj
+    if ts > sni then 
+      vi := v
+      sni := ts
+    send [ack] to pj
+```
+
+* We implement a **fail-stop** N-N **atomic register**
+
+```da
+Write(v) at pi
+  send [W] to all
+  forall pj wait until either
+    receive [W, snj] or
+    suspect [pj]
+  (sn, id) := (highest snj + 1, i)
+  send [W, (sni, id), v] to all
+  forall pj wait until either
+    receive [W, (sn, id), ack] or
+    detect [pj]
+  return ok
+```
+
+```da
+Read() at pi
+  send [R] to all
+  forall pj wait until either
+    recieve [R, (snj, idj), vj] or
+    suspect pj
+  v = vj with the highest (snj, idj)
+  (sn, id) = highest (snj, idj)
+  send [W, (sn, id), v] to all
+  forall pj wait until either
+    receive [W, (sn, id), ack] or
+    detect [pj]
+  return v
+```
+
+```da
+At pi
+T1 : 
+  when receive [W] from pj
+    send [W, sn] to pj
+  when receive [R] from pj
+    send [R, (sn, id), vi] to pj
+
+T2 : 
+  when receive [W, (snj, idj), v] from pj
+    if (snj, idj) > (sn, id) then
+      vi := v
+      (sn, id) = (snj, idj)
+    send [W, (sn, id), ack] to pj
+  when receive [W, (snj, idj), v] from pj
+    if (snj, idj) > (sn, id) then 
+      vi := v
+      (sn, id) := (snj, idj)
+    send [W, (sn, id), ack] to pj
+```
+
+* From fail-stop to **fail-silent**
+  * We assume a mojority of correct processes
+  * In the 1-N algorithm, the writer writes in a majority using a timestamp
+    determined locally and the reader selects a value from a majority and then
+    imposes this value on a majority 
+  * In the N-N algorithm, the writers determines first the timestamp using a
+    majority
