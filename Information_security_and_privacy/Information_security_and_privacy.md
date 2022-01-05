@@ -206,3 +206,115 @@ with its private key
 * A **Public key infrastructure** (PKI) ditributes public keys usign
 certificates
 * HSTS and Certificate transparency protect against MITM and fraudulent CAs
+
+## Dtatabase Security
+
+* **Access control** : Least privilege
+* Granularity at the row level can be achieved by defining *views*
+* SQL databases also support *role based* acces control
+* To limit the impact of SQL injection, use different DB users for different
+  accesses
+
+| **Layer** | **Function** | **Protect against** |
+| --- | --- | --- |
+| Hardware / OS | Data is encrypted when read/write to disk | Stealing/cloning virtual machines |
+| Database | BD encrypts when read/write to file | Access by OS users/admins |
+| Network | DB encrypts when read/write to network (e.g. TLS) | Hackers connot sniff data in transit |
+| Application | Application encrypts when read/write to the DB | Access by admins, memory dumps by OS admins |
+
+* If the data is encrypted in the database then the DB cannot
+  * search with wildcards (e.g. `WHERE name='Pete%'`)
+  * sort, compare or aggregate data
+  * $\Rightarrow$ the BD is pretty useless
+
+## Password Storage
+
+* Classic way : use **salt** and **iterations**
+* Modern way : use a **memory hard function**
+* **Time-memory trade-offs** :
+  * We create a *reduction* function $r$ : it takes a hash as input and produces
+    a password from our set
+  * We build chains : $p_1 \overset{hash}{\rightarrow} h_1
+    \overset{reduce}{\rightarrow} p_7 \overset{hash}{\rightarrow} h_7
+    \overset{reduce}{\rightarrow} \dots \overset{hash}{\rightarrow} h_3$
+  * We only keep the first and last element of each chain
+    * this is where we save memory
+    * we pay for this with more time to crack the password
+  * We build a table with several chains
+  * Hellman's original trade-off becomes inefficient when there are too many
+    chains in a single table
+    * For each collision of the reduction function, we end up with two
+      identical chains
+  * **Rainbow table** solve the collison problem by using a different reduction
+    function in each column
+* If yous search through all columns of all tables :
+  * Hellman : $t^2$ memory look-ups, $t^2$ hash operations
+  * Rainbow : $t$ memory look-ups, $\frac{1}{2}t^2$ hash operations
+* Adding a random value (**hash**) to the hash function prevents :
+  * cracking multiple hasesh with a single hash calculation
+  * calculating the hashes in advance
+* Another simple way to slow the attacker is to apply the hash functions
+  multiple times
+* **Memory hard function**
+  * the function run through many steps
+  * intermediate steps results are stored in memory
+  * each step depends on results from previous steps
+
+## Access Control
+
+* **Access control** defines and enforce the operations that can do an objects
+* Principle of **least privilege**
+  * subjects should have the minimum rights necessary to their job
+* Multiple level of access control :
+  * Network
+  * Operating system
+  * Application
+  * Within an entreprise
+* Multiple approaches to access control
+  * **Role-based Access Control** (RBAC)
+    * Simplifies the specification of premission by grouping users into roles
+    * A role can contains multiple permissions
+  * **Discretionary Access Control** (DAC)
+    * Access control is at the discreton of the object owner
+    * Owner specifies policies to acces resources it owns
+  * **Mandatory Acces Control** (MAC)
+    * Tries to ensure that even someone with acces cannot leak the data
+    * Depends on the trusted software and admins
+    * no write down
+* **ACL** vs **Capabilities**
+  * Think of a door protected by a bouncer vs a door protected by a lock
+  * ACL :
+    * The bouncer knows exactly who can get in
+    * People don't know where they can get in and where thay cannot
+  * Capabilities :
+    * Doors do not know who will show up with a key
+    * People know exactly for which doors they have a key
+* Modern OSes make use of all of these types :
+  * DAC with ACLs for file and most objects
+  * DAC and capabilities for privileged operations
+  * Using groups to implement RBAC
+  * Mac for protectiond the integrity of a system
+
+## Authentication
+
+* Access control only makes sense if we can *authenticate* subjects
+* **Password**
+* **Something you own** : hardware/software token
+* **OATH** is a standard that describes
+  * How **OTPs** are generated from a seed
+  * An XML fomat for importing the seeds into a authentication server
+* **Biometrics**
+  * no hashing is possible
+  * it is impossible to change a stolen finger
+* **Challende-response** : Rather then sending the password to the server
+  * The server sends a random challenge to the client
+  * The client uses the hash of the password to create a reponse
+* **Kerberos** uses a three steps approach
+  * An anthentication server (AS) authenticates the client and delivers a ticker
+    granting ticket (TGT)
+  * The client can then present the TGT to the tocket granting server (TGS) to
+    get a ticket for the service he wants to use
+  * The client can access the service
+* **Oauth2** is a protocol used for delegated authentication on the internet
+  * Facebook, Google, Twitter etc. can be used to authenticate and access other
+    application
