@@ -321,3 +321,120 @@ certificates
 * **Oauth2** is a protocol used for delegated authentication on the internet
   * Facebook, Google, Twitter etc. can be used to authenticate and access other
     application
+
+# Network and Operational Security Practices
+
+* Secure communication, outside of our network
+  * TLS, IPsec, VPNs
+* **Network segmentation** : Break down the network based on system and data
+  classification or into functional zones
+  * Access from zone to zone can be managed by access control list (ACLs) in
+    router or firewalls
+  * Prevents all-at-once compromise of facilities
+  * Protects the data center form external threats
+  * Containment zones aims at stpopping attacks from spreading between zones
+* **Demilitarized Zone** (DMZ)
+  * A physical or logical subnet that contains and exposes an organization's
+    external-facing services to an auntrusted network
+  * An external network node can access only what is exposed in the DMZ
+* **Zero trust network**
+  * Do note trust anybody, not even internal machines
+  * More work for configuring machines
+  * Less work on configuring the network
+  * Greatly reduces the impact if on machine is compromised
+
+* **Virtual private network**
+  * Encryption and encapsulation keep the network private
+  * Before a packet is sent over the public network, it is encrypted and
+    encapsulated with and IP header with the public address
+  * Let remote workers access the internal company network
+  * Interconnecting remotes sites for a company
+
+* **Firewalls**
+  * Enforce network level access control
+  * Firewalls operate at the network layer
+  * Firewalls should aussi be present within the network
+  * Principle of default deny
+
+* **Proxies**
+  * They operate at the application level
+  * **(Direct) proxies** : between the client and internet
+    * Protect our users when they access servers on the internet
+  * **Reverse proxies** : between internet and the server
+    * Protect our servers when accessed by users from the Internet
+  * **Web proxies** protect users by
+    * Analyzing all data downloaded from the web with anti-virus software
+    * Blocking access to dangerous sites
+* **Web application firewall** (WAF)
+  * It stands in front of your web server and receives the requests from the
+    internet.
+  * It analyses the request, and if it deems them safe, it forwards thel to the
+    real server
+* **Instructions detection systems**
+  * Inspects traffic for all application to detect protential intrusions
+  * **Signatures based** system
+    * Network traffic is compared to signature form a pattern database
+    * *Snort* is an example of signature based IDS
+  * **Anomaly based** system
+    * IDS creates traffic profile during normal operation to callibrate
+    * Looks for unusual packets
+  * Possible issues
+    * False posititves (too many alarms)
+    * False negatives (too many sucessful attacks)
+
+* Keeping **audit trails** (logs) is an important part of network security
+* Good way to protect data : **Backups**
+  * We also need restorations tests, to check if we are actually able to restore
+    data from backups
+  * We also need a **Disaster Recovery Plan** (DRP) that explains in details how
+    to rebuild each system in case of a major failure
+
+# Trusted Computing
+
+* **Trusted hardware** : A piece of hardware can be trusted if it always behaves
+  in the expected manned for the intended purpose
+
+* **Attestation** : It can be prove that it does what you think it does
+  * Attest there is secure hardware
+  * Attest the state of the OS
+  * Attest state of the code
+  * **Secure boot**
+* **Sealing** : It can store secrets in unprotected memory
+  * The device derives a key that is tied to its current status and stores the
+    encrypted data
+  * Data can only be decrypted by a device with the same status
+* **Isolation** : It is not possible to *peek* inside
+  * Requires protection against side channel attacks
+  * Trusted hardware offers one well identified entry-point to interact with the
+    software
+  * **Tamper resistance** : hard to open
+  * **Tamper evident** : You can see if it has been opened
+  * **Tamper responsive** : Delete keys when attacked
+  * **Resitance to side channel attacks** and physical probing
+  
+* **Trusted Execution Environments** (TPM) : Isolated processing environment in
+  which applications can be securely executed irrespective of the rest of the
+  application
+  * Dedicated devices : Strong physical protections
+  * Secure enclaves : Prtected regions of memory
+  * Enable processes to run while being protected from attacks perpetrated by
+    the OS, hypervisor, firmware, drivers, or remote attackers
+* **Non-volatile Storage**
+  * **Endorsement key** (EK)
+    * Created at manufacturing time
+    * Signed by manufacturer
+    * Cannot be changed
+    * Used for *attestation*
+  * **Storage Root Key** (SRK)
+    * Used for encrypted storage
+  * **OwnerPassword**
+  * They are private and never leave the TPM
+* **Platform Configuration registers** (PCR lol)
+
+* **Side channels** : Determine the secret key of a cryptographic device by
+  measurign its execution time, its power consumption, or its electromagnetic
+  field
+  * Learn how the system's secret by observing how different computations are
+  * Difficult to create trusted hardware resitent to side channel
+
+* For trusted hardware we need to **trust the manufacturer**
