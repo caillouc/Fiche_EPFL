@@ -3,26 +3,34 @@ title: Information security and privacy
 author: Pierre Colson
 date: Monday 03 January
 output: pdf_document
+geometry:
+- margin=2.5cm
+highlight-style: tango
+pdf-engine: pdflatex
+toc:
+- toc-depth=3 
+standalone: true
 ---
 
 ---
 
 **Markdown** verion on
 [*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/Information_security_and_privacy/Information_security_and_privacy.md)  
-Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://github.com/caillouc/dotfile/blob/linux/gpdf.sh)
+Compiled using [*pandoc*](https://pandoc.org/)
 
 # Vocabulary
 
-* **Virus** : a malware that infects a file and replicates by infecting other files
+* **Virus** : a malware that infects a file and replicates by infecting other
+  files
 * **Worm** : a piece of malware that propagate automatically
 * **Trojan** :
   * a malware hidden in a usefull software or file
   * a malware that stays on the victim's computer and communicate with a control
-center to carry out malicious activity
+    center to carry out malicious activity
 * **Rootkit** : hides the precense of a malware on a computer
 * **Ransomware** : encrypts the files and request payment for decryption
 * **Vulnerability** : weekness in the logic, the software or hardware of a
-system (bugs)
+  system (bugs)
 * **Exploit** : method/tool to make advantage of a vulnerability
 * Vulnerability can be fixed by **patching** a system
 * **Zero day** exploit : exploit for which no patch exists yet
@@ -32,28 +40,23 @@ system (bugs)
 ## Security
 
 * Protects the data of data owners against attacks
-
 * **Confidentiality** :
   * keep informations secret
   * give read access only to those who need to know
   * tools : access control, isolation, encryption
-
 * **Integrity** :
   * keep information correct
   * prevent modification of the data
   * detect modification
   * tools add a hash, a MAC or a signature, make public
-
 * **Availability** :
   * keep information available/systems running
   * tools : make copies, duplicate/distribute systems, prevent intrusions
-
 * **Authenticity** :
   * demonstrate the authenticity of information
   * prevent fake information
   * detect modification
   * tools : add keyed hash (MAC) or a signature
-
 * **Non repudiation** :
   * prevent denial of a statement
   * tool : add a signature as proof of origin
@@ -61,17 +64,14 @@ system (bugs)
 ## Privacy
 
 * Protects the data *subject* against abuse
-
 * **Confidentiality** :
   * keep information of *the data subject* secret
   * give access only to those who need to know
   * tools : access control, encryption, absence of data
-
 * **Anonymity** :
   * prevent a link between data and a subject
   * reduce/modify information until no correlation is possible
   * tools : k-anonymity, defferential privacy
-
 * **Absence of information** :
   * prevent revealing information
   * do not request, or delete information that is no longer needed
@@ -81,20 +81,17 @@ system (bugs)
 # Cyber Threats
 
 * A **threat** is a potential unwanted action that creates impact
-
 * **Cyber attack lifecycle** :
   * Preparation
   * Gain access
   * Maintain access
   * Complete mission
   * Cover tracks
-
 * **Commodity threats** :
   * Non targeted
   * Fully automated
   * Low risk to attackers
   * Short term financial gains
-
 * **Hacktivism** :
   * Politically motivated hacking
   * Variant of (anarchic) civil disobediance
@@ -103,29 +100,27 @@ system (bugs)
 
 * **OWASP** : **O**pen **W**eb **A**pplication **S**ecurity **P**roject
   * Documentation on the top 10 critical security risk of web application
-
 * **Injection** :
   * Context can be : HTML, JavaScript, JSON, SQL
   * Special character sequences in user inputs can trigger an action in the
-context
+    context
 * **Injection protection** :
   * Refuse characters you do not want
   * Escape (encode) specila characters when you use them
-
 * **Direct object reference** : When a user-submitted parameters is a direct
-reference to a resource, a user may try to change it to access other resources
+  reference to a resource, a user may try to change it to access other resources
 
 # Software vulnerabilities
 
 * **Buffers overflows** : while writing data to a buffer, overruns the buffer's
-boundary and overwrites adjacent memory location
+  boundary and overwrites adjacent memory location
 * **Buffers overflows protection** :
   * **Stack canaries** :
     * Push a random value on the top of the stack at the beginning of a funcion
     * Before returning, verify that the value has not been  modified
   * **Non executable memory** :
     * Do not want to set execution permission on a page that can be written
-while the program is running
+      while the program is running
   * **Address space randomization** (ASLR) :
     * Every time the program is started, it is load at a random address
     * Every time the system boot, the OS is load at random address
@@ -136,7 +131,7 @@ while the program is running
   * Solve the problem os transferring large amount of confidential data
   * Creates the problem of transferring a symmetric key
 * **Stream cypher** : Use the ey and a pseudo random generator to generate a
-stream of random bits
+  stream of random bits
 * **Block cypher** : Encrypt fixed blocks of data
   * a *padding scheme* is used to fille the last block
   * a *mode of operation* is used to combine multiple block
@@ -151,41 +146,38 @@ stream of random bits
     * Decryption is the opposite of encryption
     * Does not reveal any structure
     * Malleability : flipping one bit in a cyphertext block flips the same bit
-in th next cleartext block and mangles the current block
+      in th next cleartext block and mangles the current block
     * The last block must be padded to obtain the correct block size, if not
-carefully implemented, validation fo padding can lead to leakage of the cleartext
-
+      carefully implemented, validation fo padding can lead to leakage of the
+      cleartext
 * **Hash** function take an arbitrary length input and generate a fixed length
-output
+  output
   * *Pre-image resistance* : Given an hash $h$, it is difficult to find a
-message $m$ for which $h = hash(m)$
+    message $m$ for which $h = hash(m)$
   * *Second pre-image resistance* : Given a message $m_1$ it is difficult to
-find a second message $m_2$ such that $hash(m_1) = hash(m_2)$
+    find a second message $m_2$ such that $hash(m_1) = hash(m_2)$
   * *Collision resistance* : It is difficult to find two arbitrary messages that
-have the same hash
+    have the same hash
   * SHA-3 : no weakness known
-
 * **Messages authentication codes** (MAC) :
   * Like a hash function, but involves a symmetric key
   * The same key is used to generate the MAC and to validate it
-  * If the key is know only to the two parties of an exchange, a correct mac proves
+  * If the key is know only to the two parties of an exchange, a correct mac
+    proves
     * that the message was not created by a third party (authentication)
     * that the message was not been modified (integrity)
-
 * **Public-key Crypto** : Uses a pair of public (encryption) and private key
-(decryption)
+  (decryption)
   * Solves the problem of having to agree and on a pre-shared symmetric key
   * No need to keep the public key secret (as the name suggest ^^)
-
 * Assymetric is powerful but orders of magnitude slower than symmetric crypto
 * Assymetric is typically used to exchange a symmetric key
 * All these algo are only safe if you use keys that are long enough
   * symmetric : 128 to 256 bits
   * asymmetric : RSA  2048 bits, ECC 256 bits
   * has function : 256 bits
-
 * With public key crypto the puclic key does not have to be secret but it still
-has to be authentic (e.g. man in the middle atk)
+  has to be authentic (e.g. man in the middle atk)
   * We need a trusted third party to distribute the public keys
   * The Certification Authority certifies the keys by signing them
     * If we trust the key of the CA, we can trust all keys signed by the CA
@@ -198,16 +190,16 @@ has to be authentic (e.g. man in the middle atk)
 # TLS and HTTPS
 
 * **TLS** Transport layer Security : provide a secure channel between two
-communicating peers
+  communicating peers
   * The server is authenticated with a cetificate
   * It proves its identity by signing some information received from the client
-with its private key
+    with its private key
   * Client and server create a symmetric key using asymmetric crypto
   * They use a symmetric cipher to encrypt data:
   * They use HMAC to guarantee integrity
 * Let's Encrypt $\Rightarrow$ free certificates
 * A **Public key infrastructure** (PKI) ditributes public keys usign
-certificates
+  certificates
 * HSTS and Certificate transparency protect against MITM and fraudulent CAs
 
 # Dtatabase Security
@@ -217,14 +209,18 @@ certificates
 * SQL databases also support *role based* acces control
 * To limit the impact of SQL injection, use different DB users for different
   accesses
-
-| **Layer** | **Function** | **Protect against** |
-| --- | --- | --- |
-| Hardware / OS | Data is encrypted when read/write to disk | Stealing/cloning virtual machines |
-| Database | BD encrypts when read/write to file | Access by OS users/admins |
-| Network | DB encrypts when read/write to network (e.g. TLS) | Hackers connot sniff data in transit |
-| Application | Application encrypts when read/write to the DB | Access by admins, memory dumps by OS admins |
-
+* **Hadware/OS**
+  * *Functions* : Data is encrypted when read/write to disk
+  * *Protect against* : Stealing/cloning virtual machines
+* **Database**
+  * *Functions* : BD encrypts when read/write to file
+  * *Protect against* : Access by OS users/admins
+* **Network**
+  * *Functions* : DB encrypts when read/write to network (e.g. TLS)
+  * *Protect against* : Hackers connot sniff data in transit
+* **Application**
+  * *Functions* :  Application encrypts when read/write to the DB
+  * *Protect against* : Access by admins, memory dumps by OS admins
 * If the data is encrypted in the database then the DB cannot
   * search with wildcards (e.g. `WHERE name='Pete%'`)
   * sort, compare or aggregate data
@@ -342,20 +338,17 @@ certificates
   * More work for configuring machines
   * Less work on configuring the network
   * Greatly reduces the impact if on machine is compromised
-
 * **Virtual private network**
   * Encryption and encapsulation keep the network private
   * Before a packet is sent over the public network, it is encrypted and
     encapsulated with and IP header with the public address
   * Let remote workers access the internal company network
   * Interconnecting remotes sites for a company
-
 * **Firewalls**
   * Enforce network level access control
   * Firewalls operate at the network layer
   * Firewalls should aussi be present within the network
   * Principle of default deny
-
 * **Proxies**
   * They operate at the application level
   * **(Direct) proxies** : between the client and internet
@@ -381,7 +374,6 @@ certificates
   * Possible issues
     * False posititves (too many alarms)
     * False negatives (too many sucessful attacks)
-
 * Keeping **audit trails** (logs) is an important part of network security
 * Good way to protect data : **Backups**
   * We also need restorations tests, to check if we are actually able to restore
@@ -393,18 +385,15 @@ certificates
 
 * **Trusted hardware** : A piece of hardware can be trusted if it always behaves
   in the expected manned for the intended purpose
-
 * **Attestation** : It can be prove that it does what you think it does
   * Attest there is secure hardware
   * Attest the state of the OS
   * Attest state of the code
   * **Secure boot**
-
 * **Sealing** : It can store secrets in unprotected memory
   * The device derives a key that is tied to its current status and stores the
     encrypted data
   * Data can only be decrypted by a device with the same status
-
 * **Isolation** : It is not possible to *peek* inside
   * Requires protection against side channel attacks
   * Trusted hardware offers one well identified entry-point to interact with the
@@ -413,7 +402,6 @@ certificates
   * **Tamper evident** : You can see if it has been opened
   * **Tamper responsive** : Delete keys when attacked
   * **Resitance to side channel attacks** and physical probing
-  
 * **Trusted Execution Environments** (TPM) : Isolated processing environment in
   which applications can be securely executed irrespective of the rest of the
   application
@@ -576,8 +564,7 @@ certificates
   noticeable wheither any sender within the unobservability set sends
 * **Plausible Deniability**
   * Not possible to prove user knows, has done or has said something
-
-* PETs depend on :
+* **PETs** depend on :
   * The privacy paradigm : Confidetiality, control and practice
   * The adversary model, others users, semi-trusted service provider, everyone
 
@@ -645,7 +632,6 @@ certificates
   * **Algorithm perturbation** : Inherenlty add noise to the algo
     * Algorithm can be optimized with the noise addition
     * Difficult to generelaze and depends on the input
-
 * **Traditional Encryption**
   * Protects data at rest and in transit
   * Connot protect computation
@@ -664,7 +650,6 @@ certificates
 * **Distributed ledger technologies** (Blockchain)
   * Strong accountability and traceability in distributed environments
   * Usually no data privacy
-
 * **Attribute based credentials**
   * Digital variant of passport, drivers's license etc
   * Also known as anonymous credentials
@@ -722,9 +707,7 @@ certificates
     attack
 * If a linear model uses $d features$, the adversary needs $d+1$ different
   queries to steal by solving the linear system for $w$, $b$
-
   $$ w . x^{(i)} + b = f(x^{(i)}) $$
-
 * **Retraining attack** Observe many queries, and fit the model on it like any
   other training data. Takes mainy queries
 * Preserving model stealing
@@ -755,8 +738,8 @@ certificates
     * Given the answer of the classifier, infer whether the queried example was
       used in training
     * Attribute inference
-      * Givin the answer of the classifier, infer whether a training sample had
-        a particular attribute
+    * Givin the answer of the classifier, infer whether a training sample had
+      a particular attribute
 * **Machine learning is very good at inferring**
   * Use new learning to classify/predict on new data
     * The ML model can be used to breach privacy of that new data
@@ -951,7 +934,6 @@ certificates
     need
   * Encourages cross-border collaboration among researchers
   * Only provides minimal response back in order to mitigate privacy concerns
-
 * **Surname interface attack**
   * Goals :
     * Recover the surname of sequence donors from 1000 Geneme Project
