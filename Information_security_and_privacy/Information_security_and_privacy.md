@@ -8,7 +8,7 @@ geometry:
 highlight-style: tango
 pdf-engine: pdflatex
 toc:
-- toc-depth=3 
+- toc-depth=3
 standalone: true
 ---
 
