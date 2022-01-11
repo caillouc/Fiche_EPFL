@@ -399,10 +399,12 @@ certificates
   * Attest the state of the OS
   * Attest state of the code
   * **Secure boot**
+
 * **Sealing** : It can store secrets in unprotected memory
   * The device derives a key that is tied to its current status and stores the
     encrypted data
   * Data can only be decrypted by a device with the same status
+
 * **Isolation** : It is not possible to *peek* inside
   * Requires protection against side channel attacks
   * Trusted hardware offers one well identified entry-point to interact with the
@@ -419,6 +421,8 @@ certificates
   * Secure enclaves : Prtected regions of memory
   * Enable processes to run while being protected from attacks perpetrated by
     the OS, hypervisor, firmware, drivers, or remote attackers
+* **Hardware Secure Module** (HMS)
+  * The user need to know the the public key of the HMS
 * **Non-volatile Storage**
   * **Endorsement key** (EK)
     * Created at manufacturing time
@@ -430,11 +434,562 @@ certificates
   * **OwnerPassword**
   * They are private and never leave the TPM
 * **Platform Configuration registers** (PCR lol)
-
 * **Side channels** : Determine the secret key of a cryptographic device by
   measurign its execution time, its power consumption, or its electromagnetic
   field
   * Learn how the system's secret by observing how different computations are
   * Difficult to create trusted hardware resitent to side channel
-
 * For trusted hardware we need to **trust the manufacturer**
+
+# Privacy
+
+* **Multi-disciplinary** : computer science, law, ethics, economics, sociology,
+  politics
+* **Personal Data** Any kind of information (a single piece of information or a
+  set of information) that can personally identify an individual
+* Privacy is **not** hiding the wrong
+* Lack of privacy is equivalent to **loss of freedom**
+* Main risk : People's mind manipulation
+* **Function creep** : expansion of a process or system where data collected for
+  one specific purpose is subsequently used for another unintended or
+  unauthorized purpose
+  * Aadhaad - India's "optional" unique Identity identification number scheme
+  * Eurodac - Fingerprint database for asylum seekers
+* Security and privacy are **not opposite ends** of a seesaw
+  * There is no security without privacy (and vice-versa)
+  * Liberty requires both security and privacy
+* **Privacy by design**
+  * **Proactive** not reactive : preventive not remedial
+  * Privacy as the **Default**
+  * Privacy **Embedded** into Design
+  * Full functionality : **Positive sum**
+  * End to end **Security** : Full Lifecycle protection
+  * Visibility and transparency : **Keep it open**
+  * Respect for user privacy : Kepp us **User-Centric**
+* Technical appraches to privacy : **privacy enhancing technologies** (PETs)
+
+## Definition and classification
+
+* Privacy paradigms : privacy as
+  * **Confidentiality**
+    * Minimize data disclosure : every bit counts
+    * Distribute trust : avoid single point of failure
+    * Rely / require open source : million eyes help security
+  * **Control**
+    * User participation : let the user decide how data will be shared
+    * Transparency and Accountability : let the user know how data is used, and
+      if against his will, point to who is reponsible
+    * Organizational compliance : General Data Protection Regulation (GDPR),
+      Fair Information Practice Principles (FIPPs)
+  * **Practice**
+    * Improve user agency : help them negociate privacy
+    * Aid decision making and transparency impact : helps user understand the
+      consequences of their actions
+    * Privacy as a collective practice : help identify best practices for
+      collectives
+* Pets for **Social privacy**
+  * *Concerns* : The privacy problem is defined by Users
+  * *Goals* : Do not surprise the user
+    * Support decision making
+    * Help identify actions impact
+  * *Limitations* : Only protects from other users : **trusted service
+    provider**
+    * Limited by user's capabilities to understand policies
+* Pets for **institutional privacy**
+  * *Concerns* : The privacy problem is defined by **Legislation**
+    * Data should not be collected without user consent or processed for
+      illegitimate uses
+    * Data should be secured : correct, integrity, deletion
+  * *Goals* : Compliance with data protection principles
+    * Informed consent : Valid, freely given, specific, informed and active
+      consent
+    * Purpose limitation : Data can only be used for the purpose it was
+      collected
+    * Data minimization : One should only collect the data necessary for the
+      purpose ot the service
+    * Subject access rights : One should be abble to know what information is
+      stored/processed and how. Also right to modification, deletion, etc.
+  * *Limitaions* :
+    * Assumes collection and processing by organizations is necessary,
+      organizations are (semi)-trusted and honest
+    * Focuses on limiting misues, not collection
+* Pets for **Anti surveillance privacy**
+  * *Concerns* : How to evade / Fool a global adversary
+  * *Goals* : Minimize the need to trust other and the amount of revealed
+    information
+  * *Limitations* :
+    * Privacy-preserving designs are narrow - difficult to create "general
+      purpose privacy"
+    * Usability problems both for developers and users
+    * Lack of incentives
+
+## Crypto based solution
+
+* **Anonymous communication** : Anonimity of participants is usually achieved by
+  special **routing overlay network** that hide the physical location of each
+  node from other particapants
+* **Anonymous Credentials** : Allow users to authenticate themselves in a
+  privacy preserving manner
+* **Blind signature**
+  * Content of a message is blinded before it is signed
+  * Resulting blind signature can be publicly verified against the original
+    message
+  * Cryptographic voting systems
+    * Authority checks the credentials of the voter to ensure that he is allowed
+      to vote, and that he is not submitting more than one vote
+    * Authority does not learn the voter's selection
+* **Secure Multiparty Computation**
+* **Garbled Circuits**
+* **Deterministic Encryption**
+  * Always produces the same ciphetext for a given plaintext and key
+* **Homomorphic encryption**
+  * Allows specific typers of computations to be carried out on ciphrtext
+  * Pallier cryptosystem
+* **Private Information Retrieval**
+  * Allows a user to retrieve an item from a server in possession of a database
+    without revealing which itme is retrieved
+* **Oblious RAM**
+  * Same as PIR, but with R/W
+    * Client outsources the storage of his data to a cloud
+    * Client stores only a small amount of data locally
+    * Client accesses (read/write) his data while hiding the identities of the
+      items being acccessed
+
+## Non crypto based solutions
+
+* **Confidentiality**
+* **Pseudonymity**
+  * User persistent (random) identifiers
+  * Use of hased identifiers
+  * Different email addresses for the same user
+  * Nicknames
+  * Pseudo identifiers, Quase-identifiers
+* **De identification**
+  * Removing or obscuring information from traces that would allow direct
+    identification of a person
+  * Allows reseach that would otherwise not be possible due to privacy
+* **Anonymity** : The stahe of being not identifiable within a set of object
+* **Unlinkability** : Two or more items within a system, are no more and no less
+  related than they are related based on the a-priori knowledge
+* **Unobservability** : An items of interest being indistinguishable from any
+  item of interest at all. Sender unobservability means that it is not
+  noticeable wheither any sender within the unobservability set sends
+* **Plausible Deniability**
+  * Not possible to prove user knows, has done or has said something
+
+* PETs depend on :
+  * The privacy paradigm : Confidetiality, control and practice
+  * The adversary model, others users, semi-trusted service provider, everyone
+
+## PETs for data anonymization
+
+* *Scnenario* : You have a set of data that contains personal data and you like
+  to anonimize it to
+  * not be subject to data protection while processing
+  * make it public for profit
+  * make it public for researchers
+* *Goal* : Produce a dataset that **preserves the utility** of the original
+  dataset **without leaking informations** about individuals. This process is
+  known as **database sanitization**
+* **$k$-anonimity**
+  * Key Attribute / **Identifier**
+  * **Quasi identifier**
+  * **Sensitive attribute**
+  * Each person contained in the database cannot be distinguished from at leat
+    $k-1$ other individuals whose information also appears in the released
+    database
+  * **Generalization** : Replace attribute with less specific, but semantically
+    consistent values (e.g. zipcode)
+  * To improve anonimity identifying attributes can be suppresed
+  * Does not provide privacy when sensitive values lack of diversity
+  * Limitaion if the adversary has background knowledge
+* **$l$-diversity** : An equivalence class has $l$-diversity if there are at
+  least $l$ well represented values for the sensitive attribute
+* **$t$-closeness** : An equivalence class has $t$-closeness if the distance
+  between the distribution of a sensitive attribute in this class and the
+  distribution of the attribute in the whole table is no more than a threshold
+  $t$
+* Anonymizing a dataset via generalization and suppresion is extremely hard
+  * The $k$-anonymity idea focuese on transformation of the dataset not its
+    semantics
+  * Achieving $k$-anonymity, $l$-diversity, $t$-closeness is hardn and still
+    does not guarantee privacy
+* **Modifying outputs** :
+  * **Subsampling** : A subset of the rows is chosend at random and released and
+    statistics are computed on the subsample
+  * **Input perturbation** : Data or queries are modified before a response is
+    generated
+  * **Adding random noise to the output**
+  * **Randomized response**
+    * Respondents a query flip a coin and, based on the outcome, they either
+      honestly respond or respond randomly
+    * Privacy comes from the uncertainty of how to interpret a reported
+      individual value
+    * Yet, data can be useful because randomness can be average out
+    * Not usable for every case, or combined with other techniques
+* **Differential privacy**
+  * To have any utility we must allow the leakage of some information, but we
+    can set a bound to the extent of leakage
+  * Output is similar whether any single individual's record is included in the
+    database or not
+  * Instead of the real answer to a query, output a random answer such that by a
+    small change in the database, the distribution of the answer does not change
+    much
+* To ensure differential privacy either
+  * **Input perturbation** : Add noise to the database
+    * Independent of the algorithm and easy to reproduce
+    * determining the amount of required noise is difficult
+  * **Output perturbation** : Add noise to the function output
+    * Easier to control privacy and better guaranttes than input perturbation
+    * Results cannot be reproduced
+  * **Algorithm perturbation** : Inherenlty add noise to the algo
+    * Algorithm can be optimized with the noise addition
+    * Difficult to generelaze and depends on the input
+
+* **Traditional Encryption**
+  * Protects data at rest and in transit
+  * Connot protect computation
+* **Homomorphic Ecnryption**
+  * Protects computations on untrusted environments
+  * Limited versatility vs efficiency
+* **Secure Multiparty Computation**
+  * Protects computation in distributed environments
+  * High communication overhead
+* **Trusted Execution Environments**
+  * Protects computation with Hardware trusted element
+  * Requires trust in the manifacturer, vulnerable to side-channels
+* **Differential Privacy**
+  * Protects released data from inferences
+  * Degrades data utility
+* **Distributed ledger technologies** (Blockchain)
+  * Strong accountability and traceability in distributed environments
+  * Usually no data privacy
+
+* **Attribute based credentials**
+  * Digital variant of passport, drivers's license etc
+  * Also known as anonymous credentials
+  * Attributes are encoded as number, may represent
+    * Menbership status
+    * Name
+    * Age
+    * Social security number
+    * Random identifiers
+    * Application specific identifiers
+  * **Unforgeability** : Only the issuer should be abble to produce valid
+    credentials
+  * **Selective disclosure** : The uer can hide irrelevant attributes
+  * **Issuer unlinkability** : The issuer should not be able to recognize a
+    credential that it previously issued
+  * **Verifier unlinkability** : The verifier should not be abbel to link two
+    consecutive showings of the same credentials
+* **Zero knowledge proof** : allows a *prover* to convince a *verifier* of some
+  fact on a private input without revealing this input
+  * **Completeness** : If the statement is true, an honest prover can convince
+    an honest verifier that the statement is true
+  * **Soundness** If the statement is false, a cheating prover cannot convince
+    an honest verifier with very high probability
+  * **Zero-knowledge** If the statement is true, no verifeir learns anything
+    other than the fact that the statement is true
+
+# Machine learning
+
+* **Supervised**
+  * Labeled data
+  * Direct feedback
+  * Predict outcome/future
+* **Unsupervised**
+  * No labels
+  * NO feedback
+  * "Find the structure"
+* **Reinforcment**
+  * Decision process
+  * Reward system
+  * Learn series of actions
+* **Confidentiality** of the model itself (e.g. intellectual property)
+* **Privacy** of the training or test data (e.g. medical records)
+* **Integrity** of the predications
+* **Availability** of the system deploying machine learning
+* **BLack box attack**
+  * Model architecture and parameters unknown
+  * Can only interact blindly with the model
+* **Grey box attack**
+  * Model architecture known, parameters unknown
+  * Can only interact with the model, but has information about the type of
+    model
+* **White box attack**
+  * Known architecture and parameters
+  * Can replicate the model and use the model's internal parameters in the
+    attack
+* If a linear model uses $d features$, the adversary needs $d+1$ different
+  queries to steal by solving the linear system for $w$, $b$
+
+  $$ w . x^{(i)} + b = f(x^{(i)}) $$
+
+* **Retraining attack** Observe many queries, and fit the model on it like any
+  other training data. Takes mainy queries
+* Preserving model stealing
+  * **Output perturbations** : Add noise to the probabilities output by the
+    model to hinder reconstruction, but not accuracy
+  * **Detect suspicious quesries** : Identify deviations from expected on
+    distribution of uscessive queries from a client
+* Privacy and utility are not in conflict
+  * Overfitted models leak training data
+  * Overfitted models lack predictive power
+* **ML needs data to learn**
+  * Machine learning is based on data to find features and train the model
+  * Data is highly unique ! Allow many inferences
+    * Ananymizing may not work
+    * Aggreagtion affects utility and requires careful evaluation)
+  * Hide data
+    * Noise $\Rightarrow$ Differential privacy
+    * Ecnryption $\Rightarrow$ Homomorphic  encryption, secure multiparty
+      computation
+* **To obtain value you must give data**
+  * To use the model you need to provide a sample
+    * If the model is remote you are giving this sample out
+  * We can do *privacy preserving model evaluation*
+    * Predict on noisy data : utility hit
+    * Use advanced cryptography : performance hit
+* **The output reveals information**
+  * Menbership inference
+    * Given the answer of the classifier, infer whether the queried example was
+      used in training
+    * Attribute inference
+      * Givin the answer of the classifier, infer whether a training sample had
+        a particular attribute
+* **Machine learning is very good at inferring**
+  * Use new learning to classify/predict on new data
+    * The ML model can be used to breach privacy of that new data
+* **Adversarial Examples** : Inputs to a model that an attacker has sesigned to
+  cause the model to make a mistake
+* **Transferability property** : Samples crafted to mislead a model A are likely
+  to mislead a model B
+* Defending in general is very hard. Can only defend against a particular
+  threat model, and normally no guarentess
+* Standard way is **adversarial training** (based on robust optimization). I
+  means training on simulated adversarial example
+* If the adversary controls the inputs
+  * In deployed models, the adversary can always win
+  * In training, the adversary learn other's input
+* **Bias Reinforcment** : Action $\Rightarrow$ Effect $\Rightarrow$ Action
+* **Statistical bias** : Difference between an estomator expected value and the
+  true value
+* **Group fairness** Outcome should  not differ between demographic groups
+  * Predictive parity : Same prediction regardless of group
+  * Equal false positive
+  * Equal false negative
+* **Individual fairness** : similar ? individuals shoudl be treated similarly ?
+* **Bias detection and mitigation**
+  * What if approache : play with the value until something changes, associate
+    with bias
+  * Explainability : Try to understand why the prediction happen, associate with
+    bias
+  * Mitigation
+* Instead of sending their data directly, clients send data with differentially
+  private noise
+  * Given the sample one cannot leanr the value
+  * Challenge : add enough noise to hide the data but still provide a good model
+* **Federated learning** : combine nany small  dataset to get large dataset
+  * Clients ,need top reveal their models, that "reveal" their data. Solution ? :
+    * Homomorphic encryption
+    * Mutli party computation
+    * Before sending models, add noise (tradeoff privacy vs functionality)
+* **Fully centralized**
+  * Transfer raw data to a central database
+  * Data protection : security of the central database
+  * Nedd to trust the central server
+* **Meta-analysis**
+  * For each study, aggregated data provided by eazch site
+  * Still need to trus tthe central server
+* **Decentralized**
+  * Send the algorithm to the data
+* **Privacy preserving distributed machine learning**
+  * The querier defines the query, e.g. training of an ML model
+  * Each data provider performs several training iterations on its data
+  * The DP's collectively and iteratilvely combine their encrypted local model
+    in a global model
+  * After the training and based on a pre-agreement, the model is either :
+    * kept secret for oblivious predications
+    * revealed to the querier
+* **Gradient Descent**
+  * Non polynomial activations functions
+    * Sol : Least square **approxiamtion** of activation function
+  * Heavy homomorphic operations
+    * Sol : Problem specific **packing  schemes** to enable Single instruction,
+      Multiple Data
+  * Model specific functions
+    * Sol : Introduce seveeral functions **distributed bootstapping**
+* **Bootstrapping** : The model is persisent among multiple iterations
+  $\rightarrow$ large multiplicative depth $\rightarrow$ ciphertext need to be
+  bootstapped
+  * Sol : Efficient and collaborative distributed bootstapping and minimizing
+    the number of bootstraps via parametrization
+* **Parametrization** : Tight link between learning parameters and cryptographic
+  parameters
+  * Sol : **A constrained optimization problem** for choosing the cryptographic
+    parameters
+
+# Blockchain
+
+* **Data structure** : *linked list* with specific properties
+* It it a *distributed* database of *record* of all event that have been
+  executed and shared among participating *parties*
+* Each **block** except the first one contains the hash of the previous block
+* Blocks store cryptographically secure information (**validated by nodes**)
+* Each block contains :
+  * A **Cryptographic hash** of the previous block
+  * A **timestamp**
+  * **Data**
+* Purpose of blockchain : **Removing the trusted thrid party**
+* **Transparency** : Each participant has a copy of the current blockchain data
+* **Consensus** : All network participants must agree that an event to added to
+  the chain is valid
+* **Transaction** Content
+  * **Assets**
+    * The currency of the chain
+    * Blockchain imposes sum of all assets to be constant
+  * **Smart contract**
+    * Small programs that work on the data in the ledger
+    * Allow to extend the functionality of the blockchain
+    * Are enforced by the consensus of the nodes
+  * **Tokens**
+    * Digital representation of (physical world) objects
+    * Smart contracts define how token can be exchanged
+* **Node governance**
+  * **Proof of Authority** (PoA)
+    * A fixed set of nodes decide on consensus
+    * Updating this set often follows off-chain rules
+  * **Proof of Work** (PoW)
+    * Lottery - the first node to solve a cryptographic puzzle proposes the next
+      block and gets a reward
+    * Everybody can joined
+    * Huge waste of energy
+  * **Proof of stake** (PoS)
+    * Nodes invest a stake to be allowed to propose blocks and gets rewards
+    * The stake can be lost if the node misbehaves
+    * Concentration of stake
+  * **Proof of Personhood** (PoP)
+    * Special case of PoS, where each person has the same power to stake and get
+      rewards
+    * Experimental, socialist - universal basic income
+* **Scaling out**
+  * **Sharding**
+    * Create groups of nodes that each handle a part of the transactions
+    * Increase speed, but potential security problems
+    * Shared Security, shards are verified by a central chain
+  * **Side Chains**
+    * Independant chain that is loosely tied to the main chain
+    * Increase speed, but decrease security
+* **Permissioned Ledgers**
+  * Also called **Permissioned blockchains**
+  * Just decide *administratively* who participates; Fixed or manually changed
+    group of trustees
+  * *Liability clearly defined*
+  * No proof of work $\rightarrow$ low energy cost
+  * More mature consensus protocols applicable
+  * Higher human organizational costs
+  * No onger open for anyone to participate
+  * Strong potential for regulated sectors such as finance and health
+* **Public (permissioned)** vs **Private (permissioned)** blockchains
+  * Who is able to *write* the data in the blockchain
+* **Open** vs **Closed** blockchains
+  * Who is able to *read* the data in the blockchain
+* Blockchain abstraction
+  * **Strict orderign of messages**
+  * **Rule based write, global read**
+  * **No message modification**
+* **Consensus** properties
+  * **Termination** : Every correct process will eventually decide on some output
+  * **Integrity** : If all correct processes proposed the same value, then any
+    correct process must decide this value
+  * **Agreement** : Every process must agree on the same value
+* Conflict resolutiona : bitcoin solves this problem by having a *leader*
+  elected every 10 minutes that states which transactions are valid
+  * Elected via *proof of work*
+* **Eclipse attack**
+  * Adversary targets a **specific node** to cut off all of its communication
+    with the other peers and thus isolate this specific node
+  * A sucessful Eclipse Attack enables isolating the victim node and prevent the
+    victim from attaining true pricture of the real network activity and the
+    current ledger state
+  * By isolating a lot of nodes the attacker can remove significant of *hash
+    power* from the system
+  * How to mitigate :
+    * Random node selection
+    * Fewer nodes per IP address or machine
+    * information storage (storing informations about nodes)
+    * Larger number of connections
+* **Sybil attack**
+  * Type of attack seen in peer to peer network in which a node in the network
+    operates unedr multiple identities
+  * How to prevent it
+    * Bitcoin uses Proof of Work consesus algorithm  to prove the authenticity
+      of any block that added to the blockchain
+* **Double spending attack**
+  * A miner or a group of miners controls 51% or more of the mining power of the
+    blockchain network
+* Bitcoin : issues with scalability
+* **Smart contract**
+  * Contract that formalizes a relationship between parties and contains a set
+    of promises made between them
+  * Provides new way to formalize and secure digital relationship
+* Ethereum and **Gas**
+  * A unit that measures the maount of **computational effort** that will take
+    to execute certains operations
+  * Each operations is tagged with an explicit cost
+  * Each transaction incurs a cost to the sender
+  * Gas is the unit of all computational tasks in ethereum
+
+# Data protection for personalized health
+
+* **Homer's attack**
+  * Adversary has acces to a know participant's genome
+  * Goal : determine if the target individual is in the case group
+  * Uses simple correlation in the genome
+* **GA4GH Beacon project**
+  * Allows researcher to quickly query multiple database to find the sample they
+    need
+  * Encourages cross-border collaboration among researchers
+  * Only provides minimal response back in order to mitigate privacy concerns
+
+* **Surname interface attack**
+  * Goals :
+    * Recover the surname of sequence donors from 1000 Geneme Project
+    * Triangulate the identity of a sequence donor using his surname, age and
+      state
+  * Using :
+    * Surname are parernally inherited in most human societies
+    * Y-chromosome haplotypes in male individuals are direclty inherited from
+      the father
+  * Surname interference
+    * Profile short tandem repeats on the Y chromosome
+    * Query recreational generic genealogy database
+    * Obtain a list of possible surnames for the sequence in question
+  * Identity Triangulation
+    * Combne surnames with age and state
+    * Triangulate the identity of the target
+* **Genomic data** pose special privacy problems
+  * They are inherently identifying
+  * They can't be changed
+  * They have unique statistical regularities
+  * They contains sensitive and personal informations
+  * Their leakage can expose individuals to generic discrimination
+  * Relatives can also be affected
+* **Genome Privacy**
+  * Require duration of protection >> 1 century
+  * Data size around 300 GBytes / person
+  * Need sometimes to carry out computations on millions of patient records
+  * Noisy data
+  * Correlations
+  * Several "semi trusted" stakeholders
+  * Deiversity of applications
+* Pragmatic approach, **gradual** introduction of new protections tools
+* Different **sensitive levels** of the data
+* Different **access right**
+* Exploit **existing** data
+* Be **future proof**
+* Awarness and enforcement of **patient consent**
+* **Deterministic encryption**
+  * Preserves and leaks equality if the plaintext
+* **Probabilistic encryption**
+  * Random salt added to each encryption to achieve semantic security
