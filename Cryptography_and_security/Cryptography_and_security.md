@@ -92,15 +92,15 @@ Compiled using [*pandoc*](https://pandoc.org/)
     * The two halves are then exchanged before the next round starts
     * In the last round the exchange of halves if omitted
     * The *round function* is invertible
-    * The inverse transfrom is actually a another Feistel scheme with the round
+    * The inverse transform is actually a another Feistel scheme with the round
       key in reverse order
   * They are many know attack against DES
 * Since $56$ bits for a secret key are considered as too short, people
   considered triple encryption. This is **tripe-DES** standard
   * There are two variant :
     * Triple DES with two keys : $K_1 = K_2$
-    * Triple DES with three keys $$ 3DES_{K_1, K_2, K_3}(X) =
-      DES_{K_3}(DES^{-1}_{K_2}(DES_{K_1}(X))) $$
+    * Triple DES with three keys
+    $$ 3DES_{K_1, K_2, K_3}(X) = DES_{K_3}(DES^{-1}_{K_2}(DES_{K_1}(X))) $$
   * A block cypher should be secure against **key recovery** and **decrytion
     attack**
 * **AES** (Advanced Encryption Standard) it encrypts blocks of $128$ bits using
@@ -119,12 +119,12 @@ Compiled using [*pandoc*](https://pandoc.org/)
   * To multiply $a$ by $0x03$ we can multiply by $0x01$ and by $0x02$ and add
     (XOR) the twos results
   * In AES we only need to multiply by $0x01$, $0x02$ and $0x03$
-  * Each round consists of four types of successice transform 
+  * Each round consists of four types of successice transform
     * *AddRoundKey* which adds (XOR) the round key to the block
     * *SubBytes* which substities every byte $a$ by the byte $S(a)$, following a
       table $S$ (called the *S-box*)
     * *ShiftRows* which consists of a circular shift of every row of the block
-      by a variable number of positions 
+      by a variable number of positions
     * *MixColumns* which consists of mutlipying all columns of the block to the
       left by a prefined matrix $M$
    * To decrypt we just have to invert all subroutine processes
@@ -146,7 +146,7 @@ Compiled using [*pandoc*](https://pandoc.org/)
     sequence $k_i = ENC_K(k_{i-1}), i = 2, \dots$ and $k_1 = ENC_K(IV)$. It
     requires the IV to be unique, due to the properties of the one-time-pad, we
     then call the IV a nonce
-  * The **Cipher Feedback** (CFB) mode is defined by 
+  * The **Cipher Feedback** (CFB) mode is defined by
     $y_i = x_i \oplus ENC_K(y_{i-1}), i = 2$, and $y_1 = x_1 \oplus ENC_K(IV)$
     The nonce IV options are the same as for OFB mode. The CFB works even if the
     last plaintext block is incomplete
@@ -155,3 +155,59 @@ Compiled using [*pandoc*](https://pandoc.org/)
     The CTR mode works even if the last plaintext is incomplete
 
 ## Stream Ciphers
+
+* **Strem ciphers** are used to encrypt strems of data on the fly. The main
+  principle is that we use one-time-pad with a pseudorandom key-stream defined
+  from a secret key and a nonce
+* **RC4** generates a key-stream of bytes from a secret key (to be used only
+  once)which is a sequence of bytes of total length between $40$ bits and $256$
+  bits
+  * They are many know weakness in RC4
+* **A5/1** uses a $64$ bits secret and a $22$ bit counter, used a nonce. The key
+  and the counter are first transform into an initial state. Then, an automaton
+  base on asynchronous linear feedback shift registers generates a key stream of
+  bits
+  * They are many known attack against A5/1
+
+## Bruteforce Inversion Algorithm
+
+* Let $\mathcal{K}$ be a set of given size $N$. Consider the **random key
+  guessing game** during which a challenge selects a key $K \in \mathcal{K}$ at
+  random, then an adversaty makes guesses for the value of $K$ until it is
+  correct
+  * The average case complexity is $\frac{N + 1}{N}$
+  * If the distribution is arbitrary and unknown, the best strategy is to
+    enumerate the value of $\mathcal{K}$ in a random order
+  * If the distribution is known, wa can enumerate the value of $\mathcal{K}$ by
+    decreasing order of likelihodd and obtain the obtimal complexity which is
+    called the **guesswork entropy**
+  * If the adversary is given a clue which we call a *witness w*. Then the
+    optimal strategies is to enumerate all $k \in \mathcal{K}$ by decreasing
+    order of $P(K = k \mid w)$
+* A **dictionary attack** consists of preparing a complete table for the
+  inverse function. The attack then works with constant complexity but requires
+  a memory of $\mathcal{O}(N)$, and a preprocessign of $\mathcal{O}(N)$ as well
+  * With an incomplete dictionary of size $D$, the precomputation time is
+    $\mathcal{O}(D)$, the complexity is $\mathcal{O}(D)$ the time complexity of
+    the attak phase is $\mathcal{O}(1)$, but the probability of success in
+    $\frac{D}{N}$ and not $1$ anymore
+  * The attack can be enriched by considering a multi-target version : Instead
+    of targeting a single $K$, the goal is to recover at leat one $K_1, \dots,
+    K_T$ of $T$ targets. In that case the dictionay attack needs a
+    precomputation time of $\mathcal{O}(D)$, a memory complexity of
+    $\mathcal{O}(D)$ a time complexite of the attack of $\mathcal{O}(T)$, but a
+    propability of sucess of $1 - e^{-\frac{DT}{N}}$
+
+## Subtle Bruteforce Inversion Algorithms
+
+* **Meet in the middle attack on double encryption**. Consider a double
+  encryption scheme :
+  $$ Enc_{K_1, K_2}(x) = ENC_{K_2}(ENC_{K_1}(x)) $$
+  where the keys belong to a set of $\mathcal{K}$ of size $N$. We assume a known
+  plaintext scenario where a pair $(x, z)$ with $z = ENC_{K_1, K_2}(x)$ is known
+  * The **meet in the middle** algorithm consists of
+    * Preparing a dictionary of $(ENC_{k_1}(x), k_1)$ pairs
+    * Makes an exhaustive search on $k_2$ to compute $y = ENC_{k_2}^{-1}(z)$
+    * Looks for $(y, k_1)$ in the dictionary and print $(k_1, k_2)$ if there is
+      such an entry
+    * Complexity is $\mathcal{O}(N)$ both in time and space
