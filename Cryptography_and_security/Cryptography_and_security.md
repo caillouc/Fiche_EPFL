@@ -8,6 +8,7 @@ highlight-style: tango
 pdf-engine: pdflatex
 toc:
 - toc-depth=3
+linkcolor: blue
 standalone: true
 ---
 
@@ -19,17 +20,21 @@ Compiled using [*pandoc*](https://pandoc.org/)
 
 # General
 
-* $b \in \mathbb{Z}^*_p$ has a quare root if and only if $b^{\frac{p-1}{2}} \mod p = 1$
+* $b \in \mathbb{Z}^*_p$ has a quare root if and only if $b^{\frac{p-1}{2}} \mod
+  p = 1$
 
-# Diffie Helman
+# Diffie Helman (incomplete)
 
 * We check that $X$ and $Y$ are in $\langle g \rangle$
 * Use a KDF to fix bad distribution of $g^{xy}$
 * We wheck the lower order $X \neq 1$, $X^2 \neq 1$
-* If $n = pq$ then $\mathbb{Z}_n$ ring is isomorphic to $\mathbb{Z}_p \times\mathbb{Z}_q$ and
-  $\mathbb{Z}_n^*$ ring is isomorphic to $\mathbb{Z}_p^* \times \mathbb{Z}_q^*$
+* If $n = pq$ then $\mathbb{Z}_n$ ring is isomorphic to $\mathbb{Z}_p
+  \times\mathbb{Z}_q$ and $\mathbb{Z}_n^*$ ring is isomorphic to $\mathbb{Z}_p^*
+  \times \mathbb{Z}_q^*$
 
-# RSA
+![Diffie Helman](DF.png){ width=60% }
+
+# RSA (incomplete)
 
 * Square and multiply algorithm to compute $x^e$ or $x^d$
 * Primality test : Verify that a number os prime
@@ -37,6 +42,8 @@ Compiled using [*pandoc*](https://pandoc.org/)
 * To compute the inverse of an elem use extended euclid algorithm
 * $\varphi(p^\alpha) = (p - 1)p^{\alpha - 1}$
 * We can compute square root of $n$ in $\mathcal{O}(\log n)^3$
+
+![RSA](RSA.png){ width=60% }
 
 # Elliptic Curve
 
@@ -58,7 +65,7 @@ Compiled using [*pandoc*](https://pandoc.org/)
 * Simple factoring method : Pollard's (also called $p-1$ algorithm)
 * **Elliptic Curve Method** (ECM) is the best method to find $p$ when it is
   small
-* **ECDH** key exchange protocol is tha variant of Diffie-Hellman protocol
+* **ECDH** key exchange protocol is tha variant of Diffie-Helman protocol
   working over an elliptic curve group
   * We have two participant $U$ and $V$ using the same subgroup of order $n$
     genrated by some point $G$ over an elliptic curve.
@@ -160,7 +167,7 @@ Compiled using [*pandoc*](https://pandoc.org/)
   principle is that we use one-time-pad with a pseudorandom key-stream defined
   from a secret key and a nonce
 * **RC4** generates a key-stream of bytes from a secret key (to be used only
-  once)which is a sequence of bytes of total length between $40$ bits and $256$
+  once) which is a sequence of bytes of total length between $40$ bits and $256$
   bits
   * They are many know weakness in RC4
 * **A5/1** uses a $64$ bits secret and a $22$ bit counter, used a nonce. The key
@@ -169,7 +176,7 @@ Compiled using [*pandoc*](https://pandoc.org/)
   bits
   * They are many known attack against A5/1
 
-## Bruteforce Inversion Algorithm
+## Bruteforce Inversion Algorithms
 
 * Let $\mathcal{K}$ be a set of given size $N$. Consider the **random key
   guessing game** during which a challenge selects a key $K \in \mathcal{K}$ at
@@ -197,9 +204,6 @@ Compiled using [*pandoc*](https://pandoc.org/)
     precomputation time of $\mathcal{O}(D)$, a memory complexity of
     $\mathcal{O}(D)$ a time complexite of the attack of $\mathcal{O}(T)$, but a
     propability of sucess of $1 - e^{-\frac{DT}{N}}$
-
-## Subtle Bruteforce Inversion Algorithms
-
 * **Meet in the middle attack on double encryption**. Consider a double
   encryption scheme :
   $$ Enc_{K_1, K_2}(x) = ENC_{K_2}(ENC_{K_1}(x)) $$
@@ -211,3 +215,83 @@ Compiled using [*pandoc*](https://pandoc.org/)
     * Looks for $(y, k_1)$ in the dictionary and print $(k_1, k_2)$ if there is
       such an entry
     * Complexity is $\mathcal{O}(N)$ both in time and space
+
+# Integrity and Authentication
+
+* In a **Commitment scheme**, there are two participants, the sender and the
+  receiver, running a protocol in two phases: The commitment phase and the
+  opening phase. The sender wants to commit on message $X$ without revealing it.
+  * The sender picks some random $r$ and computes $(c, k) = Commit(X, r)$
+  * He then reveals $c$ to the receiver
+  * In the opening phase, the sender reveals $k$ and the receiver can compute
+    $Open(c, k) = X$
+  * The correctness requirement implies that $Open(Commit(X, r)) = X$ for any
+    $X$ and $r$
+  * The commitment must be **hiding** : The receiver shall not retreive any
+    information about $X$ during the commitment phase (This is similar to
+    encryption)
+  * Compared to encryption there is a second security property which is required
+    : The commitment must be **binding** : the sender shall not be able to
+    construct $c$, $k$, $k'$ such that $Open(c, k) \neq Open(c, k')$
+
+* **Pseudorandom generator** is typically an automaton initialized with a seed,
+  with a seed, which updates its state and outputs a number ar everygeneration.
+  Cryptographic pseudorandom generators must be such that the generatated
+  sequence of random numbers
+* **Key derivation function** (KDF) typically maps some random value with
+  imperfect distribution into a symmetric key which has a distribution close to
+  uniform
+* A **hash** function maps a bitstring of arbitrary length to a bitstring of
+  fixed length. There are three main uses of hash functions : 
+  * Domain expansion
+  * Commitment
+  * Pseudorandom generation
+* We often require hash function to be **collision-resistant**
+  * It must be impossible impossible to find $x$ and $y$ such that $H(x) = H(y)$
+    For this reason $H(x)$ is often called the *digest* or *fingerprint* of
+    *hash* of $x$
+* A **Message Authentication Codes** (MAC) typically appends a *tag* to message.
+  This tag is computed based on a secret key and the message. The message is
+  authenticated if it comes with a correct tab, based on the secret key
+* **HMAC** is one of the popular MAC algorithm
+  $$HMAC_K(X) = trunc(H((K \oplus opad) \mathbin\Vert H ((K \oplus ipad)
+  \mathbin\Vert X))) $$
+  where $opad$ and $ipad$ are constants defined by the standard
+* **CBCMAC** is another popular construction based on a block cipher. The tab of
+  a message is the last ciphertext block of the CBC encryption of the message
+  The algorithm is secured in two case :
+  * The application males sure that all messages have exactly the same length
+  * The tag is only available to the adversary in some encrypted form
+* **PMAC** is a block-cipher based construction. It is also prven secure if
+  block cipher is a pseudorandom permutation
+* **VCMAC** is an analog to the vernam cipher for authenticated messages which
+  provides unconditional security. To authenticate a message $X$, we essentially
+  encrypt a value $h_K(X)$ using the vernam cipher, where $h$ is an
+  $\epsilon$-XOR-universal hash function
+* **Authentication modes of operation** 
+  * In *CCM mode*, the message is concatenated with its CBCMAC, then ecnrypted
+    in CTR mode
+  * In the *GCM mode* the message is concatenated with its universal hash, then
+    encryted in CTR mode
+* A **universal hash function** $GHASH_H(X_1, \dots, X_m)$ for a sequence of
+  blocks $X_1, \dots, X_m$ and a key $H$ which is nother block. EAch block is
+  taken as ane element of $GF(2^{128})$ and we define 
+  $$ GHASH_H(X_1, \dots, X_M) = X_1 H^m + \dots + X_m H $$
+  in $GF(2^{128})$
+* Let $\theta > 0$ be a real number. If we pick $n$ independant and uniformly
+  distributed elements $X_1, \dots, X_n$ in a set of cardinality $N$, if $n =
+  o(N)$ as $N$ goes to infinity then the probability that at least two elements
+  are equal is 
+  $$ P[\exists i < j X_i = X_j] = 1 - \frac{N!}{(N - n)!N^n} = 1 -
+  e^{-\frac{n^2}{2N} + o(1)} $$
+* If we repeatedly pick samples until we find a collision, the expected number
+  of samples before we stop with a collision is $\sqrt{\frac{\pi}{2}} \times
+  \sqrt{N}$
+* There exist also constant-memory algorithms to find collisions with complexity
+  $\mathcal{O}(\sqrt{N})$. For instance the Floyd cycle algorithm can be used.
+* Symmetric encryption must face the generic attacks of complexity $2^n$, when
+  $n$ is the bitlength of the key. We take this as a reference for a security :
+  a symmectric encryption scheme is secure if this is the best attack we can
+  mount on it. So the keylenght is the security parameters.In general we say
+  that the bitlength-equivalent security is $n$ if the best attack needs $2^n$
+  operations

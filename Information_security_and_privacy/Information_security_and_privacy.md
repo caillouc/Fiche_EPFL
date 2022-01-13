@@ -9,6 +9,7 @@ highlight-style: tango
 pdf-engine: pdflatex
 toc:
 - toc-depth=3
+linkcolor: blue
 standalone: true
 ---
 
