@@ -32,7 +32,7 @@ Compiled using [*pandoc*](https://pandoc.org/)
   \times\mathbb{Z}_q$ and $\mathbb{Z}_n^*$ ring is isomorphic to $\mathbb{Z}_p^*
   \times \mathbb{Z}_q^*$
 
-![Diffie Helman](DF.png){ width=60% }
+![Diffie Helman](DF.png){ width=50% }
 
 # RSA (incomplete)
 
@@ -43,7 +43,7 @@ Compiled using [*pandoc*](https://pandoc.org/)
 * $\varphi(p^\alpha) = (p - 1)p^{\alpha - 1}$
 * We can compute square root of $n$ in $\mathcal{O}(\log n)^3$
 
-![RSA](RSA.png){ width=60% }
+![RSA](RSA.png){ width=50% }
 
 # Elliptic Curve
 
@@ -295,3 +295,88 @@ Compiled using [*pandoc*](https://pandoc.org/)
   mount on it. So the keylenght is the security parameters.In general we say
   that the bitlength-equivalent security is $n$ if the best attack needs $2^n$
   operations
+
+# Public Key Cryptography
+
+* In **public key cryptography** we have two probabilistic algorithms $Gen$ and
+  $Enc$ and one deterministic one $Dec$. $Gen$ generates a pair $(pk, sk)$ where
+  $pk$ is called the **public key** and $sk$ the **secret key**, and such that
+  for any $X$ in the domain, we always have $Dec_{sk}(Enc_{pk})) = X$
+* In a key agreement protocol (also called **key exchange** or **key
+  establishment**), there are two probabilistic interactive algorithms with no
+  input which generate the same output (the key) when interacting with each
+  other. It should be such that this output is secret even though the messages
+  between the twos algorithm are public
+* In **static mode** the public keys are long term values
+* In **ephemeral mode** the public keys are freshly generated for each sessions
+  of the protocol
+  * It adds the property of *forward secrecy* : If the any long term-term is
+    corrupted in the far future, this cannot compromise the secrety of
+    encryptions which are done using the output of the output of the key
+    exchange
+* In **semi-static mode**, one key is fresh and the other is a long term one
+* We say that a digital scheme has the property of **message recovery** if from
+  $\sigma = Sig_{sk}(X)$, we can extract $X$ by $Ver_{pk}(\sigma)$. In many
+  concrete schemes, the output of $Sig_{pk}(X)$ is of the form $X \mathbin\Vert
+  \sigma$ where $\sigma$ is called the *signature*. In that case, $Ver_{pk}(X
+  \mathbin\Vert \sigma)$ is aborting if $\sigma$ is an invalid signature of $X$
+* A popular way to construct a signature scheme (without message recovery) from
+  a traddoor permutation is by using a hash function. In this construction, we
+  have $Sig(X) = InvPerm(h(X))$
+* Lot of stuff arround signature ... not done yet ...
+* So far the best way to **break RSA is to factor $N$**. The keys must be chosen
+  such that factoring $N$ is infeasible. We just have to adjust the length of
+  $p$ and $q$ and avoid some known forms of weak moduli
+* For scheme such as **Diffe Hellman, ElGamal**, the best way is to solve the
+  discrete algorithm problem. Either we work in a subgroup of $\mathbb{Z}^*_p$
+  given a prime $p$
+* The following security parameters propose equivalent security
+  * Symmetric encryption with a $82$-bit key
+  * RSA with a $1613$-bit modulus
+  * Discrete logarithm with a subgroup of order $q$ of $\mathbb{Z}^*_p$, where
+    $p$ has $1613$ bits and $q$ has $145$ bits
+  * An elliptic curve over a field whose cardinality has $A54$ bits
+  * A hash function with digest length of $163$ bits
+* A **public key cryptography** is a tuple $(Gen, \mathcal{M}, Enc, Dec)$ with a
+  plaintext domain $\mathbb{M} \subseteq \{0, 1\}^*$ and three effecient
+  algorithms $Gen$, $Enc$, and $Dec$. The algorithm $Dec$ is deterministic out
+  output either something in $\mathcal{M}$ or an error. It is such that
+  $$ \forall X \in \mathcal{M} \quad P[Dec(sk, Enc(pk, X)) = X] = 1 $$
+  where $(pk, sk)$ is generated from running $Gen$
+* **Digital signature scheme** is a tuple $(Gen, \mathcal{D}, Sig, Ver)$ with a
+  message domain $\mathcal{D} \subseteq \{0, 1\}^*$ and three effecient
+  algorithms $Gen$, $Sig$, and $Ver$. The algorithm $Ver$ is deterministic and
+  outputs $0$ (*reject*) or $1$ (*accept*). It is such that 
+  $$ \forall X \in \mathcal{D} \quad P[Ver(pk, X, Sig(sk, K)) = 1] = 1 $$
+  where $(pk, sk)$ is generated form running $Gen$
+* A digital signatue scheme $(Gen, \mathcal{D}, Sig, Ver)$ is **$(q, t,
+  \epsilon)$-secure against axistential forgery under chosen message attacks**
+  if for any probabilistic algorithm $A$ limited to a time complexity $t$ and
+  $q$ queries, the advantage is bounded by $\epsilon$
+
+# Trust Establishment
+
+* **Password acces control** To avoid leakage from the database we can avoid
+  storing the password by saving only a hash of it. To secure against
+  multi-target attaks and time-memory tradeoffs, we can add a salt which has to
+  be stored as well. So ht database contains $(ID, salt, H(ID \mathbin\Vert salt
+  \mathbin\Vert w))$ triplets, where $w$ is the user password
+* **Challenge/response access control** consists of sending a challenge $c$ to
+  the client to which he must answer by some $r = f_K(c)$ where $K$ is his key
+  and $f$ is a pseudorandom function
+* **One time password (OTP)** Essentially we have a long list of passwords and
+  each password can only be used only once. Typically, the sequence is generated
+  form a secret seed backward : from the last to be sued to the first one. Each
+  password is the image of the next password by a one way function. So the
+  server only stores the last used password and checks that the new one hashes
+  onto the stored one
+* **Strong authentication** is the techniques usign several factors. We can use
+  factors based on *what we know*, on *what we process*, or on *what we are*
+* The main security properties that we must obtain for **secure communication**
+  are:
+  * *Confidentiality* : Only the legitimate receiver can retrieve the messge
+    * Enforce by symmetric encryption
+  * *Authentication* : Only the legitimate sender can create a new message
+    * Enforce using a MAC
+  * *Integrity* : the received message must be equal to the sent one
+    * Enforce using a hash function or with a MAC
