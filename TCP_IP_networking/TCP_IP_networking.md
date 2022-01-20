@@ -908,14 +908,14 @@ More fiches [*here*](https://github.com/caillouc/Fiche_EPFL)
 
 * The tranport layer in TCP/IP exists in two flavours
   * Reliable and stream oriented : TCP
-  * Riliable and message based : UDP
+  * Reliable and message based : UDP
 * TCP uses : slidig window and selective repeat; window flow control; congestion
   control
 * TCP offers a strict streaming service and requires 3 ways handshake
 * Other transport layer protocol exist bur their use is marginal : e.g. SCTP
   (reliable + message based)
-* Some application layer frameworks are subsititute to TCP for some application
-  : e.g. QUIC (reliable and message based), websockets
+* Some application layer frameworks are subsititute to TCP for some application : 
+  QUIC (reliable and message based), websockets
 
 ## IP multicast
 
@@ -972,6 +972,7 @@ More fiches [*here*](https://github.com/caillouc/Fiche_EPFL)
 * BGP - MPLS - VPN
 * Beyond BGP : SCION is an alternative to BGP (and to IP) that uses source
   routing and systematic encryption. Aims to provide more security
+
 > not very useful this conclusion ...
 
 ## Application layer
