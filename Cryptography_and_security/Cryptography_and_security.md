@@ -1,6 +1,7 @@
 ---
 title: Cryptography and security
 author: Pierre Colson
+date: Tuesday 04 January 2022
 output: pdf_document
 geometry:
 - margin=2cm
@@ -16,7 +17,8 @@ standalone: true
 
 **Markdown** version on
 [*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/Cryptography_and_security/Cryptography_and_security.md)  
-Compiled using [*pandoc*](https://pandoc.org/)
+Compiled using [*pandoc*](https://pandoc.org/)  
+More fiches [*here*](https://github.com/caillouc/Fiche_EPFL)  
 
 # General
 
@@ -32,7 +34,7 @@ Compiled using [*pandoc*](https://pandoc.org/)
   \times\mathbb{Z}_q$ and $\mathbb{Z}_n^*$ ring is isomorphic to $\mathbb{Z}_p^*
   \times \mathbb{Z}_q^*$
 
-![Diffie Helman](DF.png){ width=50% }
+![Diffie Helman](DF.png){ width=70% }
 
 # RSA (incomplete)
 
@@ -42,8 +44,10 @@ Compiled using [*pandoc*](https://pandoc.org/)
 * To compute the inverse of an elem use extended euclid algorithm
 * $\varphi(p^\alpha) = (p - 1)p^{\alpha - 1}$
 * We can compute square root of $n$ in $\mathcal{O}(\log n)^3$
+* Chose $e$ : Pick a random value $e$ until it is coprime with $\varphi(n) =
+  (p-1)(q-1)$
 
-![RSA](RSA.png){ width=50% }
+![RSA](RSA.png){ width=70% }
 
 # Elliptic Curve
 
@@ -242,7 +246,7 @@ Compiled using [*pandoc*](https://pandoc.org/)
   imperfect distribution into a symmetric key which has a distribution close to
   uniform
 * A **hash** function maps a bitstring of arbitrary length to a bitstring of
-  fixed length. There are three main uses of hash functions : 
+  fixed length. There are three main uses of hash functions :
   * Domain expansion
   * Commitment
   * Pseudorandom generation
@@ -268,20 +272,20 @@ Compiled using [*pandoc*](https://pandoc.org/)
   provides unconditional security. To authenticate a message $X$, we essentially
   encrypt a value $h_K(X)$ using the vernam cipher, where $h$ is an
   $\epsilon$-XOR-universal hash function
-* **Authentication modes of operation** 
+* **Authentication modes of operation**
   * In *CCM mode*, the message is concatenated with its CBCMAC, then ecnrypted
     in CTR mode
   * In the *GCM mode* the message is concatenated with its universal hash, then
     encryted in CTR mode
 * A **universal hash function** $GHASH_H(X_1, \dots, X_m)$ for a sequence of
   blocks $X_1, \dots, X_m$ and a key $H$ which is nother block. EAch block is
-  taken as ane element of $GF(2^{128})$ and we define 
+  taken as ane element of $GF(2^{128})$ and we define
   $$ GHASH_H(X_1, \dots, X_M) = X_1 H^m + \dots + X_m H $$
   in $GF(2^{128})$
 * Let $\theta > 0$ be a real number. If we pick $n$ independant and uniformly
   distributed elements $X_1, \dots, X_n$ in a set of cardinality $N$, if $n =
   o(N)$ as $N$ goes to infinity then the probability that at least two elements
-  are equal is 
+  are equal is
   $$ P[\exists i < j X_i = X_j] = 1 - \frac{N!}{(N - n)!N^n} = 1 -
   e^{-\frac{n^2}{2N} + o(1)} $$
 * If we repeatedly pick samples until we find a collision, the expected number
@@ -346,7 +350,7 @@ Compiled using [*pandoc*](https://pandoc.org/)
 * **Digital signature scheme** is a tuple $(Gen, \mathcal{D}, Sig, Ver)$ with a
   message domain $\mathcal{D} \subseteq \{0, 1\}^*$ and three effecient
   algorithms $Gen$, $Sig$, and $Ver$. The algorithm $Ver$ is deterministic and
-  outputs $0$ (*reject*) or $1$ (*accept*). It is such that 
+  outputs $0$ (*reject*) or $1$ (*accept*). It is such that
   $$ \forall X \in \mathcal{D} \quad P[Ver(pk, X, Sig(sk, K)) = 1] = 1 $$
   where $(pk, sk)$ is generated form running $Gen$
 * A digital signatue scheme $(Gen, \mathcal{D}, Sig, Ver)$ is **$(q, t,

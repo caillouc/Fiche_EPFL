@@ -21,4 +21,4 @@
 * [Information security and privacy](Information_security_and_privacy/Information_security_and_privacy.pdf)
 * [Distributed algorithms](Distributed_algorithms/Distributed_algorithms.pdf)
 
-> Compiled using pandoc and my [`gpdf` script](https://github.com/caillouc/dotfile/blob/linux/gpdf.sh)
+> Compiled using [*pandoc*](https://pandoc.org/)  

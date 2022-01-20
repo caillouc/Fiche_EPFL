@@ -1,13 +1,15 @@
 ---
 title: Fiche Machine Learning
 author: Pierre Colson
+linkcolor: blue
 ---
 
 ---
 
 **Markdown** version on
 [*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/Machine_Learning/Machine_Learning.md)  
-Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://github.com/caillouc/dotfile/blob/linux/gpdf.sh)
+Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://github.com/caillouc/dotfile/blob/linux/gpdf.sh)  
+More fiches [*here*](https://github.com/caillouc/Fiche_EPFL)  
 
 # General Stuff
 

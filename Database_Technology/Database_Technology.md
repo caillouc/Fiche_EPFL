@@ -1,13 +1,15 @@
 ---
 title: Fiche Database
 author: Pierre Colson
+linkcolor: blue
 ---
 
 ---
 
 **Markdown** version on
 [*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/Database_Technology/Database_Technology.md)  
-Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://github.com/caillouc/dotfile/blob/linux/gpdf.sh)
+Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://github.com/caillouc/dotfile/blob/linux/gpdf.sh)  
+More fiches [*here*](https://github.com/caillouc/Fiche_EPFL)  
 
 # General
 
@@ -86,7 +88,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
 
 ```sql
 CREATE TABLE Name(
-    attribute1 type, 
+    attribute1 type,
     attribute2 type
 );
 ```
@@ -101,14 +103,14 @@ DROP TABLE Name
 
 ```sql
 CREATE TABLE Name(
-    attribute1 type primary key, 
+    attribute1 type primary key,
     attribute2 type
 );
 ```
 
 ```sql
 CREATE TABLE Name(
-    attribute1 type, 
+    attribute1 type,
     attribute2 type
     primary key(attribute1, attribute2)
 );
@@ -119,14 +121,14 @@ CREATE TABLE Name(
 
 ```sql
 CREATE TABLE Name(
-    attribute1 type unique, 
+    attribute1 type unique,
     attribute2 type
 );
 ```
 
 ```sql
 CREATE TABLE Name(
-    attribute1 type, 
+    attribute1 type,
     attribute2 type
     unique(attribute1, attribute2)
 );
@@ -142,9 +144,9 @@ CREATE TABLE Name(
 
 ```sql
 CREATE TABLE name(
-    attribute1 type, 
-    attribute2 type, 
-    attribute3 type, 
+    attribute1 type,
+    attribute2 type,
+    attribute3 type,
     FOREIGN KEY (attribute1) REERENCES otherTableName(attribute1)
     FOREIGN KEY (attribute2) REERENCES otherTableName(attribute2)
 )
@@ -176,16 +178,16 @@ WHERE LIKE 'Ma%' OR LIKE 'M_ke'
     * Under set semantics
 
         ```sql
-        (SELECT ... FROM ... WHERE) 
-        UNION 
-        (SELECT ... FROM ... WHERE) 
+        (SELECT ... FROM ... WHERE)
+        UNION
+        (SELECT ... FROM ... WHERE)
         ```
 
     * Under bag semantics
 
         ```sql
-        (SELECT ... FROM ... WHERE) 
-        UNION ALL 
+        (SELECT ... FROM ... WHERE)
+        UNION ALL
         (SELECT ... FROM ... WHERE)
         ```
 
@@ -200,8 +202,8 @@ WHERE LIKE 'Ma%' OR LIKE 'M_ke'
 * Subqueries
 
 ```sql
-SELECT attribute1 
-FROM 
+SELECT attribute1
+FROM
     (SELECT ...
     FROM ...
     WHERE ...) A
@@ -297,9 +299,9 @@ WHERE A.attribute = 'smthg'
 
     ```sql
     BEGIN TRANSACTION
-    SET ISOLATION LEVEL SERIALIZABLE 
-    ... 
-    COMMIT 
+    SET ISOLATION LEVEL SERIALIZABLE
+    ...
+    COMMIT
     ```
 
   * Read Uncommitted: Transaction may see even changes by other transactions that were not committed yet.
@@ -374,7 +376,7 @@ CREATE ASSERTION assertionName (
 CREATE TRIGGER triggerName
     AFTER INSERT IN tableName
     REFERENCES NEW ROW AS newtuple
-    FOR EACH ROW 
+    FOR EACH ROW
     WHEN (newtuple.attribute NOT IN (SELECT attribute FROM otherClassName))  
     INSERT INTO otherClassName VALUES(newtuple.attribute, otherAttribute, etc)
 ```
@@ -441,7 +443,7 @@ CREATE TRIGGER triggerName
     ```dtd
     <! DOCTYPE root-tag [
         <! ELEMENT element-name (components) >
-        <! ATTLIST element-name 
+        <! ATTLIST element-name
             att-name1 type1
             att-name2 type2
         >
@@ -454,20 +456,20 @@ CREATE TRIGGER triggerName
 
         ```dtd
         <!DOCTYPE StarMovieData [
-            <!ELEMENT StarMovieData (Star* , Movie*)> 
-            <!ELEMENT Star (Name, Address+)> 
+            <!ELEMENT StarMovieData (Star* , Movie*)>
+            <!ELEMENT Star (Name, Address+)>
             <!ATTLIST Star
                 starld ID #REQUIRED
-                starredln IDREFS #IMPLIED 
+                starredln IDREFS #IMPLIED
             >
-            <!ELEMENT Name (#PCDATA)> 
-            <!ELEMENT Address (Street, City)> 
-            <!ELEMENT Street (#PCDATA)> 
-            <!ELEMENT City (#PCDATA)> 
-            <!ELEMENT Movie (Title, Year)> 
+            <!ELEMENT Name (#PCDATA)>
+            <!ELEMENT Address (Street, City)>
+            <!ELEMENT Street (#PCDATA)>
+            <!ELEMENT City (#PCDATA)>
+            <!ELEMENT Movie (Title, Year)>
             <!ATTLIST Movie
                 movield ID #REQUIRED
-                starsOf IDREFS #IMPLIED 
+                starsOf IDREFS #IMPLIED
             >
             <!ELEMENT Title (#PCDATA)>
             <!ELEMENT Year (#PCDATA)>
@@ -502,7 +504,7 @@ CREATE TRIGGER triggerName
 * XMl Schema elements
 
 ```xml
-<xs:element name="Name" type="xs:String"> 
+<xs:element name="Name" type="xs:String">
     <xs:key name = "key name">
         <xs:selector xpath = "path">
         <xs:field xpath = "path">
@@ -547,9 +549,9 @@ CREATE TRIGGER triggerName
   * Surround variable name by {...} to return value held
 
     ```xquery
-    let $d:=document(“file.xml”) 
+    let $d:=document(“file.xml”)
     for $data in $d/root/blabla/exmaple
-    order by $data descending 
+    order by $data descending
     let $temp := (
         for $data in $d/root/blabla/exmaple
         where $data/@id = $blabla

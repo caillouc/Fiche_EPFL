@@ -1,13 +1,15 @@
 ---
 title: Probalities and Statistics
 author: Pierre Colson
+linkcolor: blue
 ---
 
 ---
 
 **Markdown** version on
 [*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/Probalities_and_Statistics/Probalities_and_Statistics.md)  
-Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://github.com/caillouc/dotfile/blob/linux/gpdf.sh)
+Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://github.com/caillouc/dotfile/blob/linux/gpdf.sh)  
+More fiches [*here*](https://github.com/caillouc/Fiche_EPFL)  
 
 # General Stuff
 

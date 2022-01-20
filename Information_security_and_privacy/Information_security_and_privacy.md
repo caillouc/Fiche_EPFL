@@ -1,7 +1,7 @@
 ---
 title: Information security and privacy
 author: Pierre Colson
-date: Monday 03 January
+date: Monday 03 January 2022
 output: pdf_document
 geometry:
 - margin=2.5cm
@@ -17,7 +17,9 @@ standalone: true
 
 **Markdown** verion on
 [*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/Information_security_and_privacy/Information_security_and_privacy.md)  
-Compiled using [*pandoc*](https://pandoc.org/)
+Compiled using [*pandoc*](https://pandoc.org/); More fiches [*here*](https://github.com/caillouc/Fiche_EPFL)  
+
+\clearpage
 
 # Vocabulary
 
