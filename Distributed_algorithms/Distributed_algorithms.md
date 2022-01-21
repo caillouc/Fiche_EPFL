@@ -37,7 +37,7 @@ More fiches [*here*](https://github.com/caillouc/Fiche_EPFL)
     * *Eventually Strong Accuracy* : Eventually, no correct process is ever
       suspected
 
-## Fair-loss links
+## Fair-loss Links
 
 * **FL1. Fai-loss** : If a message is sent infinitely often by $p_i$ to $p_j$n
   and neither $p_i$ or $p_j$ crashes then $m$ is delivered infinitely often by
@@ -46,7 +46,7 @@ More fiches [*here*](https://github.com/caillouc/Fiche_EPFL)
   times by $p_i$ to $p_j$, $m$ is delivered a finite number of times by $p_j$
 * **FL3. No creation** : No message is delivered unless it was sent
 
-## Stubborn links
+## Stubborn Links
 
 * **SL1. Stubborn delivery** : If a process $p_i$ sends a message $m$ to a
   correct process $p_j$, and $p_i$ does not crash, then $p_j$ delivers $m$ an
@@ -63,7 +63,7 @@ upon event <flp2pDeliver, src, m> do
   trigger <sp2pDeliver, src, m>
 ```
 
-## Reliable (Perfect) links
+## Reliable (Perfect) Links
 
 * **PL1. Validity** : If $p_i$ and $p_j$ are correct
 * **PL2. No duplication** : No message is delivered (to a process) more than
@@ -184,7 +184,7 @@ upon event (for any [pj, m] in forward) <correct in ack[m]> and <m not in delive
   * **C3. Transitivity** : There is a message $m_3$ such that $m_1 \rightarrow m_3$
     and $m_3 \rightarrow m_2$
 
-## Causal broadcast
+## Causal Broadcast
 
 * **CO** : If any process $p_i$ delivers a message $m_2$, then $p_i$ must have
   delivered every message $m_1$ such that $m_1 \rightarrow m_2$
@@ -275,7 +275,7 @@ procedure deliver-pending is
   agree on one among these values
 
 * **C1. Validity** : Any value decided is a value proposed
-* **C2. (Unifrom) Agreement** : No two correct (any) processes decide
+* **C2. (Uniform) Agreement** : No two correct (any) processes decide
   differently
 * **C3. Termination** : Every correct process eventually decides
 * **C4. Integrity** : Every process decides at most once
@@ -310,7 +310,7 @@ upon event <Decide, decided>sn do
 
 # Shared Memory
 
-## Regular register
+## Regular Register
 
 * Assumes only one writer
 * Provides *strong* guarantees when there is no concurrent operations
@@ -514,14 +514,14 @@ T2 :
   $\varphi$ or $m$ was broadcasted by $src$
 * **TRB2. Validity** : If the sender $src$ is correct and broadcasts a message
   $m$, then $src$ eventually delivers $m$
-* **TRB3. (Unifrom) Agreement** : For any message $m$, if a correct (any)
+* **TRB3. (Uniform) Agreement** : For any message $m$, if a correct (any)
   process delivers $m$, then every correct process delivers $m$
 * **TRB4. Termination** : Every correct process eventually delivers exactly one
   message
 
 ```da
 Implements: trbBroadcast (trb)
-Uses: 
+Uses:
   BestEffortBroadcast (beb)
   PerfectFailureDetector (P)
   Consensus (cons)
@@ -534,7 +534,7 @@ upon event <crash, src> and (prop = 0) do
   prop := phi
 upon event <bebDeliver, src, m> and (prop = 0) do
   prop := m
-upon event (prop != 0) do
+upon event (prop not 0) do
   trigger <Propose, prop>
 upon event <Decide, decision> do
   trigger <trbDeliver, src, decision>
@@ -544,3 +544,197 @@ upon event <Decide, decision> do
   $p_i$ is the sender $src$
   1. Every process $p_i$ keeps on trbBroadcasting messages $m_{i1}, m_{i2}$ etc
   2. If a process $p_k$ delivers $\varphi_i$, $p_k$ suspects $p_i$
+
+# Non-Blocking Atomic Commit (NBAC)
+
+* A **transaction** is an atomic program describing a sequence of accesses to shared
+  and  distributed information
+  * Can be determined either by **commiting** or **aborting**
+* **Atomicity** : a transaction either performs entirely or none at all
+* **Consistency** : a transaction transforms a consistent state into another
+  consitent state
+* **Isolation** : a transaction appears to be executed in isolation
+* **Durability** : the effects of a transaction that commits are permanent
+* As in consensus, every process has an initial value $0$ (no) or $1$ (yes) and
+  must decide on a final value $0$ (abort) or $1$ (commit)
+* The proposition means the ability to commit the transaction
+* The decision reflects the contract with the user
+* Unlike consensus, the processes here seek to decide $1$ but every process has
+  a veto right
+* **NBAC1. Agreement** : No two processes decide differently
+* **NC1C2. Termination** : Every correct process eventually decides
+* **NBAC3. Commit-Validity** : $1$ can only be decided if all process propose
+  $1$
+* **NBAC4. Abort-Validity** : $0$ can only be decided if some process crashes of
+  votes $0$
+
+```da
+Implements: nonBlockingAtomicCommit (nbac)
+Uses:
+  BestEffortBroadcast (beb)
+  PerfectFailureDetector (P)
+  UniformConsensus (uniCons)
+upon event <Init> do
+  prop := 1
+  delivered := emptySet
+  correct := pi
+upon evnet <crash, pi> do
+  correct := correct \{pi}
+upon event <Propose, v> do
+  trigger <bebBroadcast, v>
+upon event <bebDeliver, pi, v> do
+  delivered := delivered U {pi}
+  prop := prop * v
+upon event correct \ deliver = empty do
+  if correct not pi then
+    prop := 0
+  trigger <uncPropose, prop>
+upon event <uncDecide, decision> do
+  trigger <Decide, decision>
+```
+
+# Group Menbership and View Synchronous Communication
+
+## Group Menbership (gmp)
+
+* In many distributed applications, processes neet to know which processes are
+  **participating** in the computation and which are not
+* Failure detector provide such information; however that information is **not
+  coordinated** event if the failure detector is perfect
+* Like with a failure detector, the processes are informed about failures, we
+  say that the precesses **install views**
+* Like with a perfect failure detector, the processes have accurate knowledge
+  about failures
+* Unlike with a perfect failure detector, the information about failures are
+  **coordinated** : the processes install the same sequence of views
+* **Memb1. Local Monotonicity** : if a process installs view $(j, M)$ after
+  installing $(k, N)$, then $j > k$ and $M < N$
+* **Memb2. Agreement** : no two porcesses install views $(j, M)$ and $(j, M')$
+  such that $M \neq M'$
+* **Memb3. Completness** : if a process $p$ crashes, then there is an integer
+  $j$ such that every correct porcess eventtually installs view $(j, M)$ such
+  that $p \notin M$
+* **Memb4. Accuracy** : if some process installs view $(i, M)$ and $p \notin M$
+  then $p$ has crashed
+
+```da
+Implements: groupMenberShip (gmp)
+Uses:
+  PerfectFailureDetector (P)
+  UniformConsensus (Ucons)
+upon event <Init> do
+  view := (O, S)
+  correct := S
+  wait := true
+upon event <crash, pi> do
+  correct := corrext \{pi}
+upon event (correct < view.memb) and (wait = false) do
+  wait := true
+  trigger <ucPropose, (view.id + 1, correct)>
+upon event <ucDecide, (id, memb)> do
+  view := (id, memb)
+  wait := false
+  trigger <membView, view>
+```
+
+## View Synchrony (vsc)
+
+* **View synchronous broadcast** is an abstraction that results from the
+  combination of group membership and reliable broadcast
+  * Ensures that the delivery of messages is coordinated with the installation
+    of views
+* **Memb1**, **Memb2**, **Memb3**, **Memb4**, **RB1**, **RB2**, **RB3**, **RB4**
+* **VS** : a message is **vsDelivered** in the view where it is **vsBroadcast**
+* If the application keeps **vsBroadcasting** messages, the **view synchrony**
+  abstraction might never be able to **vsInstall** a new view, the abstraction
+  would be impossible
+  * We introduce a specific event for the abstraction to block the application
+    from **vsBroadcasting**  messages, this only happends when a process crashes
+
+```da
+Implements: ViewSynchrony (vs)
+Uses:
+  GroupMembership (gmp)
+  TerminationReliableBroadcast (trb)
+  BestEffortBroadcast (beb)
+upon event <Init> do
+  view := (0, S) 
+  nextView := ()
+  pending := delivered := trbDone := emptySet
+  flushing := blocked := false
+upon event <vsBroadcast, m> and (blocked = false) do
+  delivered := delivered U {m}
+  trigger <vsDeliver, self, m>
+  trigger <bebBroadcast, [data, view.id, m]>
+upon event <bebDeliver, src, [data, vid, m]> do
+  if (view.id = vid) and (m not in delivered) and (blocked = false) then
+    delivered := delivered U {m}
+    trigger <vsDeliver, src, m>
+upon event <membView, V> do
+  addtoTail(pending, V)
+upon event (pending not emptySet) and (flushing = false) do 
+  nextView := removeFromHead(pending)
+  flushing := true
+  trigger <vsBlock>
+upon event <vsBlockOk> do
+  blocked := true
+  trbDone := emptySet 
+  trigger <trbBroadcast, self, (view.id, delivered)>
+upon event <trbDeliver, p, (vid, del)> do
+  trbDone := trbDone U {p}
+  forall m in del and m not in delivered do
+    delivered := delivered U {m}
+    trigger <vsDeliver, src, m>
+upon event (trbDone = view.memb) and (blocked = true) do
+  view := nextView
+  flushing := blocked := false
+  delivered := emptySet
+  trigger <vsView, view>
+```
+
+```da
+Implements: ViewSynchrony (vs)
+Uses: 
+  UniformConsensus (uc)
+  BestEffortBroadcast (beb)
+  PerfectFailureDetector (P)
+upon event <Init> do
+  view := (O, S)
+  correct := S
+  flushing := blocked := false
+  delivered := dset := emptySet
+upon event <vsBroadcast, m> and (blocked = false) do
+  delivered := delivered U {m}
+  trigger <vsDeliver, self, m>
+  trigger <bebBroadcast, [data, view.id, m]>
+upon event <bebDeliver, src, [data, vid, m]> do
+  if (view.id = vid) and (m not in delivered) and (blocked = false) then
+    delivered := delivered U {m}
+    trigger <vsDeliver, src, m>
+upon event <crash, p> do
+  correct := correct \{p}
+  if flushing = false then
+    flushing = true
+    trigger <vsBlock>
+upon event <vsBlockOk> do
+  blocked := true
+  trigger <bebBroadcast, [DSET, view.id, delivered]>
+upon event <bebDeliver, src, [DSET, vid, del]> do
+  dset = dset U (src, del)
+  if forall p in correct, (p, mset) in dset then
+    trigger <ucPropose, view.id+1, correct, dset>
+upon event <ucDecided, id, memb, vsdset> do
+  forall (p, mset) in vsdest and p in memb do
+    forall (src, m) in mset and m not in delivered do
+      delivered := delivered U {m}
+      trigger <vsDeliver, src, m>
+    viewx := (id, memb)
+    flushing := blocked := false
+    dset := delivered := emptySet
+    trigger <vsView, view>
+```
+
+* Using uniform reliable broadcast instead of best effort broadcast in the
+  previous algorithms does not ensure the uniformity of the message delivery
+    
+
