@@ -1,14 +1,26 @@
 ---
 title: Distributed algorithms
 author: Pierre Colson
-date: mercredi 05 janvier
+date: Wednesday 05 January 2022
+output: pdf_document
+highlight-style: tango
+geometry:
+- margin=2.5cm
+pdf-engine: pdflatex
+toc:
+- toc-depth=3
+linkcolor: blue
+standalone: true
 ---
 
 ---
 
 **Markdown** verion on
 [*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/Distributed_algorithms/Distributed_algorithms.md)  
-Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf_da` script*](https://github.com/caillouc/Fiche_EPFL/blob/main/Distributed_algorithms/gpdf_da.sh)
+Compiled using [*pandoc*](https://pandoc.org/)  
+More fiches [*here*](https://github.com/caillouc/Fiche_EPFL)  
+
+\clearpage
 
 # General
 
@@ -95,7 +107,7 @@ Implements: BestEffortBroadcast (beb)
 Uses: PerfectLinks (pp2p)
 upon event <bebBroadcast, m> do
   forall pi in S do
-    trigger <pp2pSend, pi, m> 
+    trigger <pp2pSend, pi, m>
 upon event <pp2pDeliver, pi, m> do
   trigger <dedDeliver, pi, m>
 ```
@@ -121,12 +133,12 @@ upon event <rbBroadcast, m> do
   delivered := delivered U {m}
   trigger <rbDeliver, self, m>
   trigger <bebBroadcast, [data, self, m]>
-upon event <crash, pi> do 
+upon event <crash, pi> do
   correct := correct \{pi}
   forall [pj, m] in from[pi] do
     trigger <bebBroadcast, [data, pj, m]>
 upon event <bebDeliver, pi, [data, pj, m]> do
-  if m not in delivered then 
+  if m not in delivered then
     delivered := delivered U {m}
     trigger <rbDeliver, pj, m>
     if pi not in correct then
@@ -145,7 +157,7 @@ upon event <bebDeliver, pi, [data, pj, m]> do
 
 ```da
 Implements: UniformBroadcast (urb)
-Uses: 
+Uses:
   BestEffortBroadcast (beb)
   PerfectFailureDetector (P)
 upon event <Init> do
@@ -157,7 +169,7 @@ upon event <urbBroadcast, m> do
   trigger <bebBroadcast, [data, self, m]>
 upon event <bebDeliver, pi, [data, pj, m]> do
   ack[m] := ack[m] U {pi}
-  if [pi, m] not in forward then 
+  if [pi, m] not in forward then
     forward := forward U {[pj, m]}
     trigger <bebBroadcast, [data, pj, m]>
 upon event (for any [pj, m] in forward) <correct in ack[m]> and <m not in delivered> do
@@ -207,9 +219,9 @@ upon event <rcoBroadcast, m> do
   trigger <rbBroadcast, [data, past, m]>
   past := past U {[self, m]}
 upon event <rbDeliver, pi [data, pastm, m]> do
-  if m not in delivered then 
+  if m not in delivered then
     forall [sn, n] in pastm do
-      if n not in delivered then 
+      if n not in delivered then
         trigger <rcoDeliver, sn, n>
         delivered := delivered U {n}
         past := past U {[self, n]}
@@ -228,8 +240,8 @@ upon event <rcoBroadcast, m> do
   trigger <rcoDeliver, self, m>
   trigger <rbBroadcast, [data, VC, m]>
   VC[self] := VC[self] + 1
-upon event <rbDeliver, pj, [data, VCm, m]> do 
-  if pj not self then 
+upon event <rbDeliver, pj, [data, VCm, m]> do
+  if pj not self then
     pending := pending U (pj, [data, VCm, m])
     deliver-pending
 procedure deliver-pending is
@@ -330,7 +342,7 @@ upon event <Decide, decided>sn do
 ```da
 Write(v) at pi
   send [W, w] to all
-  forall pj, wait until either 
+  forall pj, wait until either
     receive [ack] or
     detect [pj]
   return ok
@@ -375,10 +387,10 @@ Read() at pi
 ```
 
 ```da
-At pi 
+At pi
   when receive [W, ts1, v] from p1
-    if ts1 > sni then 
-      vi = v 
+    if ts1 > sni then
+      vi = v
       sni := ts1
       send[W, ts1, ack] to p1
   when receive [R, rsj] from pj
@@ -397,7 +409,7 @@ At pi
 
 * We implement a **fail-stop** 1-N **atomic register**
   * Every process maintais a local value of the register as well as a sequence
-    number 
+    number
   * The writer, $p_1$, maintains, in addition a timestamp $ts_1$
   * Any process can read in the register
 
@@ -414,8 +426,8 @@ Write(v) at p1
 ```da
 Read() at pi
   send [W, sni, vi] to all
-  forall pi wait until either 
-    receive [ack] or 
+  forall pi wait until either
+    receive [ack] or
     suspect [pj]
   return vi
 ```
@@ -423,7 +435,7 @@ Read() at pi
 ```da
 At pi
   When pi receive [W, ts, v] from pj
-    if ts > sni then 
+    if ts > sni then
       vi := v
       sni := ts
     send [ack] to pj
@@ -462,20 +474,20 @@ Read() at pi
 
 ```da
 At pi
-T1 : 
+T1 :
   when receive [W] from pj
     send [W, sn] to pj
   when receive [R] from pj
     send [R, (sn, id), vi] to pj
 
-T2 : 
+T2 :
   when receive [W, (snj, idj), v] from pj
     if (snj, idj) > (sn, id) then
       vi := v
       (sn, id) = (snj, idj)
     send [W, (sn, id), ack] to pj
   when receive [W, (snj, idj), v] from pj
-    if (snj, idj) > (sn, id) then 
+    if (snj, idj) > (sn, id) then
       vi := v
       (sn, id) := (snj, idj)
     send [W, (sn, id), ack] to pj
@@ -485,6 +497,59 @@ T2 :
   * We assume a mojority of correct processes
   * In the 1-N algorithm, the writer writes in a majority using a timestamp
     determined locally and the reader selects a value from a majority and then
-    imposes this value on a majority 
+    imposes this value on a majority
   * In the N-N algorithm, the writers determines first the timestamp using a
     majority
+
+# Terminating Reliable Broadcast (TRB)
+
+* Like reliable broadcast, terminating reliable broadcast (TRB) is a
+  communication primitive used to disseminate a message among a set of processes
+  in a reliable way
+* TRB is however strictly stronger than (uniform) reliable broadcast
+* Like with reliable broadcast, correct processes in TRB agree on the set of
+  messages they deliver
+* Like with (uniform) reliable broadcast, every correct process in TRB delivers
+  every message delivered by any correct process
+* Unlike with reliable broadcast, every correct process delivers a message,
+  event if the broadcaster crashes
+* The problem is defined for a specific broadcaster process $p_i = src$ (know by
+  all processes)
+  * Process $src$ is supposed to broadcast a message $m$ (distinct from
+    $\varphi$)
+  * The other processes need to deliver $m$ if $src$ is correct but may deliver
+    $\varphi$ is $src$ crashes
+* **TRB1. Integrity** : If a prcess delivers a message $m$, then either $m$ is
+  $\varphi$ or $m$ was broadcasted by $src$
+* **TRB2. Validity** : If the sender $src$ is correct and broadcasts a message
+  $m$, then $src$ eventually delivers $m$
+* **TRB3. (Unifrom) Agreement** : For any message $m$, if a correct (any)
+  process delivers $m$, then every correct process delivers $m$
+* **TRB4. Termination** : Every correct process eventually delivers exactly one
+  message
+
+```da
+Implements: trbBroadcast (trb)
+Uses: 
+  BestEffortBroadcast (beb)
+  PerfectFailureDetector (P)
+  Consensus (cons)
+upon event <Init> do
+  prop := 0
+  correct := S
+upon event <trbBroadcast, m> do
+  trigger <bebBroadcast, m>
+upon event <crash, src> and (prop = 0) do
+  prop := phi
+upon event <bebDeliver, src, m> and (prop = 0) do
+  prop := m
+upon event (prop != 0) do
+  trigger <Propose, prop>
+upon event <Decide, decision> do
+  trigger <trbDeliver, src, decision>
+```
+* We give an algorithm that implements $P$ unsign TRB. More precisely, we assume
+  that every process $p_i$ can use an infinite number of instances of TRB where
+  $p_i$ is the sender $src$
+  1. Every process $p_i$ keeps on trbBroadcasting messages $m_{i1}, m_{i2}$ etc
+  2. If a process $p_k$ delivers $\varphi_i$, $p_k$ suspects $p_i$

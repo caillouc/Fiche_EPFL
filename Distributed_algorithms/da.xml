@@ -9,6 +9,11 @@
       <item>event</item>
       <item>procedure</item>
       <item>is</item>
+      <item>Write</item>
+      <item>Read</item>
+      <item>send</item>
+      <item>receive</item>
+
     </list>
 	<list name="code">
       <item>do</item>
