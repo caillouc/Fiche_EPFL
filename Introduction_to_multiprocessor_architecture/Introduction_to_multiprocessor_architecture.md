@@ -2,8 +2,6 @@
 title: Fiche Introduction to multiprocessor architecture
 author: Pierre Colson
 date: Saturday 30 October 2022
-output: pdf_document
-linkcolor: blue
 ---
 
 ---

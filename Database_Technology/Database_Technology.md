@@ -1,7 +1,6 @@
 ---
 title: Fiche Database
 author: Pierre Colson
-linkcolor: blue
 ---
 
 ---

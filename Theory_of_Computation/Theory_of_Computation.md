@@ -1,7 +1,6 @@
 ---
 title: Theory of Computation fiche
 author: Pierre Colson
-linkcolor: blue
 ---
 
 ---

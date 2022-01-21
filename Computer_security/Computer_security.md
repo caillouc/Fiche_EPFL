@@ -1,7 +1,6 @@
 ---
 title: Computer security fiche
 author: Pierre Colson
-linkcolor: blue
 ---
 
 ---

@@ -1,7 +1,6 @@
 ---
 title: Fiche Machine Learning
 author: Pierre Colson
-linkcolor: blue
 ---
 
 ---

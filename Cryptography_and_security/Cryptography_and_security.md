@@ -2,22 +2,13 @@
 title: Cryptography and security
 author: Pierre Colson
 date: Tuesday 04 January 2022
-output: pdf_document
-geometry:
-- margin=2cm
-highlight-style: tango
-pdf-engine: pdflatex
-toc:
-- toc-depth=3
-linkcolor: blue
-standalone: true
 ---
 
 ---
 
 **Markdown** version on
 [*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/Cryptography_and_security/Cryptography_and_security.md)  
-Compiled using [*pandoc*](https://pandoc.org/)  
+Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://github.com/caillouc/dotfile/blob/linux/gpdf.sh)  
 More fiches [*here*](https://github.com/caillouc/Fiche_EPFL)  
 
 # General

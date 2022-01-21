@@ -1,7 +1,6 @@
 ---
 title: Signal and System fiche
 author: Pierre Colson
-linkcolor: blue
 ---
 
 ---

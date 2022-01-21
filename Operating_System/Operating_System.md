@@ -1,7 +1,6 @@
 ---
 title: Fiche Operating System
 author: Pierre Colson
-linkcolor: blue
 ---
 
 ---

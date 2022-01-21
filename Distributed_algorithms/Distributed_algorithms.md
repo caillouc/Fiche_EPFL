@@ -2,22 +2,13 @@
 title: Distributed algorithms
 author: Pierre Colson
 date: Wednesday 05 January 2022
-output: pdf_document
-highlight-style: tango
-geometry:
-- margin=2.5cm
-pdf-engine: pdflatex
-toc:
-- toc-depth=3
-linkcolor: blue
-standalone: true
 ---
 
 ---
 
 **Markdown** verion on
 [*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/Distributed_algorithms/Distributed_algorithms.md)  
-Compiled using [*pandoc*](https://pandoc.org/)  
+Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://github.com/caillouc/dotfile/blob/linux/gpdf.sh)  
 More fiches [*here*](https://github.com/caillouc/Fiche_EPFL)  
 
 \clearpage

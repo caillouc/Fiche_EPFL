@@ -1,7 +1,6 @@
 ---
 title: Probalities and Statistics
 author: Pierre Colson
-linkcolor: blue
 ---
 
 ---

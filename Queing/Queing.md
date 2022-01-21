@@ -1,7 +1,6 @@
 ---
 title: Fiche Queuing 
 author: Pierre Colson
-linkcolor: blue
 ---
 
 ---
