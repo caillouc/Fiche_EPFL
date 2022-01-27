@@ -406,6 +406,7 @@ upon event p_round = self and broadcast = false and currentProposal not null do
 ## Algorithm 3
 
 * A <>$P$-based uniform algorithm assuming a correct majority
+  * <>$P$ $\Rightarrow$ Eventually Perfect Failure Detector
 * The processes alternate in the role of a coordinator until one of them
   succeeds in imposing a decision
 * A uniform consensus algorithm assuming
@@ -416,7 +417,7 @@ upon event p_round = self and broadcast = false and currentProposal not null do
 * <>$P$ ensures
   * **Strong completeness** : eventually every process that crashes is permanantly
     suspected by all correct processes
-  * **Eventaul strong accuracy** : eventually no correct process is suspected by
+  * **Eventual strong accuracy** : eventually no correct process is suspected by
     any process
     * Strong accuracy holds only after finite time
   * Correct processes may be falsely suspected a finite number of times
@@ -872,5 +873,3 @@ upon event <ucDecided, id, memb, vsdset> do
 
 * Using uniform reliable broadcast instead of best effort broadcast in the
   previous algorithms does not ensure the uniformity of the message delivery
-    
-
