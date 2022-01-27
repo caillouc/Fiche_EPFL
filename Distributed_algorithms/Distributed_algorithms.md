@@ -695,7 +695,7 @@ upon event <Decide, decision> do
 * **Request** : <Propose, v>
 * **Indication** : <Decide, v`>
 * **NBAC1. Agreement** : No two processes decide differently
-* **NC1C2. Termination** : Every correct process eventually decides
+* **NBAC2. Termination** : Every correct process eventually decides
 * **NBAC3. Commit-Validity** : $1$ can only be decided if all process propose
   $1$
 * **NBAC4. Abort-Validity** : $0$ can only be decided if some process crashes of
