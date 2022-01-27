@@ -36,6 +36,7 @@
       <item>forall</item>
       <item>emptySet</item>
       <item>and</item>
+	  <item>null</item>
 	  <item>to</item>
 	</list>
     <contexts>

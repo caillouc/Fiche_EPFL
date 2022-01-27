@@ -75,7 +75,7 @@ upon event <flp2pDeliver, src, m> do
 ```da
 Implements: PerfectLinks (pp2p)
 Uses: StubbornLinks (sp2p)
-upon event <Init> do delivered := emptySet
+upon event <Init> do delivered = emptySet
 upon event <pp2pSend, dest, m> do
   trigger <sp2Send, dest, m>
 upon event <sp2pDeliver, src, m> do
@@ -89,7 +89,7 @@ upon event <sp2pDeliver, src, m> do
 ## Best-effort Broadcast (beb)
 
 * **Request** : <bebBroadcast, m>
-* **Indication** : <bebDelilver, src, m>
+* **Indication** : <bebDeliver, src, m>
 * **BEB1. Validity** : If $p_i$ and $p_j$ are correct then every message
   broadcast by $p_i$ is eventually delivered by $p_j$
 * **BEB2. No duplication** : No message is delivered more than once
@@ -121,25 +121,25 @@ Uses:
   BestEffortBroadcast (beb)
   PerfectFailureDetector (P)
 upon event <Init> do
-  delivered := emptySet
-  correct := S
-  forall pi in S do from[pi] := emptySet
+  delivered = emptySet
+  correct = S
+  forall pi in S do from[pi] = emptySet
 upon event <rbBroadcast, m> do
-  delivered := delivered U {m}
+  delivered = delivered U {m}
   trigger <rbDeliver, self, m>
   trigger <bebBroadcast, [data, self, m]>
 upon event <crash, pi> do
-  correct := correct \{pi}
+  correct = correct \{pi}
   forall [pj, m] in from[pi] do
     trigger <bebBroadcast, [data, pj, m]>
 upon event <bebDeliver, pi, [data, pj, m]> do
   if m not in delivered then
-    delivered := delivered U {m}
+    delivered = delivered U {m}
     trigger <rbDeliver, pj, m>
     if pi not in correct then
       trigger <bebBroadcast, [data, pj, m]>
     else
-      from[pi] := from[pi] U {[pj, m]}
+      from[pi] = from[pi] U {[pj, m]}
 ```
 
 ## Uniform Reliable Broadcast (urb)
@@ -158,19 +158,19 @@ Uses:
   BestEffortBroadcast (beb)
   PerfectFailureDetector (P)
 upon event <Init> do
-  correct := S
-  delivered := forward := emptySet
-  ack[Message] := emptySet
+  correct = S
+  delivered = forward = emptySet
+  ack[Message] = emptySet
 upon event <urbBroadcast, m> do
-  forward := forward U {[self, m]}
+  forward = forward U {[self, m]}
   trigger <bebBroadcast, [data, self, m]>
 upon event <bebDeliver, pi, [data, pj, m]> do
-  ack[m] := ack[m] U {pi}
+  ack[m] = ack[m] U {pi}
   if [pi, m] not in forward then
-    forward := forward U {[pj, m]}
+    forward = forward U {[pj, m]}
     trigger <bebBroadcast, [data, pj, m]>
 upon event (for any [pj, m] in forward) <correct in ack[m]> and <m not in delivered> do
-  delivered := delivered U {m}
+  delivered = delivered U {m}
   trigger <urbDeliver, pj, m>
 ```
 
@@ -217,49 +217,49 @@ upon event (for any [pj, m] in forward) <correct in ack[m]> and <m not in delive
 Implements: ReliableCausalOrderBroadcast (rco)
 Uses : ReliableBroadcast (rb)
 upon event <Init> do
-  delivered := past := emptySet
+  delivered = past = emptySet
 upon event <rcoBroadcast, m> do
   trigger <rbBroadcast, [data, past, m]>
-  past := past U {[self, m]}
+  past = past U {[self, m]}
 upon event <rbDeliver, pi [data, pastm, m]> do
   if m not in delivered then
     forall [sn, n] in pastm do
       if n not in delivered then
         trigger <rcoDeliver, sn, n>
-        delivered := delivered U {n}
-        past := past U {[self, n]}
+        delivered = delivered U {n}
+        past = past U {[self, n]}
     trigger <rcoDeliver, pi, m>
-    delivered := delivered U {m}
-    past := past U {[pi, m]}
+    delivered = delivered U {m}
+    past = past U {[pi, m]}
 ```
 
 ```da
 Implements ReliableCausalOrderBroadcast (rco)
 Uses: ReliableBroadcast (rb)
 upon event <Init> do
-  forall pi in S: VC[pi] := 0
-  pending := emptySet
+  forall pi in S: VC[pi] = 0
+  pending = emptySet
 upon event <rcoBroadcast, m> do
   trigger <rcoDeliver, self, m>
   trigger <rbBroadcast, [data, VC, m]>
-  VC[self] := VC[self] + 1
+  VC[self] = VC[self] + 1
 upon event <rbDeliver, pj, [data, VCm, m]> do
   if pj not self then
-    pending := pending U (pj, [data, VCm, m])
+    pending = pending U (pj, [data, VCm, m])
     deliver-pending
 procedure deliver-pending is
   while (s, [data, VCm, m]) in pending do
     if forall pk: (VC[pk] >= VCm[pk]) do
-      pending := pending - (s, [data, VCm, m])
+      pending = pending - (s, [data, VCm, m])
       trigger <rcoDeliver, self, m>
-      VC[s] := VC[s] + 1
+      VC[s] = VC[s] + 1
 ```
 
 * These algo ensure causal reliable broadcast
 * If we replace reliabe broadcast with uniform reliabe broadcast, these algo
   would ensure uniform causal broadcast
 
-# Total Order Broadcast (tob)
+# Total Order Broadcast (to)
 
 * In **reliable** broadcast, the processes are free to deliver messages in any
   order they wish
@@ -281,20 +281,7 @@ procedure deliver-pending is
 * **(Uniform) Total order** : Let $m$ and $m'$ be any two messages. Let $p_i$ be
   any any (correct) process that delivers $m$ without having delivered $m'$.
   Then no (correct) process delivers $m'$ before $m$
-
-## (Uniform) Consensus
-
-* In the (uniform) consensus problem the processes propose values and need to
-  agree on one among these values
-* **Request** : <Propose, v>
-* **Indication** : <Decide, v'>
-* **C1. Validity** : Any value decided is a value proposed
-* **C2. (Uniform) Agreement** : No two correct (any) processes decide
-  differently
-* **C3. Termination** : Every correct process eventually decides
-* **C4. Integrity** : Every process decides at most once
-
-## Total Order (to)
+* Uses consensus (see next chapter)
 
 ```da
 Implements: TotalOrder (to)
@@ -302,25 +289,150 @@ Uses:
   ReliableBroadcast (rb)
   Consensus (cons)
 upon event <Init> do
-  unordered := delivered := emptySet
-  wait := false;
-  sn := 1
+  unordered = delivered = emptySet
+  wait = false;
+  sn = 1
 upon event <toBroadcast, m> do
   trigger <rbBroadcast, m>
 upon event <rbDeliver, sm, m> and (m not in delivered) do
-  unordered := unordered U {(sm, m)}
+  unordered = unordered U {(sm, m)}
 upon event (unordered not emptySet) and not wait do
-  wait := true
+  wait = true
   trigger <Propose, unordered>sn
 upon event <Decide, decided>sn do
-  unordered := unordered \ decided
-  ordered := deterministicSort(decided)
+  unordered = unordered \ decided
+  ordered = deterministicSort(decided)
   forall (sm, m) in ordered do
     trigger <toDeliver, sm, m>
-    delivered := delivered U {m}
-  sn := sn + 1
+    delivered = delivered U {m}
+  sn = sn + 1
   wait = false
 ```
+
+# Consensus
+
+* In the (uniform) consensus problem the processes propose values and need to
+  agree on one among these values
+* **Request** : <Propose, v>
+* **Indication** : <Decide, v`>
+* **C1. Validity** : Any value decided is a value proposed
+* **C2. (Uniform) Agreement** : No two correct (any) processes decide
+  differently
+* **C3. Termination** : Every correct process eventually decides
+* **C4. Integrity** : Every process decides at most once, No process decides
+  twice
+
+## Algorithm 1 (cons)
+
+* A $P$-based (fail-stop) consensus algorithm
+* The processes exchange and update proposals in rounds and decide on the value
+  of the non-suspected process with the smallest id
+* The processes go through rounds incrementally ($1$ to $n$) : in each round,
+  the process with the id corresponding to that round is the leader of the round
+* The leader of a round decides its current proposal and broadcast it to all
+* A process that is not leader in a round waits to deliver the proposal of the
+  leader in that round to adopt, or to suspect the leader
+
+```da
+Implements: Consensus (cons)
+Uses:
+  BestEffortBroadcast (beb)
+  PerfectFailureDetector (P)
+upon event <Init> do
+  suspected = emptySet
+  round = 1
+  currentProposal = null
+  broadcast = delivered[] = false
+upon event <crash, pi> do
+  suspected := suspected U {pi}
+upon event <Propose, v> do
+if currentPoposal = null then
+  currentPoposal = v
+upon event <bebDeliver, p_round, value> do
+  currentPoposal = value
+  delivered[round] = true
+upon event delivered[round] = true or p_round in suspected do
+  round = round + 1
+upon event p_round = self and broadcasted = false and currentPoposal not null do
+  trigger <Decide, currentPoposal>
+  trigger <bebBroadcast, currentPoposal>
+  broadcast = true
+```
+
+## Algorithm 2 (ucons)
+
+* A $P$-based (fail-stop) uniform consenus algorithm
+* The processes exchange and update proposal in rounds, and after $n$ rounds
+  decide on the current proposal value
+* Implements uniform consensus
+* The processes go through rounds incrementally ($1$ to $n$): in each round $I$,
+  process $p_I$ sends its currentProposal to all
+* A process adpots any currentProposal it receives
+* Processes decide on their currentProposal values at the end of round $n$
+
+```da
+Implements: Uniform Consensus (ucons)
+Uses :
+  BestEffortBroadcast (beb)
+  PerfectFailureDetector (P)
+upon event <Init> do
+  suspected = emptySet
+  round = 1
+  currentProposal = null
+  broadcast = delivered[] = false
+  decided = false
+upon event <crash, pi> do
+  suspected = suspected U {pi}
+upon event <Propose, v> do
+  if currentProposal = null then
+    currentProposal = v
+upon event <bebDeliver, p_round, value> do
+  currentProposal = value
+  delivered[round] = true
+upon event delivered[round] = true or p_round in suspected do
+  if round = n and decided = false then
+    trigger <Decide, currentProposal>
+    decided = true
+  else
+    round = round + 1
+upon event p_round = self and broadcast = false and currentProposal not null do
+  trigger <bebBroadcast, currentProposal>
+  broadcast = true
+```
+
+## Algorithm 3
+
+* A <>$P$-based uniform algorithm assuming a correct majority
+* The processes alternate in the role of a coordinator until one of them
+  succeeds in imposing a decision
+* A uniform consensus algorithm assuming
+  * A correct majority
+  * A <>$P$ failure detector
+* The processes alternate in the role of a phase coordinator until one of them
+  suceeds in imposing a decision
+* <>$P$ ensures
+  * **Strong completeness** : eventually every process that crashes is permanantly
+    suspected by all correct processes
+  * **Eventaul strong accuracy** : eventually no correct process is suspected by
+    any process
+    * Strong accuracy holds only after finite time
+  * Correct processes may be falsely suspected a finite number of times
+  * This breaks consensus algorithm 1 and 2
+* This algorithm is also round based : process move incrementally from one round
+  to the other
+* Process $p_i$ is leader in every round $k$ such that $k mod N = i$
+* In such a round, $p_i$ tries to decide
+  * $p_i$ succeeds if it is not suspected (process that suspect $p_i$ inform
+    $p_i$ and move to the next round, $p_i$ does so as well)
+  * If $p_i$ succeeds, $p_i$ uses a reliable broadcast to send the decision to
+    all (the reliability of the broadcast is important here to preclude the case
+    where $p_i$ crashes, some other porcesses delivers the message and stop
+    while rest keeps going without majority)
+  1. $p_i$ selects among a majority the latest adopted value (lastest with
+     respect to the round in which the value is adopted)
+  2. $p_i$ imposes that value at a majority : any process in that majority
+     adopts that value - $p_i$ fails if it is suspected
+  3. $p_i$ decides and broadcasts the decision to all
 
 # Shared Memory
 
@@ -361,7 +473,7 @@ Read() at pi
 ```da
 At pi
   when receive [W, w] from pj
-    vi := v
+    vi = v
     send [ack] to pj
 ```
 
@@ -387,7 +499,7 @@ Read() at pi
   rsi ++
   send [R, rsi] to all
   when receive [R, rsi, snj, vj] from majority
-    v := vj with the largest snj
+    v = vj with the largest snj
     return v
 ```
 
@@ -396,7 +508,7 @@ At pi
   when receive [W, ts1, v] from p1
     if ts1 > sni then
       vi = v
-      sni := ts1
+      sni = ts1
       send[W, ts1, ack] to p1
   when receive [R, rsj] from pj
     send [R, rsj, sni, vi] to pj
@@ -441,8 +553,8 @@ Read() at pi
 At pi
   When pi receive [W, ts, v] from pj
     if ts > sni then
-      vi := v
-      sni := ts
+      vi = v
+      sni = ts
     send [ack] to pj
 ```
 
@@ -454,7 +566,7 @@ Write(v) at pi
   forall pj wait until either
     receive [W, snj] or
     suspect [pj]
-  (sn, id) := (highest snj + 1, i)
+  (sn, id) = (highest snj + 1, i)
   send [W, (sni, id), v] to all
   forall pj wait until either
     receive [W, (sn, id), ack] or
@@ -488,13 +600,13 @@ T1 :
 T2 :
   when receive [W, (snj, idj), v] from pj
     if (snj, idj) > (sn, id) then
-      vi := v
+      vi = v
       (sn, id) = (snj, idj)
     send [W, (sn, id), ack] to pj
   when receive [W, (snj, idj), v] from pj
     if (snj, idj) > (sn, id) then
-      vi := v
-      (sn, id) := (snj, idj)
+      vi = v
+      (sn, id) = (snj, idj)
     send [W, (sn, id), ack] to pj
 ```
 
@@ -542,14 +654,14 @@ Uses:
   PerfectFailureDetector (P)
   Consensus (cons)
 upon event <Init> do
-  prop := 0
-  correct := S
+  prop = 0
+  correct = S
 upon event <trbBroadcast, m> do
   trigger <bebBroadcast, m>
 upon event <crash, src> and (prop = 0) do
-  prop := phi
+  prop = phi
 upon event <bebDeliver, src, m> and (prop = 0) do
-  prop := m
+  prop = m
 upon event (prop not 0) do
   trigger <Propose, prop>
 upon event <Decide, decision> do
@@ -578,7 +690,7 @@ upon event <Decide, decision> do
 * Unlike consensus, the processes here seek to decide $1$ but every process has
   a veto right
 * **Request** : <Propose, v>
-* **Indication** : <Decide, v'>
+* **Indication** : <Decide, v`>
 * **NBAC1. Agreement** : No two processes decide differently
 * **NC1C2. Termination** : Every correct process eventually decides
 * **NBAC3. Commit-Validity** : $1$ can only be decided if all process propose
@@ -593,19 +705,19 @@ Uses:
   PerfectFailureDetector (P)
   UniformConsensus (uniCons)
 upon event <Init> do
-  prop := 1
-  delivered := emptySet
-  correct := pi
+  prop = 1
+  delivered = emptySet
+  correct = pi
 upon evnet <crash, pi> do
-  correct := correct \{pi}
+  correct = correct \{pi}
 upon event <Propose, v> do
   trigger <bebBroadcast, v>
 upon event <bebDeliver, pi, v> do
-  delivered := delivered U {pi}
-  prop := prop * v
+  delivered = delivered U {pi}
+  prop = prop * v
 upon event correct \ deliver = empty do
   if correct not pi then
-    prop := 0
+    prop = 0
   trigger <uncPropose, prop>
 upon event <uncDecide, decision> do
   trigger <Decide, decision>
@@ -642,17 +754,17 @@ Uses:
   PerfectFailureDetector (P)
   UniformConsensus (Ucons)
 upon event <Init> do
-  view := (O, S)
-  correct := S
-  wait := true
+  view = (O, S)
+  correct = S
+  wait = true
 upon event <crash, pi> do
-  correct := corrext \{pi}
+  correct = corrext \{pi}
 upon event (correct < view.memb) and (wait = false) do
-  wait := true
+  wait = true
   trigger <ucPropose, (view.id + 1, correct)>
 upon event <ucDecide, (id, memb)> do
-  view := (id, memb)
-  wait := false
+  view = (id, memb)
+  wait = false
   trigger <membView, view>
 ```
 
@@ -679,66 +791,66 @@ Uses:
   TerminationReliableBroadcast (trb)
   BestEffortBroadcast (beb)
 upon event <Init> do
-  view := (0, S) 
-  nextView := ()
-  pending := delivered := trbDone := emptySet
-  flushing := blocked := false
+  view = (0, S)
+  nextView = ()
+  pending = delivered = trbDone = emptySet
+  flushing = blocked = false
 upon event <vsBroadcast, m> and (blocked = false) do
-  delivered := delivered U {m}
+  delivered = delivered U {m}
   trigger <vsDeliver, self, m>
   trigger <bebBroadcast, [data, view.id, m]>
 upon event <bebDeliver, src, [data, vid, m]> do
   if (view.id = vid) and (m not in delivered) and (blocked = false) then
-    delivered := delivered U {m}
+    delivered = delivered U {m}
     trigger <vsDeliver, src, m>
 upon event <membView, V> do
   addtoTail(pending, V)
-upon event (pending not emptySet) and (flushing = false) do 
-  nextView := removeFromHead(pending)
-  flushing := true
+upon event (pending not emptySet) and (flushing = false) do
+  nextView = removeFromHead(pending)
+  flushing = true
   trigger <vsBlock>
 upon event <vsBlockOk> do
-  blocked := true
-  trbDone := emptySet 
+  blocked = true
+  trbDone = emptySet
   trigger <trbBroadcast, self, (view.id, delivered)>
 upon event <trbDeliver, p, (vid, del)> do
-  trbDone := trbDone U {p}
+  trbDone = trbDone U {p}
   forall m in del and m not in delivered do
-    delivered := delivered U {m}
+    delivered = delivered U {m}
     trigger <vsDeliver, src, m>
 upon event (trbDone = view.memb) and (blocked = true) do
-  view := nextView
-  flushing := blocked := false
-  delivered := emptySet
+  view = nextView
+  flushing = blocked = false
+  delivered = emptySet
   trigger <vsView, view>
 ```
 
 ```da
 Implements: ViewSynchrony (vs)
-Uses: 
+Uses:
   UniformConsensus (uc)
   BestEffortBroadcast (beb)
   PerfectFailureDetector (P)
 upon event <Init> do
-  view := (O, S)
-  correct := S
-  flushing := blocked := false
-  delivered := dset := emptySet
+  view = (O, S)
+  correct = S
+  flushing = blocked = false
+  delivered = dset = emptySet
 upon event <vsBroadcast, m> and (blocked = false) do
-  delivered := delivered U {m}
+  delivered = delivered U {m}
   trigger <vsDeliver, self, m>
   trigger <bebBroadcast, [data, view.id, m]>
 upon event <bebDeliver, src, [data, vid, m]> do
   if (view.id = vid) and (m not in delivered) and (blocked = false) then
-    delivered := delivered U {m}
+    delivered = delivered U {m}
     trigger <vsDeliver, src, m>
 upon event <crash, p> do
-  correct := correct \{p}
+  correct = correct \{p}
   if flushing = false then
     flushing = true
     trigger <vsBlock>
 upon event <vsBlockOk> do
-  blocked := true
+  blocked = true
   trigger <bebBroadcast, [DSET, view.id, delivered]>
 upon event <bebDeliver, src, [DSET, vid, del]> do
   dset = dset U (src, del)
@@ -747,11 +859,11 @@ upon event <bebDeliver, src, [DSET, vid, del]> do
 upon event <ucDecided, id, memb, vsdset> do
   forall (p, mset) in vsdest and p in memb do
     forall (src, m) in mset and m not in delivered do
-      delivered := delivered U {m}
+      delivered = delivered U {m}
       trigger <vsDeliver, src, m>
-    viewx := (id, memb)
-    flushing := blocked := false
-    dset := delivered := emptySet
+    viewx = (id, memb)
+    flushing = blocked = false
+    dset = delivered = emptySet
     trigger <vsView, view>
 ```
 
