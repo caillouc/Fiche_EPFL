@@ -28,6 +28,7 @@ More fiches [*here*](https://github.com/caillouc/Fiche_EPFL)
 
 ## Failure Detector
  
+* **Indication** : <Crash ,p>
 * A **Failure detector** is a distributed oracle that provides processes with
   suspicions about crashed processes
   * It is implemented using *timing assumptions*
