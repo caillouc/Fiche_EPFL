@@ -712,16 +712,16 @@ Uses:
 upon event <Init> do
   prop = 1
   delivered = emptySet
-  correct = pi
-upon evnet <crash, pi> do
-  correct = correct \{pi}
+  correct = PI
+upon event <crash, pi> do
+  correct = correct \ {PI}
 upon event <Propose, v> do
   trigger <bebBroadcast, v>
 upon event <bebDeliver, pi, v> do
   delivered = delivered U {pi}
   prop = prop * v
-upon event correct \ deliver = empty do
-  if correct not pi then
+upon event correct \ delivered = empty do
+  if correct different PI then
     prop = 0
   trigger <uncPropose, prop>
 upon event <uncDecide, decision> do
