@@ -150,7 +150,7 @@ upon event <bebDeliver, pi, [data, pj, m]> do
 * **URB2** = BEB2
 * **URB3** = BEB3
 * **URB4. Uniform Agreement** : For any message $m$, if any process delivers
-  $m$, then every process delivers $m$
+  $m$, then every correct process delivers $m$
 
 ```da
 Implements: UniformBroadcast (urb)
@@ -279,7 +279,7 @@ procedure deliver-pending is
 * **RB4. (Uniform) Agreement** : For any message $m$. If a correct (any) process
   delivers $m$, then every correct process delivers $m$
 * **(Uniform) Total order** : Let $m$ and $m'$ be any two messages. Let $p_i$ be
-  any any (correct) process that delivers $m$ without having delivered $m'$.
+  any (correct) process that delivers $m$ without having delivered $m'$.
   Then no (correct) process delivers $m'$ before $m$
 * Uses consensus (see next chapter)
 
