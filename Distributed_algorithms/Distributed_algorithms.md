@@ -25,17 +25,20 @@ More fiches [*here*](https://github.com/caillouc/Fiche_EPFL)
   * **Omissions** : The process omits to send messages it is supposed to send
   * **Arbitrary** : The process sends messages it is not supposed to send
 * A **correct** process is a process that does not fail (that does not crash)
+
+## Failure Detector
+ 
 * A **Failure detector** is a distributed oracle that provides processes with
   suspicions about crashed processes
   * It is implemented using *timing assumptions*
-  * **Perfect** :
-    * *Strong Completness* : Eventually, every process that crashes is
-      permanantly suspected by every other correct process
-    * *String Accuracy* : No process is suspected before it crashes
-  * **Eventually Perfect** :  
-    * *Strong Completness*
-    * *Eventually Strong Accuracy* : Eventually, no correct process is ever
-      suspected
+* **Perfect Failure Detector** :
+  * **Strong Completness** : Eventually, every process that crashes is
+    permanantly suspected by every other correct process
+  * **Strong Accuracy** : No process is suspected before it crashes
+* **Eventually Perfect Failure Dectector** :  
+  * **Strong Completness**
+  * **Eventually Strong Accuracy** : Eventually, no correct process is ever
+    suspected
 
 ## Fair-loss Links
 
