@@ -9,4 +9,3 @@ command="pandoc ./Distributed_algorithms.md \
 	--standalone \
 	-o ./Distributed_algorithms.pdf"
 eval $command
-open "./Distributed_algorithms.pdf"

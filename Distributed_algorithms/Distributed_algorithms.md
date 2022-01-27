@@ -88,8 +88,10 @@ upon event <sp2pDeliver, src, m> do
 
 ## Best-effort Broadcast (beb)
 
+* **Request** : <bebBroadcast, m>
+* **Indication** : <bebDelilver, src, m>
 * **BEB1. Validity** : If $p_i$ and $p_j$ are correct then every message
-  broadcast by $p_i$ is eventually delivered by $p_y$
+  broadcast by $p_i$ is eventually delivered by $p_j$
 * **BEB2. No duplication** : No message is delivered more than once
 * **BEB3. No creation** : No messages is delivered unless it was broadcast
 
@@ -105,9 +107,11 @@ upon event <pp2pDeliver, pi, m> do
 
 ## Reliable Broadcast (rb)
 
+* **Request** : <rbBroadcast, m>
+* **Indication** : <rbDeliver, src, m>
 * **RB1** = BEB1
 * **RB2** = BEB2
-* **RB3** = RB3
+* **RB3** = BEB3
 * **RB4. Agreement** : For any message $m$, if any correct process delivers
   $m$, then every correct process delivers $m$
 
@@ -140,6 +144,8 @@ upon event <bebDeliver, pi, [data, pj, m]> do
 
 ## Uniform Reliable Broadcast (urb)
 
+* **Request** : <urbBroadcast, m>
+* **Indication** : <urbDeliver, src, m>
 * **URB1** = BEB1
 * **URB2** = BEB2
 * **URB3** = BEB3
@@ -186,16 +192,22 @@ upon event (for any [pj, m] in forward) <correct in ack[m]> and <m not in delive
 
 ## Causal Broadcast
 
+* **Request** : <coBroadcast, m>
+* **Indication** : <coDeliver, src, m>
 * **CO** : If any process $p_i$ delivers a message $m_2$, then $p_i$ must have
   delivered every message $m_1$ such that $m_1 \rightarrow m_2$
 
 ## Reliable Causal Broadcast (rcb)
 
+* **Request** : <rcoBroadcast, m>
+* **Indication** : <rcoDeliver, src, m>
 * **RB1**, **RB2**, **RB3**, **RB4**
 * **CO**
 
 ## Uniform Causal Broadcast (ucb)
 
+* **Request** : <ucoBroadcast, m>
+* **Indication** : <ucoDeliver, src, m>
 * **URB1**, **URB2**, **URB3**, **URB4**
 * **CO**
 
@@ -258,7 +270,8 @@ procedure deliver-pending is
 * In **total order** broadcast, the processes must deliver all messages
   according to the same order(i.e. the order is now total)
   * This order does not need to respect causality (or event FIFO ordering)
-
+* **Request** : <toBroadcast, m>
+* **Indication** : <toDeliver, src, m>
 * **RB1. Validity** : If $p_i$ and $p_j$ are correct, then every message
   broadcast by $p_i$ is eventually delivered by $p_j$
 * **RB2. No duplication** : No message is delivered more than once
@@ -273,7 +286,8 @@ procedure deliver-pending is
 
 * In the (uniform) consensus problem the processes propose values and need to
   agree on one among these values
-
+* **Request** : <Propose, v>
+* **Indication** : <Decide, v'>
 * **C1. Validity** : Any value decided is a value proposed
 * **C2. (Uniform) Agreement** : No two correct (any) processes decide
   differently
@@ -492,7 +506,7 @@ T2 :
   * In the N-N algorithm, the writers determines first the timestamp using a
     majority
 
-# Terminating Reliable Broadcast (TRB)
+# Terminating Reliable Broadcast (trb)
 
 * Like reliable broadcast, terminating reliable broadcast (TRB) is a
   communication primitive used to disseminate a message among a set of processes
@@ -510,6 +524,8 @@ T2 :
     $\varphi$)
   * The other processes need to deliver $m$ if $src$ is correct but may deliver
     $\varphi$ is $src$ crashes
+* **Request** : <trbBroadcast, m>
+* **Indication** : <trbDeliver, p, m>
 * **TRB1. Integrity** : If a prcess delivers a message $m$, then either $m$ is
   $\varphi$ or $m$ was broadcasted by $src$
 * **TRB2. Validity** : If the sender $src$ is correct and broadcasts a message
@@ -545,7 +561,7 @@ upon event <Decide, decision> do
   1. Every process $p_i$ keeps on trbBroadcasting messages $m_{i1}, m_{i2}$ etc
   2. If a process $p_k$ delivers $\varphi_i$, $p_k$ suspects $p_i$
 
-# Non-Blocking Atomic Commit (NBAC)
+# Non-Blocking Atomic Commit (nbac)
 
 * A **transaction** is an atomic program describing a sequence of accesses to shared
   and  distributed information
@@ -561,6 +577,8 @@ upon event <Decide, decision> do
 * The decision reflects the contract with the user
 * Unlike consensus, the processes here seek to decide $1$ but every process has
   a veto right
+* **Request** : <Propose, v>
+* **Indication** : <Decide, v'>
 * **NBAC1. Agreement** : No two processes decide differently
 * **NC1C2. Termination** : Every correct process eventually decides
 * **NBAC3. Commit-Validity** : $1$ can only be decided if all process propose
@@ -607,6 +625,7 @@ upon event <uncDecide, decision> do
   about failures
 * Unlike with a perfect failure detector, the information about failures are
   **coordinated** : the processes install the same sequence of views
+* **Indication** : <membView, V>
 * **Memb1. Local Monotonicity** : if a process installs view $(j, M)$ after
   installing $(k, N)$, then $j > k$ and $M < N$
 * **Memb2. Agreement** : no two porcesses install views $(j, M)$ and $(j, M')$
@@ -643,6 +662,8 @@ upon event <ucDecide, (id, memb)> do
   combination of group membership and reliable broadcast
   * Ensures that the delivery of messages is coordinated with the installation
     of views
+* **Request** : <vsBroadcast, m> (\<vsBlockOk\>)
+* **Indication** : <vsDeliver, src, m>, <vsView, V> (\<vsBlock\>)
 * **Memb1**, **Memb2**, **Memb3**, **Memb4**, **RB1**, **RB2**, **RB3**, **RB4**
 * **VS** : a message is **vsDelivered** in the view where it is **vsBroadcast**
 * If the application keeps **vsBroadcasting** messages, the **view synchrony**
