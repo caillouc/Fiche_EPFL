@@ -26,6 +26,10 @@ More fiches [*here*](https://github.com/caillouc/Fiche_EPFL)
 * **Network layer** provides full connectivity
   * **IPv4** (32 bits)
   * **IPv6** (128 bits)
+* **IPv6**
+  * The 3 first blocks or more are the routing prefix
+  * The 4th block or fewer is the subnet id
+  * The 4 first blocks are the network prefix
 * Data is broken into chunks called **IP packets** of size $\leq 1500$ bytes
 * **Names** are human readable synonyms for IPv4 and IPv6 address
   * Mapped to address by **DNS** servers
@@ -905,7 +909,7 @@ More fiches [*here*](https://github.com/caillouc/Fiche_EPFL)
 * TCP offers a strict streaming service and requires 3 ways handshake
 * Other transport layer protocol exist bur their use is marginal : e.g. SCTP
   (reliable + message based)
-* Some application layer frameworks are subsititute to TCP for some application : 
+* Some application layer frameworks are subsititute to TCP for some application :
   QUIC (reliable and message based), websockets
 
 ## IP multicast
