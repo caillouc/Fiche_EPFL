@@ -431,7 +431,7 @@ upon event p_round = self and broadcast = false and currentProposal not null do
     $p_i$ and move to the next round, $p_i$ does so as well)
   * If $p_i$ succeeds, $p_i$ uses a reliable broadcast to send the decision to
     all (the reliability of the broadcast is important here to preclude the case
-    where $p_i$ crashes, some other porcesses delivers the message and stop
+    where $p_i$ crashes, some other processes delivers the message and stop
     while rest keeps going without majority)
   1. $p_i$ selects among a majority the latest adopted value (lastest with
      respect to the round in which the value is adopted)
@@ -761,7 +761,7 @@ Uses:
 upon event <Init> do
   view = (O, S)
   correct = S
-  wait = true
+  wait = false
 upon event <crash, pi> do
   correct = corrext \{pi}
 upon event (correct < view.memb) and (wait = false) do
