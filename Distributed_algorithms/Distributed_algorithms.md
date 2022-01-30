@@ -760,7 +760,7 @@ upon event <Init> do
   wait = false
 upon event <crash, pi> do
   correct = corrext \{pi}
-upon event (correct < view.memb) and (wait = false) do
+upon event (view.memb > correct) and (wait = false) do
   wait = true
   trigger <ucPropose, (view.id + 1, correct)>
 upon event <ucDecide, (id, memb)> do
