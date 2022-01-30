@@ -406,10 +406,6 @@ upon event p_round = self and broadcast = false and currentProposal not null do
 
 ## Algorithm 3
 
-* A <>$P$-based uniform algorithm assuming a correct majority
-  * <>$P$ $\Rightarrow$ Eventually Perfect Failure Detector
-* The processes alternate in the role of a coordinator until one of them
-  succeeds in imposing a decision
 * A uniform consensus algorithm assuming
   * A correct majority
   * A <>$P$ failure detector
@@ -425,7 +421,7 @@ upon event p_round = self and broadcast = false and currentProposal not null do
   * This breaks consensus algorithm 1 and 2
 * This algorithm is also round based : process move incrementally from one round
   to the other
-* Process $p_i$ is leader in every round $k$ such that $k mod N = i$
+* Process $p_i$ is leader in every round $k$ such that $k \mod N = i$
 * In such a round, $p_i$ tries to decide
   * $p_i$ succeeds if it is not suspected (process that suspect $p_i$ inform
     $p_i$ and move to the next round, $p_i$ does so as well)
