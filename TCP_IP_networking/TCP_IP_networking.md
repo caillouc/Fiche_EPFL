@@ -468,6 +468,10 @@ More fiches [*here*](https://github.com/caillouc/Fiche_EPFL)
 * We say that a feasible allocation $x$ is **proportionally fair** if all
   allocation is proportionally fair if for any other allocation, the total *rate
   of change* is $\leq$ 0
+  * A proportionally fait allocation is Pareto-efficient
+  * Given a set of constraints for the rates that is convex : The proportionally
+    fair allocation *exists* and is *unique*. It is obtain by maximazing :
+    $\sum_i \log x_i$
 * **Utility fairness** : One can interpret proportional fairness as the
   allocation that maximizes a global utility
 * **Congestion control implementation**
