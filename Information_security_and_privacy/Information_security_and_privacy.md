@@ -7,8 +7,8 @@ date: Monday 03 January 2022
 ---
 
 **Markdown** verion on
-[*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/Information_security_and_privacy/Information_security_and_privacy.md); Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://github.com/caillouc/dotfile/blob/linux/gpdf.sh)  
-More fiches [*here*](https://github.com/caillouc/Fiche_EPFL)  
+[*github*](https://github.com/caillouc/Fiche_EPFL/blob/main/Information_security_and_privacy/Information_security_and_privacy.md?plain=1)  
+Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://github.com/caillouc/dotfile/blob/linux/gpdf.sh)  
 
 \clearpage
 

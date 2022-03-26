@@ -7,9 +7,8 @@ date: Saturday 30 October 2022
 ---
 
 **Markdown** version on
-[*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/Introduction_to_multiprocessor_architecture/Introduction_to_multiprocessor_architecture.md)  
+[*github*](https://github.com/caillouc/Fiche_EPFL/blob/main/Introduction_to_multiprocessor_architecture/Introduction_to_multiprocessor_architecture.md?plain=1)  
 Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://github.com/caillouc/dotfile/blob/linux/gpdf.sh)  
-More fiches [*here*](https://github.com/caillouc/Fiche_EPFL)  
 
 # General
 

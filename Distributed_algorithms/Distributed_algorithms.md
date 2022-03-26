@@ -7,9 +7,8 @@ date: Wednesday 05 January 2022
 ---
 
 **Markdown** verion on
-[*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/Distributed_algorithms/Distributed_algorithms.md)  
-Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://github.com/caillouc/dotfile/blob/linux/gpdf.sh)  
-More fiches [*here*](https://github.com/caillouc/Fiche_EPFL)  
+[*github*](https://github.com/caillouc/Fiche_EPFL/blob/main/Distributed_algorithms/Distributed_algorithms.md?plain=1)  
+Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://github.com/caillouc/Fiche_EPFL/blob/main/Distributed_algorithms/gpdf_da.sh)  
 
 \clearpage
 

@@ -7,9 +7,8 @@ date: Tuesday 04 January 2022
 ---
 
 **Markdown** version on
-[*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/Cryptography_and_security/Cryptography_and_security.md)  
+[*github*](https://github.com/caillouc/Fiche_EPFL/blob/main/Cryptography_and_security/Cryptography_and_security.md?plain=1)  
 Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://github.com/caillouc/dotfile/blob/linux/gpdf.sh)  
-More fiches [*here*](https://github.com/caillouc/Fiche_EPFL)  
 
 # General
 

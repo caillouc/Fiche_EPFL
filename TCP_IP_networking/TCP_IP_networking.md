@@ -7,9 +7,8 @@ date: Thursday 06 January 2022
 ---
 
 **Markdown** version on
-[*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/TCP_IP_networking/TCP_IP_networking.md)  
+[*github*](https://github.com/caillouc/Fiche_EPFL/blob/main/TCP_IP_networking/TCP_IP_networking.md?plain=1)  
 Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://github.com/caillouc/dotfile/blob/linux/gpdf.sh)  
-More fiches [*here*](https://github.com/caillouc/Fiche_EPFL)  
 
 \clearpage
 

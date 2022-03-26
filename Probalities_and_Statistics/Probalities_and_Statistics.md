@@ -6,9 +6,8 @@ author: Pierre Colson
 ---
 
 **Markdown** version on
-[*github*](https://raw.githubusercontent.com/caillouc/Fiche_EPFL/main/Probalities_and_Statistics/Probalities_and_Statistics.md)  
+[*github*](https://github.com/caillouc/Fiche_EPFL/blob/main/Probalities_and_Statistics/Probalities_and_Statistics.md?plain=1)  
 Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://github.com/caillouc/dotfile/blob/linux/gpdf.sh)  
-More fiches [*here*](https://github.com/caillouc/Fiche_EPFL)  
 
 # General Stuff
 
