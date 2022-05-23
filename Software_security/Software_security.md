@@ -138,7 +138,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
       their update policies, risk analysis on dependencies
   * **Design** : the classic design phase focuses on functionality requirements.
     here we make security concerns an integral part of the analysis
-    * Continuously **update threat model** as requirements change 
+    * Continuously **update threat model** as requirements change
     * **Secuity design review** : a major milestones, review security design and
       its interaction with functionality/requirements
     * **Design documentation** : up-to-date document of requirements and
@@ -152,19 +152,19 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     * **Vulnerability scanning** of external dependencies for exploits
     * **Unit tests** ensure functionality/security across components
     * **Accountability** : use a source code/version control system
-    * **Coding Standards** : assertions and documentation 
+    * **Coding Standards** : assertions and documentation
     * **Continuous integration** : run unit tests, static analysis, and linter
       whenver code is checked in
   * **Testing** : Completed components are rigorously tested before they are
     finally integrated into the prototype
     * **Fuzzing** is a form of probabilistic test integration
     * **Dynamic analysis** complements fuzzing with heavy-weight tests based on
-      symbolic execution and models 
+      symbolic execution and models
     * **Third party penetration testing** provides external validation and clean
       slate testing
   * **Release** : Before release of the final prorotype, verify the base
     assumptions from the initial requirements analysis and design
-    * **Security review** : check for compliance of security properties 
+    * **Security review** : check for compliance of security properties
     * **Privacy review** : check for privacy policy complicance
     * **Review all licensing agreements**
   * **Maintenance** : Afte shipping software, continuously maintain security
@@ -173,16 +173,139 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     * **Provide vulnerability disclosure contacts** through, e.g. a bu bounty
       program or a least a public contact
     * **Regression testing** : whenever an update is deployed recheck security
-      and functionality requirements 
+      and functionality requirements
     * **Deploy updates securly**
 
 # Policies and Attacks
 
 ## Security prolicies
 
-## Bug, a violation of a security policy
+* A **policiy** is a deliberate system of principle to guide decisions and
+  achieve rational outcomes. A policy is a statment of intent, and is
+  implemented as a procedure of protocol.
+* **Isolation** is the process or fact of isolating  or being isolated. Two
+  components are isolated if their intercations are resitrited.
+* **Least privilege** ensures that each components has the minimal amount of
+  privileges to function. If any privilege is removed, the component stops
+  working
+* **Compartmentalization** General technique of separating two more parts of a
+  system to prevent malfunctions from spreading between or amoung them
+  * Requires combination of isolation and least privilege
+  * String policy to contain faults to single components
+* **Memory safety** is a property that ensures that all memory accesses adhere
+  to the semantics defined by the source programming language
+  * Memory unsafe languages like C/C++ cannot enforce memory safety. Data
+    accesses can occur through stale/illegal pointers
+  * Memory safety prohibits buffer overflows, NULL pointer dereferences, use
+    after free, use of uninitialized memory, or double free
+  * A program is memoryy safe, if all possible excecutions of the program are
+    memory safe
+  * Runtime environment is memory safe, if all runnable programs are memory safe
+  * A programming language is memory safe, if all expressible programs are
+    memory safe
+* Every memory safety is a bug
+* A bug who's input can be attacker-controlled is a vulnerability
+* The goals of the attack depends on your threat model
+* **Memory safety violation** rely in two steps
+  * Pointer foes out of bound or become dangling
+  * The pointer is deferenced (used for read or write)
+* **Spacial memory safety** is a property that ensures that all memory
+  dereferences are within boudns of their pointer's valid object.
+* **Temporal memory safety** is a property that ensures that all memory
+  dereferences are vamid at the time of the dereference
+* Policies defferences
+  * **Object based** policies strore metadata (size, location) for each
+    allocated object (none for pointer)
+    * Allow you to check if an access targets a valid object
+    * Cannot distinguish different pointers
+    * Trade lower security for lower overhead
+  * **Pointer based** polices strore metadata for each pointers
+    * Allow you to verify if each access is correct for each pointer
+ * C/C++ **softbound** : compiler based instrumentation to enforce memory safety
+   for C/C++
+   * Initialize(disjoint) metadata for pointer when it is assigned
+   * Assignment covers both creation of pointers and propgation
+   * Check bounds whenever pointer is dereferenced
+* Temporal memory safety is orthogonal to spacial memory safety
+  * The same memory area can be allocated to new object
+
+* **CETS** leverages memory object versioning. Each allocated memory object and
+  pointer is assigned a unique version. Upon dereference, check if the pointer
+  version is equal to the version of the memory object
+  * Two failure versions
+    * Area was deallocated and version is smaller
+    * Are was reallocated to new object and the vesion is larger
+* **Type safe** code accessed only the memory locations it is authorized to
+  access.
+
+## Software bugs
+
+* **Attack primitive** are building blocks for exploits
+* Software bugs map to attack primitives
+* A chain of attack primitive results in an **exploit**, the underlying bugs of
+  the attack primitives become vunlnerabilites
+> nothing more in the slides ...
 
 ## Attack vectors
+
+* **Denial of service** (DoS): Prohibit legit use of a service by either causing
+  abnormal service termination or overwhelming the service with a large number
+  of duplicate/unnecessary requests so that legit requests can no longer be
+  served
+* **Leak information**: An abnormal transfer of sensitive information to the
+  attacker. An information leak abuses an illegal, implicit, or unintended
+  transfer of information to pass sensitive data to the attacker who should not
+  have access to that data
+  * Outout sensitive data
+* **Code execution** allows the attacker to break out the restricted computation
+  available through the application and execute arbitrary code instead. This can
+  be achieved by (i) injecting new code, or (ii) repurposing existing code
+  through different means
+  * **Control flow Hijacking** is attack primitive that allows the adversary to
+    redirect control flow to locations that would not be reached in a benign
+    execution. It requires :
+    * Knowledge of the location of the code pointer
+    * Knowledge of the code target
+    *  Existing code and control flow must be use the compromised pointer
+  * **Code injection**: Instead of modifyign/overwriting code, inject new code
+    into the address space of the process. It requites : 
+    * Knowledge of the location of a writable memory area
+    * Memory area must be executable 
+    * Control flow must be hijacked/redirected to injected code 
+    * Contruction of shellcode 
+    * Code can be injected either on the *heap* or on the *stack*
+  * **Code reuse**: Instead of injecting code, reuse code of the program. The
+    main idea is to stitch together existing code snippets to execute new
+    arbitrary behavior. It requires : 
+    * Knowledge of a writable memorry area that contains invocation frames
+    * Knowledge of executable code snippets
+    * Control flow must be hijacked/redirected to prepared invocation frames
+    * Contruction of ROP payload
+  * **Data corruption**: This attack vector locates existing code and modifies
+    it to execute the attacker's computation. It requires : 
+    * Knowledge of the code location 
+    * Area must be writable 
+    * Program must execute that code on benign code path
+  * Code execution requires control over control flow
+    * Attacker must overwrite a code pointer
+    * Force program to dereference corrupted code pointer
+* **Privilege excalation**: An unintended escalation (increase) of privileges.
+  An attacker gains higher privileges in an unintended way. An example of
+  privilege escalation is gaining administrator privileges through a kernel bug
+  or a bug in a privileged program. A common example is setting the `is_admin`
+  flag.
+* Low level attacks start with a memory or type safety violation
+* Accessing out-of-bounds violates **spacial memory safety**
+* Accessing reclaimed object violates **temporal memory safety**
+* Casting object into incompatible type violates **type safety**
+* "*Writing shellcode is an art*"
+* **Format string** are highly versatile, resulting in a flexible exploitation
+  * Code injection: place shell code in string itself 
+  * Code reuse: encode fixed gadget offsets and invocation frames
+  * Advanced code reuse: recover gadget offsets, then encode them on-the-fly
+* **Type confusion attacks**
+  * Control two pointers of different types ot single memory area 
+  * Different interpretation of fields leads to "opportunities"
 
 # Stopping Exploitation
 
@@ -213,13 +336,42 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * Security of a system depends on its thread model
   * Concepts: isolation, least privilege, fault compartments, trust
   * Security relies on abstractions to reduce complexity
-* **Secure software lifecycle** 
+* **Secure software lifecycle**
   * Secure software development enforces security principles during software
-    development 
-  * Software lives and evolves 
-  * Security must be first class citizen 
-    * Secure Requirements/specification 
+    development
+  * Software lives and evolves
+  * Security must be first class citizen
+    * Secure Requirements/specification
     * Security-aware Design (Threats?)
     * Secure Implementation (Reviews?)
     * Testing
-    * Updates and patching 
+    * Updates and patching
+* **Security prolicies**
+  * Security policies against specific attack vectors
+  * Generic policies: isolation, least provileges, compartimentalization
+  * Runtime policies : memory and type safety
+  * Memory and type safety bugs are root cause of vulnerabilities
+  * Memory safety: distinguish between spacial and temporal memory safety
+    violations
+    * Softbound: spacial memory safety, disjoint pointer metadata
+    * CETS: temporal memory safety through versioning
+  * Type sfae code accesses only the memory locations it is authorized to access
+    * HexType: keep per object type metadata, explicit cast checks
+  * Softbound, CETS, and Hextype are sanitizers: they trade performance for
+    correctness during development
+* **Software bugs**
+  * Memory safety bugs allow state modification  
+    * Spacial memory safety focuses on bounds
+    * Temporal memory safety focuses on validity
+  * Type safety ensures that objects have the correct type
+  * Large amounts of bug classes lead to *fun* vulnerabilities
+* **Attack vectors**
+  * Work with constrained resources (buffer size, limited control, limited
+    information, partial leaks)
+  * Control environment: write sehllcode or prepare gadget invocation frames
+  * Execute outside ot eh defined program semantics
+  * Attack vectors
+    * Code injection (plus control flow hijacking)
+    * Code reuse (plus control flow hijacking)
+    * Heap versus stack 
+
