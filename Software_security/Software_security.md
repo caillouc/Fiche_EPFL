@@ -198,7 +198,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     accesses can occur through stale/illegal pointers
   * Memory safety prohibits buffer overflows, NULL pointer dereferences, use
     after free, use of uninitialized memory, or double free
-  * A program is memoryy safe, if all possible excecutions of the program are
+  * A program is memory safe, if all possible excecutions of the program are
     memory safe
   * Runtime environment is memory safe, if all runnable programs are memory safe
   * A programming language is memory safe, if all expressible programs are
@@ -268,23 +268,23 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     * Knowledge of the code target
     *  Existing code and control flow must be use the compromised pointer
   * **Code injection**: Instead of modifyign/overwriting code, inject new code
-    into the address space of the process. It requites : 
+    into the address space of the process. It requites :
     * Knowledge of the location of a writable memory area
-    * Memory area must be executable 
-    * Control flow must be hijacked/redirected to injected code 
-    * Contruction of shellcode 
+    * Memory area must be executable
+    * Control flow must be hijacked/redirected to injected code
+    * Contruction of shellcode
     * Code can be injected either on the *heap* or on the *stack*
   * **Code reuse**: Instead of injecting code, reuse code of the program. The
     main idea is to stitch together existing code snippets to execute new
-    arbitrary behavior. It requires : 
-    * Knowledge of a writable memorry area that contains invocation frames
+    arbitrary behavior. It requires :
+    * Knowledge of a writable memory area that contains invocation frames
     * Knowledge of executable code snippets
     * Control flow must be hijacked/redirected to prepared invocation frames
     * Contruction of ROP payload
   * **Data corruption**: This attack vector locates existing code and modifies
-    it to execute the attacker's computation. It requires : 
-    * Knowledge of the code location 
-    * Area must be writable 
+    it to execute the attacker's computation. It requires :
+    * Knowledge of the code location
+    * Area must be writable
     * Program must execute that code on benign code path
   * Code execution requires control over control flow
     * Attacker must overwrite a code pointer
@@ -300,20 +300,182 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
 * Casting object into incompatible type violates **type safety**
 * "*Writing shellcode is an art*"
 * **Format string** are highly versatile, resulting in a flexible exploitation
-  * Code injection: place shell code in string itself 
+  * Code injection: place shell code in string itself
   * Code reuse: encode fixed gadget offsets and invocation frames
   * Advanced code reuse: recover gadget offsets, then encode them on-the-fly
 * **Type confusion attacks**
-  * Control two pointers of different types ot single memory area 
+  * Control two pointers of different types ot single memory area
   * Different interpretation of fields leads to "opportunities"
 
 # Stopping Exploitation
 
 ## Mitigations
 
+* **Mitigations** make it harder to exploit a bug
+* The bug remain in the program
+* Factor for mitigation adoption
+  * Mitigation of the most imminent problem
+  * Very low performance overhead
+  * Low developer cost
+* **Data Execution prevention** (DEP)
+  * Policy : data is never executable, only code is executable
+  * CPU checks if page is executable on instruction fetch
+  * Stop all code injection
+  * Page table extension, introduce NX-bit (No eXecute bit)
+  * This is an additional bit for every mapped virtual page. If the bit is set,
+    then data on that page cannot be interpreted as code and the procesor will
+    trap if control flow reaches that page
+  * Attackers can still redirect control flow to existing code
+* **Code reuse** : the Attacker can overwrite a code pointer and prepare the
+  right parameters on the stack, reuse a full function (or part of a function)
+  * Instead of targeting a simple function, we can target a gadget
+    * Gadgets are a sequance if instructions ending in an indirect control flow
+      transfer
+    * Prepare data and envirinment so that pop instructions load data into
+      registers
+    * A gadget instruction frame consists of a sequence of 0 to $n$ data valuers
+      and a pointer to the next gadget. The gadget uses the data values and
+      transfers control to the next gadget
+* **Address Space Randomization** (ASR)
+  * Sucessful contorl flow hijack attacks depend on the attacker overwriting a
+    code pointer with a known aleternate target
+  * ASR changes (randomize) the process memory layout
+  * If the attacker does not know where a piece of code (or data) is, then it
+    cannot be reused in an attack
+  * Attacker must first learn or recover the adress layout
+  * The security improvment of ASR depends on
+    * the entropy available for each randomized location
+    * the completeness of randomization (i.e. are all object randomize)
+    * the absence of any information leak
+* **Address Space Layout Randomization** (ASLR) is a practical form of ASR
+  * ASLR focuses on blocks of memory (it is coarse grained)
+  * Head, stack, code, executable, mmap regions
+  * ASLR is inherently page-based, limiting cost of shuffling
+* **ASLR entropy**
+  * Entropy for each region is key to security (if all section are randomized)
+  * Attacker follows path of least resistance, i.e. targets the obkect with the
+    lowest entropy
+  * Early ASLR implementation had low entropy on the stack and no entropy en x86
+    for the main executable
+  * Linux (through Exec Shield) uses 19 bits of entropy for the stack and 8 bits
+    of mmap entropy
+* **Stack canaries**
+  * Memory safety would mitigate this problem but adding full safety checks is
+    infeasible due to high performance overhead
+  * Instead of checking each pointer, check its integrity
+  * Assumption: we only prevent RIP control flow hijack attacks
+  * We therefore only need to protect the integrity of the return instruction
+    pointer
+  * Place a canary after a potentially vulnerable buffer
+  * Check the integrity of the canary before the function returns
+  * The compiler may place all buffers at the end of the stack frame and the
+    canary just before the first buffer. This way, all non buffer local
+    variables are protected as well
+  * Limitation: the stack canary only protects against continious overwrites iff
+    the attacker does not know the stack canary
+  * An alternative is to encrypt the return instruction pointer by xoring it
+    with a secret
+  * Protects against most stack based hijack attacks
+  * Simple, low overhead compiler based defense
+* **Safe Exception Handling** (SEH)
+  * Exceptions are a way of indirect control flow transfer in C++
+  * A safe alternative to setjmp/longjmp or goto
+  * Make control flow semantics explicit in the programming language
+  * Exceptions allow handling of special conditions
+  * Exceptions safe code safely recovers from thrown conditions
+  * **Inline exception handling**
+    * The compiler generates code that registers exceptions whenever a function
+      is entered
+    * Individual exception frames are linked across stack frames
+    * When an excpetion is thrown, the runtime system traces the chain of
+      exceptions frames to find the corresponding handler
+    * This approach is compact but results in overhead for each function call
+      (as metadata about exceptions has to be allocated)
+    * Whenever you call a function, in the function prologue store all
+      information on the stack, this makes it much easier to process but has
+      cost for each function call (even if o exception is thrown)
+  * **Exception tables**
+    * Compiler emits per function orper objet tables that link code addresse to
+      program state with respect to exception handling
+    * Throwing an exception becomes a range query in the corresponding table and
+      locating the correct handler
+    * These tables are encoded very efficiently. This encoding may lead to
+      security problems
+    * For each code location, you mark in the table what kind of exceptions
+      could be thrown. When an exception is thrown, use the return instruction
+      pointers in the stack to walk  backwards and infer where you are at and
+      recover the information by walking the translation tables
+* **Format string mitigations**
+  * Deprecate use of `%n` (Windows); the is the sane option
+  * Add extra checks for format strings (Linux)
+    * Check for buffer overflows if possible
+    * Check if the first argument is in read only area
+    * Chek if all arguments are used
+* **Arbitrary computation**: implement a Turing machine
+* **Arbitrary code execution**: excecute any instructions
+
 ## Advanced mitigations
 
-# Fiding bugs
+* **Stack Integrity** ensures that the return instruction pointer and the stack
+  pointer cannot be modified
+  * **Return instruction pointers** are code pointers, stack integrity guarantees
+    return instruction pointer integrity, i.e. only valid return instruction
+    pointers are dereferenced
+  * Pointer to other stack frames are stored on the stack, stack integrity
+    ensures the integrity of this metadata. Note that modifying the base pointer
+    indireclty modifies the return instruction pointer
+  * **Stack canaries** are a weak form of stack integrity
+  * **Shadow stacks** are a strong form of stack integrity
+    * It is a second stack for each thread that keeps track of control data
+    * Data on the shadow stack is integrity protected
+    * Limitation: data corruption in uncaught
+  * **Safe stacks** are a strong form with partial data protection
+    * A shadow satck always keeps two allocated stack frames for each function
+      invocation
+    * Core idea: for each variable in a stack frame decide if it is safe 
+    * Variables are safe if they are only used in a safe context, i.e., they
+      don't escape the current function and are only used with bounded pointer
+      arithmetic
+    * Push any unsafe variables to the unsafe stack
+    * Performance benfit: an unsafe stack frame is only allocated if there are
+      unsafe variables, i.e., if it is needed
+    * Limitation: unsafe data corruption is uncaught
+  * **Memory safety** gives full stack integrity
+* **Control flow Integrity** (CFI) is a defence mechanism that protects
+  applications against control flow hijacks. A sucessfull CFI machanism ensures
+  that the control flow of the application never leaves the predetermined, valid
+  control flow that is defined at the source code/application level. This means
+  that an attacker cannot redirect control flow to alternate or enw locations 
+  * Limitations:
+    * CFI allows the underlying bug to fore and the memory corruption can be
+      controlled by the attacker. The defense only detects the deviation after
+      the fact, i.e., when a corrupted pointer is used in the program
+    * Over-approximation in the static analysis reduces security
+    * CFI itseft is stateless, no dynamic control flow or data flow
+    * Attacker may bend control flow along valid CFG
+    * Attacker may run advanced data only attacks to jump between useful blocks
+    * Assume fully precise CFI, no stack integrity
+    * Divert control flow along this path and control argument
+
+  * Attacks:
+    * An attacker is free to modify the outcome of any JCC
+    * An attacker can chosse any allowed target at each ICF location 
+    * For return instructions: in set of return targets is too broad ane even
+      localized returns sets are too braod for most cases
+* **Target set construction**
+  * Core idea: restric the dynamic control flow of the application to the
+    control flow graph of the application
+  * A static analysis can recover an appriximation of the control flow graph
+    (Precision of the analysis is crutial)
+  * Trade off between precision and compatibility
+  * On set of **valid functions** is highly compatible with other software but may
+    result in imprecision given the large amount of functions
+  * **Class hierarchy analysis** results in small sets but may be incompatible
+    with other source code and some programmer patterns
+* **Code Pointer Integrity**
+* **Sandboxing**
+
+# Finding bugs
 
 ## Testing
 
@@ -373,5 +535,15 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * Attack vectors
     * Code injection (plus control flow hijacking)
     * Code reuse (plus control flow hijacking)
-    * Heap versus stack 
-
+    * Heap versus stack
+* **Mitigations**
+  * Few defense mechanism have been adopted in practice. Know their strenghts
+    and weakness
+  * Data Execution Prevention stops code injection attacks,  but does not stop
+    code reuse attacks
+  * Address Space Layout Randomization is probabilistic, shuffles memory space,
+    prone to information leaks
+  * Stack canaries are probabilistic, do not protect against direct overwrites,
+    prone to information leaks
+  * Safe Exception Handling protects exception handlers. reuse remains possible
+  * Fortify source protects static buffer and format strings
