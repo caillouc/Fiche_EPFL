@@ -198,7 +198,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     accesses can occur through stale/illegal pointers
   * Memory safety prohibits buffer overflows, NULL pointer dereferences, use
     after free, use of uninitialized memory, or double free
-  * A program is memory safe, if all possible excecutions of the program are
+  * A program is memory safe, if all possible executions of the program are
     memory safe
   * Runtime environment is memory safe, if all runnable programs are memory safe
   * A programming language is memory safe, if all expressible programs are
@@ -331,7 +331,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * Instead of targeting a simple function, we can target a gadget
     * Gadgets are a sequance if instructions ending in an indirect control flow
       transfer
-    * Prepare data and envirinment so that pop instructions load data into
+    * Prepare data and environment so that pop instructions load data into
       registers
     * A gadget instruction frame consists of a sequence of 0 to $n$ data valuers
       and a pointer to the next gadget. The gadget uses the data values and
@@ -456,7 +456,6 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     * Attacker may run advanced data only attacks to jump between useful blocks
     * Assume fully precise CFI, no stack integrity
     * Divert control flow along this path and control argument
-
   * Attacks:
     * An attacker is free to modify the outcome of any JCC
     * An attacker can chosse any allowed target at each ICF location 
@@ -472,14 +471,302 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     result in imprecision given the large amount of functions
   * **Class hierarchy analysis** results in small sets but may be incompatible
     with other source code and some programmer patterns
-* **Code Pointer Integrity**
+* **Code Pointer Integrity** (CPI)
+  * String memrory based defenses have not been adopted
+  * Weaker defenses like strong memory allocators also ignored
+  * Only defenses that have a negligible overhead are adapted
+  * Code Pointer Integrity ensures that all code pointers are protected at all
+    times
+  * Instead of protecting everything a little protect a little completely 
+  * Strong protection for a select subset of data
+  * CPI deterministically protects against CF hijacking
+  * Sensitive pointers are code pointers and pointer used to access sensitve
+    data
+  * We can over approximate and identify sensitive pointer through their types:
+    all types of sensitive pointer are sensitive
+  * Over approximation only affects performance
+  * Memory view is split into two views: control and data plane
+    * The control plane is a view that only contains code pointers (and
+      transitively all related pointers)
+    * The data plane contains only data, code pointers are left empty
+      (void/unused data)
+  * The two planes must be seperated and data in the control plance must be
+    protected from pointer dereferences in the data plane
+  * CPI protects pointers and sensitive pointers
+    * CPI enforces memory safety for select data
 * **Sandboxing**
+  * Kernel isolates process memory 
+    * The kernel provides the most well known form of sandboxinng 
+    * Process are sandboxed and connot access privileged intructions directly
+    * To access resources, they must fo through a system call that elevated
+      privileges and asks the kernel to handle the access
+    * The kernel can then enforce security, fairness, access policies
+    * Sandboxing in enable through HW, namely different privileges
+  * `chroot` / containers isolate process from each other
+    * Containers are lighweight form of virtualization
+    * They isolate a group of processes from all other processes
+    * Root us restricted to the container but not the full system
+    * Sandboxing powered in SW, through kernel data structures
+  * `seccomp` restricts process from interacting with the kernel
+    * Seccomp restricts system calls and parameters accessible by a single
+      process
+    * Processes are sandboxed based on a policy
+    * In the most constrained case, the allowed system calls are only : read,
+      write, close, exit, sigreturn
+    * Sandboxing powered in SW, through kernel data structures
+  * Software absed Fault Isolation isolated components in a process
+    * SFI restricts code execution/data access inside a single process 
+    * Application and untrusted code run in the same address space
+    * The untrusted code may only read/write the untrusted data segment
+    * Sandboxing is enabled through SW instrumentation
 
 # Finding bugs
 
 ## Testing
 
+* Testing is the process of analyzing a program to find errors
+* An **error** is a deviation between observed bahaviour and specified behaviour
+* "*Testing can only show the precesence of bugs, never their absence*"
+  (Dijkstra)
+* Testing checks whether implementation agrees with **specification** 
+  * Without specification, there is nothing to test
+* A **Specification** defines illegal operations, given a policy
+* Test cases detect bugs through 
+  * Assertions
+  * Segmentation fault 
+  * Division by zero
+  * Uncaught exceptions
+  * Mitigations triggering termination
+* Augment code with **checks** that validate your specification
+* **Human testing**: have a human test the code
+  * Debug by `printf`
+  * Unit tests
+  * Integration tests
+  * Limitations
+    * Requires manual effort to create each test
+    * Tests must be kept up to date as specification evolves
+* **Static analysis** analyze the program without executing it. Static analysis
+  abstracts across all possible executions. The large amount of constraints
+  often results in a state explosion limiting scalability
+  * **Compiler warnings**: `-Wall` `-Wextra` `-Wpedantic`
+  * **Fast checkers**: linters and per-unit checks
+  * **Heavy-weight static analysis** clang checker
+  * **Advantages**
+    * Absolute coverage (no need for complete test cases)
+    * Complete (test cases may miss edge cases)
+    * Abstract interpretation (no need for a runtime environment)
+  * **Disadvantage** 
+    * Computation depends on datan resulting in undecidability
+    * Over-approximation due to imprecision and aliasing 
+    * May have large amounts of false positives
+  * Can't check code you don't see
+  * Can't checl code you can't parse
+  * Not eveything is implemented in C
+  * Not a bug
+  * Not all bugs matter
+  * False positives matter
+  * False negatives matter
+  * Annotations are extremely costly
+  * **Requirements** 
+    * **Abstract domain**: what is computed by out static analysis
+    * **Transfer function**: how are abstract values computed/updated at each
+      relevant instruction
+    * We must consider the instruction semantics for the transfer function
+  * **Limitations** 
+    * Trade off between soundness and completeness
+    * **Soundness** find all bugs of type X
+    * Findind more bugs is good
+    * Soundness is costly: checks are weak or complexity explodes
+    * Diminishing returns: initial analysis finds most bugs, spend exponentially
+      more time in few remaining bugs
+    * **Formal verification**: 100 loc, find all bugs
+    * **Bounded model checking**: 1000 loc, finds most bugs
+    * **Symbolic execution**: 10 000 loc finds all bugs
+    * **Concolic execution**: 50 000 loc finds bugs close to provided concrete
+      execution
+    * **Fuzzing** 1 000 000 loc, finds many bugs
+    * **Warnings/simple anaysers** 100 000 000 locn find a lot of bugs
+      interesting locations
+* **Dynamic analysis**: analyze the program during a concrete execution.
+  Dynamique analysis focuses on a single concrete run. The limited focus
+  allows detailed analysis of a run but testing is imcomplete
+  * **Whitebox testing**: aware of functionality specification
+  * **Greybox testing**: partially aware of specification
+  * **Blackbox testing**: unaware of specification
+* **Continuous integration** systems run your tests at fixed intervals (dayly of
+  even for each commit)
+  * Only as good as your test case and setup
+  * Ensures that changes comply with your specification
+  * An active form of ongoing testing
+
+## Fuzzing
+
+* **Fuzzing** finds reachable bugs effectively
+* **General fuzzing** 
+  * Produces inputs according to input specification
+  * Requires significant amount of manual work
+* **Mutational fuzzing**
+  * Generates unputs by mutating seeds
+  * Most recent work focuses on mutational fuzzing
+* The **taget program** is the binary you're searching bugs in 
+  * It needs to be en executable binary 
+  * It need to accept some form of input
+  * Ideally, it crashes whenever you hit a bug
+* The **execution environment**: the fuzzer executes the program with the
+  generated input
+  * Provide an environment for the progam
+  * Create a process and feed input to the program
+  * Make sure the environment is safe
+* **Crash detection**: inputs that trigger a crash are put aside for later
+  (human) analysis
+  * Execution environment registers faults
+  * May also detect resource exhaustion or hangs 
+  * Making program more likely to crash is a separate research area
+* **Fuzzinq Queue**: Fuzzer maintains a queue of inputs to try next, executot
+  picks first in queue
+  * Queue initally filled with seed inputs
+  * Seed inputs are reasonable starting inputs
+  * Quality influences fuzzing results (as they serve as starting point)
+* **Input mutation**: fuzzers must generate new inputs: pick an input and
+  mutate it
+  * Fuzzers often split mutation into deterministic and havoc phases
+  * Mutation operators include flipping 1-2-4-8-16 bits, randomizing some
+    part, replacing patterns, slicing inputs, merging inputs
+* **Coverage collection**: Fuzzer tracks global coverage
+  * Compare most significant bit of collected coverage with global coverage
+  * If any edge increase, store seed
+
+## Symbolic execution
+
+* SE in an abstract interpretation of the code
+  * Symbolic values, not concret
+  * Target conditions must be defined
+* Agnostic to concrete values
+  * Values turn into formulas
+  * Constraints concretize formulas
+* Finds concrete input
+  * Triggers interesting condition
+* Defines a set of code locations
+  * Symbolic execution determines triggering input
+* Testing: finding bugs in application
+  * Infers pre/post conditions and add assertions
+  * Use symbolic execution to negate conditions
+* Generating Poc input through SAT solving
+* **State exposition**: either the lenght of the constraints or the amount of
+  state doubles at each loop iteration/conditional
+  * Searching valid paths is crutial
+  * Path optimization key research area
+  * State prunning another key area 
+* **Binary processing** 
+  * **IR based Symbolic execution**
+    * Easier to implement
+    * Architecture agnostic
+    * Easier queries to the solver
+    * Less robust
+    * Poor execution performance
+    * Likely underconstrained
+  * **IR-less Sysmbolic Execution**
+    * Hard to implement
+    * Architecture dependent
+    * Harder queries to the solver
+    * More robust
+    * Good execution performance
+    * Likely overconstrained
+* **State manegment**
+  * Issues
+    * Too many states to track 
+    * Wasting time analysing useless path
+    * States have too complex path constraints
+  * Approach
+    * **Hybrid Execution**
+    * **Program summarization**
+    * **Path Scheduling**
+* **Hybrid execution** mix concrete and symbolic inputs to support symbolic
+  analysis and increase code coverage
+  * **Concolic execution**: Execute program with symbolic and concret inputs.
+    Collect path constraints and use concrete values to help symb exec to get
+    unstuck
+  * **Symetric Symbolic Execution**: Use backward symbolic execution (BSE) and
+    concrete execution to reason about specific target instruction
+* **Program summarization**: Reduce the amount of generated states by using
+  constraints of simplifications
+  * **Function summarization**: Avoid paying the cost of re-executing the same
+    functions over and over
+  * **Loop summarization**: Avoid the cost of re executing the same loop every
+    time state enters if
+  * **State merging**: Model state progression using path constraints rather
+    than generating new states
+  * **Third party libraries summarization**: Use models to summarize side effect
+    of non tracked function on the symbolic states
+* **Path scheduling**: Manage paths exploration to reach more intersting
+  program's state and avoid state explosion
+  * Path running 
+  * Path priorization
+* **Environment**
+  * **Abstract Models**: Summarize a call to external procedure with a specific
+    function
+  * **Concrete Delegation**: Execution of external functions is delegated to the
+    real system outside of the symbolic executor
+* **Constraints Management** 
+  * **Constraints Reduction**: Sumplify the constraints with equivalents ones to
+    speed up solving time
+  * **Constraints caching**
+  * **Constraints prediction**
+* **Store management**
+  * Single concretization
+  * Forking model
+  * Merge Model
+  * Falt Model
+
 ## Sanitizer
+
+* Sanitizer instrument programs to check for violations, crash immediately
+* Fuzzer trigger faults and record crashes, but not every fault crashes
+* Sanitizers enforce a security policy to crash the program upon violation
+* Sanitizers make faults detectable 
+* Program is analyzed during compilation (e.g. to learn such properties such as
+  type graphs or to enable optimizations)
+* The program is insrumented (e.g. to record metadata for checks and to execute
+  policy checks at other places)
+* At runtime, the instrumentation constantly verifies that the policy holds
+* **AddressSanitizer** Detects memory erro
+  * It places red zones aournd objects and checls those obejcts on trigger
+    events. The tool can detect the folowing types of bugs
+    * Out of bounds accesses to head, stack and globals
+    * Use after free
+    * Use after return 
+    * Use after scope 
+    * Double free, invalid free
+    * Memory leaks (experimental)
+  * Policy
+    * Intrument each access, check for poison value
+    * Advantage: fast checks
+    * Disadvantage: Large memory, Still slow, Not a mitigation: does not detect
+      all bugs
+* **MemorySanitizer** detects uninitialized read. Memory allocations are tagged
+  and uinitialized read are flagged
+* **UndefinedBahaviorSanitizer** detects undefined behavior. It instruments code
+  to trap on typical undefined behavior in C/C++ programs. Detectable errors
+  are:
+  * Unsigned/misaligned pointers
+  * Signed integer overflow 
+  * Converion between floating point types leading to oveflow 
+  * Illegal use of NULL pointers
+  * Illegal pointer arithmetic
+* **ThreadSanitizer** finds data recas between threads. Focus ion data races
+  involving writes
+  * Multiple thread of execution share an address space
+  * Accessing the ame variable requirs a protocol
+  * Accesses must be ordered, if at least one thread writes
+* **FuZZan** introduce alternate light-weight metadata structures
+  * Reduce sparse Page Table Entries
+  * Minimize memory management  overhead
+  * Runtime profiling to select optimal metadata structure 
+  * Dynamic switching mode : switch to selected metadata structure during
+    fuzzing
+  * Periodically measures the target program's behavior
+  * Use fork server to avoid unnecessary re initialization
+  * Modify ASan to disable the logging functionality
 
 # Case study ?
 
@@ -547,3 +834,32 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     prone to information leaks
   * Safe Exception Handling protects exception handlers. reuse remains possible
   * Fortify source protects static buffer and format strings
+* **Advanced mitigations**
+  * Deployed defenses are incomplete and do not stop all attacks
+    * Deployed: ASLR, DEP, stack canaries, safe execution 
+  * Control flow hijacking is the most versatile attack vector
+  * Stack integrity guards the stack
+  * CFI restricts targets on the forward edge
+  * CPI prohibits control flow hijacking, key insight: enforme memory safety
+    *only* for code pointers
+  * Sandboxing seperates diffetent privilege domains
+* **Testing**
+  * Software testing finds bugs beforre an attacker can exploit them 
+  * Teting requires specification or policy
+  * Anaysis checks if code follows policy/specification
+    * Static analysis is over an abstraction domain
+    * Transfer functions to transition between states
+    * Static analysis must terminates
+    * Differetn strengh of analysis
+  * Be aware of laws of static analysis: check all code, find important bugs,
+    trade-offs between false positives/negatives
+  * Use the right tool for the job
+* **Sanitizer**
+  * Sanitizers allow early bug detection, not just on exceptions
+  * Different sanitizers for different use case
+    * AddressSanitizer enforces probabilistic memory safety by recording
+      metadata for every allocated object and checking every memory read/write
+    * MemorySanitizer targets uninitialized data
+    * ThreadSanitizer targets data races
+    * UndefinedBahaviorSanitizer finds different kinds of undefined behavior
+    * HexType targets type confusion
