@@ -413,6 +413,14 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     * Chek if all arguments are used
 * **Arbitrary computation**: implement a Turing machine
 * **Arbitrary code execution**: excecute any instructions
+* **Forward-edge control-flow** transfers direct code forward to a new location
+  and are used in indirect jump and indirect call instructions, which are mapped
+  at the source code level to, e.g., switch statements, indirect calls, or
+  virtual calls. 
+* The **backward-edge** is used to return to a location that was used in a
+  forward-edge earlier, e.g., when returning from a function call through a
+  return instruction. For simplicity, we leave interrupts, interrupt returns,
+  and exceptions out of the discussion.
 
 ## Advanced mitigations
 
@@ -767,14 +775,6 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * Periodically measures the target program's behavior
   * Use fork server to avoid unnecessary re initialization
   * Modify ASan to disable the logging functionality
-
-# Case study ?
-
-## Browser security
-
-## Web security
-
-## Modbile Security
 
 # Summaries
 
