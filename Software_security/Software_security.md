@@ -333,7 +333,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
       transfer
     * Prepare data and environment so that pop instructions load data into
       registers
-    * A gadget instruction frame consists of a sequence of 0 to $n$ data valuers
+    * A gadget instruction frame consists of a sequence of 0 to $n$ data values
       and a pointer to the next gadget. The gadget uses the data values and
       transfers control to the next gadget
 * **Address Space Randomization** (ASR)
@@ -606,6 +606,12 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * Only as good as your test case and setup
   * Ensures that changes comply with your specification
   * An active form of ongoing testing
+* **Coverage** is used as a metric to evaluate the quality of the test suite
+  * **Statement coverage** measures of each statementn, if it has been executed
+  * **Branch coverage** measures for each branch if it has been followed 
+  * **Path coverage** evaluates all possble paths
+  * **Data flow coverage** extends beyong path coverage and tracks full data
+    flow through the program at even higher overhead
 
 ## Fuzzing
 
@@ -747,7 +753,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     * Double free, invalid free
     * Memory leaks (experimental)
   * Policy
-    * Intrument each access, check for poison value
+    * Instrument each access, check for poison values
     * Advantage: fast checks
     * Disadvantage: Large memory, Still slow, Not a mitigation: does not detect
       all bugs
