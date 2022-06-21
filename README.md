@@ -25,5 +25,6 @@
 ## MA2 EPFL
 
 * [Software security](Software_security/Software_security.pdf)
+* [Advanced computer architecture](Advanced_computer_architecture/Advanced_computer_architecture.pdf)
 
 > Compiled using [*pandoc*](https://pandoc.org/)  
