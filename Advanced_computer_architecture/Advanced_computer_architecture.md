@@ -507,31 +507,31 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   exploited
   * Prologue, Body and Epilogue  
   * **Iterations** advancing in parallel
-* Dependences : Trace Scheduling 
+* Dependences : Trace Scheduling
   * Optimise the **most probable path** by increasing the size of basic blocks
   * Add compensation code in less probable paths
 * **Compile time speculation**
   * **Register renaming** to ensure that correction code source operands are
     preserved
-  * Because of **exceptions**, you only need to either: 
+  * Because of **exceptions**, you only need to either:
     * **Avoid errors** : Speculate only instructions which cannot raise
       exceptions (but one wants to speculates loads)
     * **Resolve errors** : Add a special field in the opcode (Poison bit, ...)
       that says when an instructions has been speculated
 * Elimination WAW and WAR at compile time
   * Rename: Eliminate dependencies by using more registers at compile time
-    * Need more architecturally visible registers 
+    * Need more architecturally visible registers
 * RAW is the only important one : moving a load above a store
-  * At runtime we have more information on memory addresses 
+  * At runtime we have more information on memory addresses
   * But a **compile time** we have **more time available**: we can make much
-    more complex analysis which depend on a wider knowledge og the code 
+    more complex analysis which depend on a wider knowledge og the code
 * Conclusion on VLIW compilers
-  * Many different decisions 
+  * Many different decisions
     * Which type of region is right? Trace, superblocks, hyperblocks,
       treeregions
     * Which regions to optimise
-    * To unroll or not to runroll? How many times? 
-    * To predicate or not to predicate? 
+    * To unroll or not to runroll? How many times?
+    * To predicate or not to predicate?
     * When to allocate resgisters
     * $\rightarrow$ powerful compiler backends for VLIWs are **very hard** to build
 
@@ -546,7 +546,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * **Code identification** : all code must be discovered statically and
     separated from embedded data
   * **Self modifying code** : what to do with it? Additional hardware to allow
-    support of source architecture? 
+    support of source architecture?
   * **Precise Exceptios** : no 1-to-1 relation between target instructions and
     source ones
   * **OS** : support of shared librairies and system calls
@@ -556,7 +556,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   analysis, Load store telescoping, Copy propagation, Combining, Unification,
   Limited dead code elimination
   * These optimizations are now simpler since we saw the code behaviour several
-    time 
+    time
 * Now inside the porcessor we have a DBT (Dynamic Binary Translation) engine,
   located between the OS and the VLIW Processor
 * **Difficult Problems for DBT**
@@ -584,12 +584,12 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
       (which holds pending stores for commit at the end of a group)
     * Re-emulate source architecture to find the exact point of the execution
       and to leave the processor in the architecturally correct state
-    * Invoke translated exception handler 
+    * Invoke translated exception handler
 * Additional Optimization in BDT
   * **Block Reordering**: Make target image execution as sequential as possible
   * **Memory Colouring**: Improve mapping of translated code to fit target
     memory hierarchy
-  * **Code Specialization**: Clone procedures based on constant parameter values 
+  * **Code Specialization**: Clone procedures based on constant parameter values
 * **Benefits** of DBT
   * Compatibility
     * With native implementation
@@ -607,7 +607,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     * Memory consumes less than logic: Schedule once and then fetch from memory
       (?)
 * **Issues** of DBT
-  * Reduced resources from the user 
+  * Reduced resources from the user
     * Cycles: lost performance for translation
     * Memory
   * Slow at start (emulation) and real times difficulties
@@ -636,7 +636,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
 * Collapse a subset of the Direct Acyclic Graph node into a single Functional
   Unit (AFU)
   * Exploit cheaply the parallelism within the basic block
-  * Simplify operations with constant operands 
+  * Simplify operations with constant operands
   * Optimize sequences of instructions
   * Exploit limited precision
 * Using hardware for special functional unit
@@ -645,11 +645,11 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     * Cheap ILP without true ILP support
   * No quantization of time in clock for each operation/instruction
     * Operation chaining
-  * Hardware is a different 
+  * Hardware is a different
     * Constant may be propagated
     * Precision can be tuned (bitwidth analysis)
     * Arithmetic components can be optimized
-    * Arithmetic operations often appeat in groups 
+    * Arithmetic operations often appeat in groups
     * A literal/sequential implementation may not make the best of the potential
       available
     * A different number representation can be game-changer
@@ -686,19 +686,19 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   specification to build hardware
 * It represents an attempt to raison the abstraction level of hardware design
   above the classic RTL level (i.e., synthesizable VHDL and Verilog)
-* Same as VLIW scheduling ? 
+* Same as VLIW scheduling ?
   * Very similar problem but with some notable differences
     * Exact resources are not fixed; maybe there is a constraint on their total
       cost
     * Clock cycle may be constrained but is in general not fixed; pipelining is
-      not fixed 
+      not fixed
     * No register file (which allows connecting everything to everything) but
       had-hoc connectivity
-* **Manual Code Refactoring** 
+* **Manual Code Refactoring**
   * Direct results are very often highly suboptimal
     * Naive FIR
   * users should have a sense of what curcuit they want to produce and suggest
-    it to HLS tools by restructuring the code 
+    it to HLS tools by restructuring the code
   * HLS tools today are *not* really meant to *abstract away hardware design
     issue* from software programmers; in practice, they are more like
     productivity tools to help hardware designers explore quickly the space of
@@ -707,7 +707,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * **Loop Fission**
   * **Loop unrolling**
 * **Pipelining**
-  * Perfect pipelining cannot be achieved easly by rewriting the code 
+  * Perfect pipelining cannot be achieved easly by rewriting the code
   * We need to schedule differently the operations within a loop so that
     operations of different iterations take place simultaneoulsy
   * Remember "software pipelining" How we need it so that a software program
@@ -723,7 +723,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * Both impose **burdens onto the user**: decisions on how where to apply
     optimizations are not self evident, depend on the particular combination of
     the user constraints (note that the solution space is much wider for HLS),
-    and thus are often left to user through code restructuring or pragmas 
+    and thus are often left to user through code restructuring or pragmas
 
 ### Dynamically Scheduled High Level Synthesis
 
@@ -736,7 +736,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   control dependencies are resolved
 * Functional units, the only difference, they wait for the operands to be true
 * *Fork* : takes a token and slipt the token  to a number of users
-* *Join* : wait for all token to arrive at his input and let them pass 
+* *Join* : wait for all token to arrive at his input and let them pass
 * *Branch* : represents decisions
 * **Synthesizing Dataflow Circuits**
   * C to intermediate graph representation
@@ -751,7 +751,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
 * Dataflow circuits have **no notion of program order**
   * Which is need for a Load Store Queue and handle memory dependencies
 * An **LSQ for dataflow circuits** whose only difference is in the *allocation
-  policy*: 
+  policy*:
   * *Static knowledge* of memory accesses program order inside each basic block
   * *Dynamic knowledge* of the sequence of basic blocks *from the dataflow
     circuit*
@@ -768,7 +768,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * To increase performance we can merge the Save and Commit unit on cyclic
     paths
 * What to expect from Dynamic HLS
-  * Two hopes derived from the VLIW vs OoO analogy 
+  * Two hopes derived from the VLIW vs OoO analogy
     * Significant better performance in control dominated applications with poorly
       predictable memory accesses
     * Better out of the box performance
@@ -776,3 +776,228 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * A major issue is the **hardware overhead** of supporting dynamic schedules
   * Probably statically scheduled HLS remains the best choice for classic DSP-like
     applications
+
+## Digital Signal Processors
+
+* **Embedded Systems**
+  * Application specific:
+    * Application fixed in advance
+    * Not or very moderately programmable by the user
+  * Reactive:
+    * Reacts on events coming from the environment
+    * Has real time constraints
+  * Efficient:
+    * Cost reduction must profit from specialisation
+    * Low power, small size, ...
+* **Specificities of Embedded procesors**
+  * Cost usde to be the only concern; now **performance/cost is at premium** and
+    still not performance alone as in PCs; Performance is often a constraints
+  * **Binary compatibility** is less of an issue for embedded systems
+  * System-on-chip make **processor volume irrelevant** (moderate motication
+    toward single processor for all product)
+* **Cost in performance**
+  * **Performance is a design constraints**
+    * *General purpose*: new high-end processor must be tangibly faster than
+      best in class
+    * *Embedded*: adequately programmed, must just satisfy some minimal
+      performance constraints
+  * **Cost is the optimisation criteria**
+    * *General purpose*: must be within sime typical range $\rightarrow$ profit
+      margin can be as high as some factor
+    * *Embedded*: must be **minimal** $\rightarrow$ economic margin on the whole
+      product can be as low as a few percent points
+* **Typical features ofo DSPs**
+  * Arithmetic and datapath
+    * Fixed-point arithmetic support
+    * MAC = multi-accumulate instruction
+    * Special registers, not directly accessible
+  * Memory Architecture
+    * Harvard architecture
+    * Mulatiple data memories
+  * Addressing modes
+    * Special address generators
+    * Bit reversal addressing
+    * Circular buffers
+  * Optimized Control
+    * Zero overhead loops
+  * Special purpose peripherical
+* **Fixed point**
+  * In principle, if one adds a fractional point in a fixed position, hardware
+    for integers works just as well and there are no additional ISA needs
+    * It is just a matter or representation
+  * Multiplication typically intriduces the ned of arithmetic rescaling with
+    shifts to the right (multiplicative constant cannot be implicit anymore)
+    $\rightarrow$  Choice of accuracy depending on how many bits one can keep
+  * Different approximation choices
+    * **Truncate**: Discard bits $\rightarrow$ *Large bias*
+    * **Round**: $< .5$ round down, $\geq .5$ round up $\rightarrow$ *Small
+      bias*
+    * **Convergent Round**: $< .5$ round down, $> .5$ round up, $= .5$ round to
+      the nearest even $\rightarrow$ *no bias*
+* DSP Arithmetic needs
+  * Rather than having full floating point support (expensive and slow), one
+    wants in a DSP sime *simple and fast* ad-hoc operations
+    * MUL + ADD in a *single cycle* (MAC)
+    * *Accumulation* register fater MAC
+    * *Approximation* mechanism
+  * Nouniform precision in the whole architecture
+  * MAC operations tend to dominate DSP code (maybe 50% of critical code)
+    $\rightarrow$ highly optimised MAC instruction
+* DSPs habe multiple memory ports
+* DSP do not have caches
+  * Importance of real time constraints: no data caches
+  * Sometimes caches on the instruction memory but determinism is key ins DSPs
+    * Caches under programmer control to lock-in some critical instructions
+    * Turn caches into fast program memory
+  * Once again, one is not after highest performance but just guaranteed minimal
+    performance one needs
+* **Addressing modes**
+  * To keep MAC busy all the time, with new data from memory, one need to
+    generate memory addresses
+  * Forget about Load/Store queue architecture
+  * Complex addressing is now fully welcome if
+    * Allows automatic next address calculation
+    * Does not require usage of the datapath (MAC is busy...)
+  * Dedicated simple datapaths to generate meaningful sequences of addresses,
+    ususally 2-4 per DSP
+  * AR can be loaded with
+    * *Immediate laod*: constant from the instrucion field into the pointed AR
+    * *Immediate modify*: constant from the instruction field added to the
+      pointed AR
+    * *Autoincrement*: small constant added to the pointed AR
+    * *Automodify*: value of the pointed MR added to the pointed AR
+    * *Bit reversing*: value of the pointed AR bit-reversed and loaded into the
+      pointed AR
+    * *Modulo/circular*: autoincrement/automodify with modulo
+    * Also decrement/substract
+    * Sometimes pre- and/or post-modification
+
+## Compilers and DSPs
+
+* **Classic compiler Flow/Phases**
+  * *Front-end*
+    * Mostly dependent on programming language
+    * Largely or fully independent of target machine
+    * Source code $\rightarrow$ Source-level optimisations $\rightarrow$
+      Source-code Analysis
+  * *Back-end*
+    * Mostly dependent on target machine
+    * Largely of fully independent of programming language
+    * IR optimisation $\rightarrow$ Code selection $\rightarrow$ Instruction
+      scheduling $\rightarrow$ Register allocation $\rightarrow$ Assembly code
+* **Standard code generation techniques** Standard Code Generation layering: Three fully independent phases
+  * **Code selection**: *which* instruction to implement DFG node
+  * **Instructions Scheduling**: *When* instructions will be executed at runtime
+    (or considered for execution in dynamically scheduled processors)
+  * **Register allocation**: *where* results should be stored
+* **Code selection problem**
+  * Find minimal cost cover of the DFG with instructions of the ISA
+  * **Tree parsing**
+    * Break DFGs in Data Flow Trees (DFTs)
+    * Define a tree grammar
+    * Tree is parsed from a leaves to root, patterns are matched to apply rules
+      (= instantiate instructions) and labeled with possible costs, and cheapest
+      solution is found by dynamic programming by traversing the tree again from
+      root to leaves
+    * Optimal results in $\mathcal{O}(n)$ time (for DFTs not DFGs)
+* **Instruction Scheduling problem**
+  * Find a sequence $S$ of instructions which *minimises* the total
+    schedule length $L(S)$ under the folowing conditions 
+    * *Dependencies*: each instruction cannot be scheduled before the time the
+      predecossors are scheduled plus their respective latencies
+    * *Resources*: an instruction can be scheduled only if there are available
+      resources to execute it
+  * NP-hard problem  
+  * Exact solutions are usually not practical for instruction scheduling
+  * Greedy heuristic algorithm
+    * At each step, maintain a ready list containing all the unscheduled
+      instructions that can be scheduled respecting dependencies and resources
+      availability 
+    * Use a priority function to decide which instrunction from the ready list
+      to start next
+  * Priority function is the key and tries to maximise advantage
+    * Pick instruction with the largest number of succesords, that is maximise
+      size of future ready list
+    * Pick instructions on the critical path or with minimal slack
+    * Pick long latencies instructions
+* **Register allocation**
+  * Intermediate code uses infinite number of virtual registers
+  * Virtual registers should be mapped to a limited number of physical registers
+  * **Graph colouring**
+    * Interference Graph edges represent the fact that two VRs cannot be mapped
+      to the same PR
+    * PR are "colors"
+    * Nodes should be colored with at most $k$ colours and no adjacent nodes get
+      the same colour
+    * NP-complete problem
+    * Several heuristics to find an approximation solution
+* **Memory layout (aka, offset assignment)**
+  * How to arrange data in memory in such a way that the typical access sequence
+    can be done with only automatic address updates
+  * Create an edge-weighted graph
+  * An assignment is an Hamiltionian Path (= Path touching all node once)
+  * The maximum weighted Hamiltionian Path is the best assignment (largest
+    numbe of free accesses)
+  * NP-hard problem
+  * Not one, but a set of $k$ ARs which can be used
+  * General problem is much more complex
+  * Several ARs and MRs available, autoincrement range large than 1
+  * Goal is to find partition the variables among the ARs and define a set of
+    values in the MRs such that the access cost a minimal
+  * Access cost is null if
+    * Distance of new variable from last variable accessed with the used AR is
+      within the autoincrement range
+    * Distance of new variable from last variable accessed with the used AR is a
+      value stored in a MR
+  * Very complex nonlinear optimisation problem $\rightarrow$ nonoptimal
+    optimisation algorithms
+* **Address Register allocation**
+  * How to make all accesses with a minimal number of registers and with onlly
+    automatic address updates
+  * With array accesses, no offset assignment possible 
+  * Use of pointers make code unreadable but forces many DSP compilers to
+    allocate ARs and use autoincrement
+  * How to allocate ARs automatically from readable code
+  * Create a single graph with accesses being nodes and edges from i-th to j-th
+    accesses if 
+    * j-th access follows i-th access and 
+    * the two accesses are within range $r$
+  * An assignment is a set of disjoint paths (each path = one register) covering
+    the distance graph
+  * An assignment with a minimal set of paths is the optimal solution
+* Exploit resgisters in of pipelined datapath
+  * Chained operations
+    * Pipelined MAC
+  * Many special registers
+    * Dedicated pipelining 
+    * Reduced pressure on general-purpose register file
+    * Shorter instruction length (implicit operand addressing)
+  * Architecturally visible pipeline
+  * Each DFT mapped independently and intertree values passed via registers
+  * Since registers are not orthogonal, choice of registers may be highly
+    suboptimal for DSPs
+* $\Rightarrow$ Coupling of three phases needed
+  * Code selection
+  * Register Allocation
+  * Scheduling
+* Scheduling and Partioning  
+  * Major difficulty is that one simultaneously looks for a partition $P$ and a
+    schedule $S$
+  * Scheduling problem with limited redources is already NP-hard and need
+    heuristics 
+  * Classic scheduling algorithms need either partitioning before or after,
+    cannot do it together
+* Summary
+  * **Irregularity** can be used to make processors more effective in very
+    specific situations (e.g., DSPs)
+  * Resulting complexity in compilation is often the **need of phase coupling**:
+    leyered back-end complilation phases fail to exploit the specific featuers
+    * Special Registers $\rightarrow$ Register allocation, Code selection, and
+      Scheduling
+    * Multiple Clusters $\rightarrow$ Partitioning and Scheduling 
+    * SIMD Isntructions $\rightarrow$ Register allocation and Code selection
+  * **Regularity** of a processor essentially means creating an architecure
+    where the usefulness of missing information acress phases is minimal (e.g.,
+    all registers are equally usable for all instructions)
+
+
