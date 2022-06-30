@@ -10,6 +10,8 @@ date: June 2022
 [*github*](https://github.com/caillouc/Fiche_EPFL/blob/main/Advanced_computer_architecture/Advanced_computer_architecture.md?plain=1)  
 Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://github.com/caillouc/dotfile/blob/linux/gpdf.sh)  
 
+\clearpage
+
 # General Purpose Architectures
 
 ## Exploiting ILP Dynamically
@@ -777,6 +779,89 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * Probably statically scheduled HLS remains the best choice for classic DSP-like
     applications
 
+## Challenges of High-Level Synthesis
+
+* Variable latencies in computation, memory accesses, or loop execution time
+  * Floating point units, cache hit/miss, viriable loop bounds, early-exit
+    execution
+  * Prevent good pipelining using standard HLS techniques
+* Static HLS: assume the **worst case latency**
+  * Reserve additional pipeline stages for variable latency operations
+  * **Hardware overhead** in area (power timing) $\rightarrow$ may not be
+    feasible for larger latencies
+  * High throughput in particular case (e.g., no loop carried dependencies on
+    variable latency op)
+* Static HLS: stall **entire pipeline** in case of a variable event
+  * Schedule each operation on its **minimum latency**
+  * If an operation does no complete within min. latency block operations and
+    *stall pipeline*
+* **Dynamic HLS** naturally handles variable latencies
+  * Handshaking mechanism stalls long-latency operations
+  * Other computations can advance during stall
+  * Howerver, in an in order system, pipeline usage and parallelism may still be
+    limited
+* Separate vairble-latency memory accesses and computation
+  * Data is loaded from memory, stored in FIFOs, and sent to execution datapath
+    as soon as ready
+  * Requires nontrivial **code restructuring** (by user or compiler)
+  * Some schemes support **out-of-order** execution
+* Out-of-order **multithread** pipelines
+  * Loop iteartions are tagged iterations which can execute out-of-order
+  * Suspended thread occupied resources, subsequent threads can continue without
+    stalling 
+  * Qualitatively the same results as A/E decouplingn but can be applied to many
+    variable latency op
+* In addition to operation, the **number of loop iterations** can also be
+  variable
+  * E.g., loop bounds computed at runtime, early exit condition
+  * As in the case of variable-latency operations, not trivial to handle with
+    standard HLS
+* Static HLS: start a new inner loop **only when previous one completes**
+  * When all loop bounds are known, loops can be analysed statically and
+    flattened
+  * In general case: exit inner loop, compute new loop bounds, enter inner loop
+* **Access/Execute decoupling** works here, but the transformation is even more
+  complex
+  * Compute loop bounds and enqueue into FIFO
+  * Dequeue bounds, compute loop loads, and enqueue into FIFO
+  * Dequeue accessed data, execute loop operations
+* **Dynamic scheduling** naturally starts a new loop **as soon as pipeline is
+  ready**
+  * No special mechanism or transformation required
+* **Loop Carried Dependencies**
+  * In order pipelines
+    * Different operations execute **out of order** with respect to each other,
+      but each operation processes its own data **in order**
+    * Limited throughput in case of **long latency loop-carried dependencies**
+* Out fo order execution to increase throughput 
+  * Issue multiple inned loops in parallel
+  * **Multithreaded execution**
+* **Spacial Parallelism**
+  * Instruction-level parallelism within a **single datapath**
+  * **Replicate datapath/kernel** to increase parallelism
+  * Challenges:
+    * How to express the parallelism to the computer
+    * How to maximize utilisation of each datapath
+* **Loop Unrolling**
+  * **Standard unrolling**: replicate computations within a loop 
+    * Achieves spacial parallelism in regular loops
+    * Not suitable for irregular code
+* **Task parallelism** (loop replication)
+  * Replicate loop and execute **multiple loop instance** in parellel
+    * Difficult to express using a C based HLS tool 
+    * Increase parallelism, but datapath not fully used if inner loop latencies
+      differ
+* **Load balancing** to maximize parallelims and kernel utilization 
+  * Dispatch computation to processing units based on availability
+* Summary
+  * Access/execute decoupling, multithreading, dynamic scheduling
+    * Dealing with variable-latency events
+    * In-order: adapt the schedule to particular outcomes
+    * Out-of-order: fill gaps ins schdule to particular outcomes
+  * Loop replication for spatial parallelism 
+    * Unrolling irregular loops and loops nets
+    * load balancign to maximise datapath utilization
+
 ## Digital Signal Processors
 
 * **Embedded Systems**
@@ -991,7 +1076,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * **Irregularity** can be used to make processors more effective in very
     specific situations (e.g., DSPs)
   * Resulting complexity in compilation is often the **need of phase coupling**:
-    leyered back-end complilation phases fail to exploit the specific featuers
+    leyered back-end complilation phases fail to exploit the specific features
     * Special Registers $\rightarrow$ Register allocation, Code selection, and
       Scheduling
     * Multiple Clusters $\rightarrow$ Partitioning and Scheduling 
@@ -1000,4 +1085,604 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     where the usefulness of missing information acress phases is minimal (e.g.,
     all registers are equally usable for all instructions)
 
+# Hardware Security
 
+* **Software complexity**
+  * OSes and hypervisors are too complex to be trusted bo te bug free
+  * Who can trust OSes and hypervisors, **Secure proceccor architecture**
+* **Microarchitectural side-channel** attacks
+  * Sharing with other users gives them the ability to discover our secrets
+    * Shared caches, shared processors (branch predictor, pieplines, etc.)
+* Pysical monitoring attacks and **physical side-channel attacks** 
+  * User cannot physically protect and their computing hardware
+    * Hardware if often in the cloud
+    * Hardware is embedded and remote (Internet-of-Things, IoT)
+
+## Microarchitectural Side‐Channel Attacks
+
+* A set of **extremely powerful attacks** which intimately depend on the
+  microarchitectural features of our processor
+* **Treat model**, specification of the threats that a system is protected
+  against
+  * **Trusted Computing Base** : what is the set of trusted hardware and
+    software components
+  * **Security properties**: what the trusted computing base is supposed to
+    guarantee
+  * **Attacker assumtions**: what a potential attacker is assumed capable of
+  * **Potential vulnerabilities**: what an attacker might be able to gain
+* **Confidentiality**: prevent the disclosure of secret information
+* **Integrity**: prevent the modification of protected information
+* **Availability**: guarantee the availability of services and systems
+* **Isolation**: the possibility to prevent any interaction between users and
+  processes, often to guarantee confidentiality and integrity
+* **Dynamic random-access memory** (DRAM)
+  * DRAMs are the densest (and the cheapest) form of random-access semiconductor
+    memory
+  * DRAMs store **information as charge in small capacitors** part of the memory
+    cell
+  * Charge **leaks off** the capacitor due to parasitic resitances $\rightarrow$
+    every DRAMs cell need a **periodeic refresh** lest it forgets information
+* To increase density (i.e, reduce cost) memory cells have becime incredibely
+  small ($\rightarrow$ *small storage capacitance, smaller noise margin*) and
+  extremely close to each other ($\rightarrow$ small crosstalk capacitance)
+* Frequent **activation of word lines** neighbouring particular cells between
+  refreshes may **flip the cell states**
+* **Disturbances erros** have been a know design of DRAMs since even, but
+  failure in commercial DDR3 chips was demonstrated in 2014 : **Rowhammer**
+
+```nasm
+code: 
+  mov (x), %eax   //read from address x
+  mov (y), %ebx   // read from address y
+  cflush (x)      // flush the cache for address x
+  cflush (y)      // flush the cache for address y 
+  mfence
+  jmv code
+```
+
+* Rowhammer effectively **violates memory protection** ("if I can read, I can
+  also write") which is a ley ingredient to privilege separation across
+  processes
+* By accessing locations in neighbouring rows one could gain unrestricted memory
+  access and privilege escalation
+  * Allocate large chunks of memory, try many addresses, **learn weak cells**
+  * Release memory to the OS
+  * Repeatedly map a file with RW permissions to **fill memory with page table
+    entries (PTEs)** 
+  * Use Rowhammer to **flip (semirandomly) a bit in one of these PTEs** it will
+    point to the wrong physical page
+  * Chances are that this physical page contains PTEs too, so now **accessing
+    that particular mapping of the file (RW) actually modifies the PTEs** not
+    the file 
+  * Attacker can arbitrary change PTEs and **memory protection is gone**
+  * **Mitigations**
+    * Error correcting codes may fail to detect multiple flips
+    * Shortering the refresh intervals mitigates but does not solve problem;
+      implemented in firmware by some vendors
+    * Hard or impossible to avoid altogether without **changes in the DRAMs**
+    * Increase electrical nois margins (costly)
+    * Count indise the DRAM the number of row activations within a time window,
+      **identify potential victims, and refresh** 
+* An aside on DRAMs: Data Remanence
+  * A completely different problem with storing data on capacitors: cells may
+    leak information quickly in the worst case but very many do not leak much in
+    typical conditions
+  * Lowering significantly the device temperature (e.g., use spray refrigerants)
+    makes **most cells retain charge for long time** (seconds to miniutes)
+  * **Coldboot** attacks:
+    * Cool a working DRAM device
+    * Switch off 
+    * Move the device to another computer or reboot a malicious OS
+    * Read content (password, secret keys, etc.)
+* A **covert channel** is an *intentional communication* between a sender and a
+  receiver *via a medium not designed to be communication channel*
+  * If we isolate critical process inside a virtual machine, a covert cahnnel
+    may allow a rogue programme insidde of the isolated process (a *Trojean
+    horse*) to leak secret to some malicious receiver without anyone to notice
+    (no conventional communication channel visible)
+* Attacks where the sender is the usnsuspecting **victim** of the attack, who is
+  **unknowingly transmitting information through a covert channel**, and the
+  receiver is the attacker
+* Sending (or leaking) information is a **side effect fo the normal operation of
+  the victim**, either because of the hardware implementation of the system or
+  because of the software implementaion of the victim, or both
+* Covert and Side channel are either :
+  * **Microarchitectural**
+    * Based on the *existence* of microarchitectural state, that is state not
+      (normally) visible to the programmer, because architecural state is know
+      and thus, apart from bugs, inherently protected
+    * based on the *sharing of the hardware components* featuring such
+      microarchitectural state
+    * Physical replication and isolation may solve the problem
+  * **Physical**
+    * Based on the physical nature fo the computing system
+    * Potentially more difficult to flight, but also harder to exploit
+* **Timing side channel attack**
+  * Execution time reveals something on data
+  * Blinding through constant time  
+    * May need to fight compiler optimizations
+    * Variability may arise from microarchitectural phenoma
+* **Cache Side channel attacks**
+  * Oldest and perhaps most powerful example of microarchitectural side chanel
+  * Attacker can differentiate hits and misses using some high resolution timing
+    measurment (e.g., processor cycles)
+  * Victim memory accesses (= where the victim loads or store) reveal secrets
+    * Accesses to an AES sbox() depend on the secret key
+  * Attacker can run victim code
+* **Evict+Time** Does the victim access location $X$ (in set $Y$)
+  * Run the victim
+  * Run the victim and time it
+    * Fast because data are in the cache
+  * Evict contetn from set $Y$ 
+    * By replacing with attacker content
+    * Making sure to pollute all ways
+  * Run the victim and time it 
+    * If this run is longer then the previous one, the victim accessed something
+      is set $Y$
+  * Problem
+    * Relies on measuring the *precise execution time of the victim*
+    * Repeats the *same execution*, so no variability in the executed code
+    * Yet, timing may be affected by *environmental issues* (system call, branch
+      prediction, etc.)
+    * It is a small noise but may be comparable to the quantoty being measure 
+    * *Repeat many times*
+* **Prime+Probe** What locatin (set) does the victim access
+  * Fill all sets with the attacker content (*prime*)
+  * Read all pieces of data for all sets and time each set 
+    * Fast because dara are in the cache
+  * Run the victim
+  * Read all pieces of data for all sets and time each set (*probe*) 
+    * If step 4 takes longer than 2 for set $Y$ then victim accessed something
+      in set $Y$
+  * *Key advantage* now the attacker times their own code and not the victim's
+    code, arguably allowing *better control of measurment noise*
+  * Multiple level
+    1. Fill set in LLC (prime)
+    2. Fill set (= evict) in L1 (reprime) (do not evict from LLC), *Reprime*
+       with element in the same set in L1 but in a different set in LLC
+    3. Run the victim
+    4. Find misses
+* Many attacks to cryptographic algorithms involve trying multiple plaintexts
+  and/or key hypotheses and ditinguishing between most likely and least likely
+  over many attempts
+* The attacker and the victim may be on *different cores*
+  * diffenrent core does not share first caches
+* **Inclusion property** 
+  * Whatever is in L1D is certainy in L2; whatever is in L2 is certainly in L3,
+    etc.
+  * Useful to maintain coherance 
+  * It is interesting for an attack to try to attacker last layer caches, since
+    there is more info
+* Take advanteages of the hardware support for larges pages
+  * Large pages $\rightarrow$ More memory waste but *more efficient managment*
+    in applications with larger data footprint
+  * Attacker needs administrator rights to set larger pages
+    * Not a problem because they have them in their guest OS
+* **Meltdown**
+  * Catastrophci attack making possible **read all memory of a process**
+    (included protected data)
+  * By product of the way sime microarchitectural features are implemented 
+  * Exploits **race condition** between memory access and protection checks
+    * Ultimately exploits the microarchitectural nature of coaches (something is
+      left in the cache upon exception because *the cache is not part of the
+      architectural state*)
+  * The attacker executes a *forbidden access* and speculatively uses the result
+    to obtain *non architectural side effect* that reveal the secrets before the
+    forbidden access is squashed
+  1. Execute a forbiden access
+  2. and speculatively use the result
+  3. with nonarchitectural side effect that reveal the secrets
+  * Use the secret to access a location in memory, the access will be done
+    speculatively, then check what data have been accessed (via the cache) and
+    find back the index
+* Possible mitigations for meltdown
+  * The obvious solution is to *change the processor design*
+    * Test privilege level before making the result of a speculative access
+      available
+  * The other line of mitigation os to *better isolate user space and kernel*
+    space memory
+* **Spectre**
+  * Another catastrophic attack making it possible to **read all memory**
+  * Addresses another shared resources: **branch predictors**
+    * For simplicity, branch predictor are not thread specific
+  * Exploits side effect of **mispredicted speculative exectution**
+    * Mispeculation does not affect the architectural 
+    * but it may affect microarchitectural structures
+  2. Speculatively execute
+  1. leaky code
+  3. with non architectural side-effect that raveal secrets
+* Possible mitigation for spectre
+  * hardware 
+    * Disable speculative execution
+    * Seperate branch predictor per process/thread
+  * General software approaches 
+    * Run only an application per processor
+  * Partial and application-specific software appraoches
+    * Add serialization instruction between branches and loads 
+
+## Trusted Execution Environments
+  
+* First attempt to develop **architectural features to mitigate some of the most
+  severe threats** to isolation and confidentiality
+* **Isolation** = Confidentiality and Integrity
+* The key to the ability of limiting the possible translation depends on the
+  existnece of **processor privilege levels**
+  * Some instructions can be *executed only in some privilege levels*
+  * Instruction lowering the privilege level do not need to be restricted to a
+    particular level: there is no harm in deciding that one can do less
+  * Critical is the *mechanism to raisse the privilege level*, of course
+    * Link raising the privilege level to a predefined change in control flow
+      (i.e., some form of jump): if the privilege level raises, only some
+      specific code can be executed
+    * Usually in the form of a *software exception instruction*: raise the
+      privilege and then raise the execption to execute the exception handler
+    * If the virtual memory mechanism has been used well to protect the
+      excpetion handler code, there is confidence that when the privilege level
+      is high, only the OS can be executing
+* **Classic privilege level**
+  * Traditionaly **multiple privilege levels** with varying capabilities tuned
+    to some particular purposes
+  * Lower levels *add the capabilities* of levles above
+  * In practive, most processor evolved to have only two privilege levels:
+    **user mode** and **kernel mode** 
+* **Virtual Machines**
+  * **Full virtualization**: run the very same OS and applications in the
+    virtual machine that one would run on the bare hardware
+  * Many reasons:
+    * **Consolidation** of multiple small machines in a powerful one (lower
+      cost and energy)
+    * **Flexible deployment** (no need to buy a mahcine upfront)
+    * **Lower dependence** from the *hardware* details (easy to move accross
+      servers)
+    * **Better isolation** (not processes of the same OS but different OSes) 
+* **Software-base virtualization** 
+  * Mostly the ingredient for process virtualisation enable also full
+    virtualization:
+    * Memory is accessed via TLBsn violations results exception being raised,
+      etc.
+  * Achieving full virtualization on a CPU no meant for it is challenging
+    * If guest OS needs to be isolatedd, they cannor run all in kernel mode
+    * But if *guest OSes run a user mode*, how can they do thier job
+  * The classic approach is called **trap-and-emulate**
+    * Guest OS will create exceptions when trying to do its normal job (loading
+      TLB)
+    * Hypervisor will check the pertinence and, aif appropriate, emulate
+    * May key data structures will be replicated (shadow page tables)
+  * But some instructions simply behvae differently in user and kernel mode
+    * **Dynamic Binary Translation** to rewrite the functionality with user mode
+      instruction
+* **Hardware-Assisted virtualisation**
+  * Introduce **ISA extensions and ahardware support** for full virtualization
+    and progressively extend it
+    * More privilege levels (Ring-1 Hyoervisor)
+    * Another level of address translation (nested paging) supported by the
+      hardware page walker
+    * Interrupt virtualisation
+    * IOMMU virtualisation 
+* More **high privilege levels**
+  * **System managment mode** (ring-2)
+    * Guarantee some managment functionality in firmware even if the OS or the
+      hypervisor anr compromised accessible by dedicated interupts
+    * Mastly used for power and thermal managment or handling hardware errors
+  * **Platform Security Engine** (ring-3)
+    * Physical isolation through a piece of hardware independent from the
+      processor
+  * Not just more level but **dedicated hardware** and **physical isolation**
+  * Largely implement *security by obscurity*
+* **Symmetric key Cryptography**
+* **Public key cryptography**
+* **One way hash functions**
+  * Typically used for integrity: it should be impossible to create a new
+    message or modify one such that it results in the same hash at the original
+* **Hash trees** 
+  * recursive application of one-way hashses on a dataset split in blocks
+  * Useful to keep hashes up to data in case of local changes: one need to
+    *recompute the hash of the block where the change took place and of the
+    parents*
+* **Random Number Generators**
+  * Main distinction
+    * **Pseudo-random number Generators** are algorithm to produce from a few
+      initial bits (a seed) a deterministic long string of random-looking numbers
+    * **True random number generators** are typically hardware components which
+      exploit physical phenomena (electrical of thermal noise, temperature
+      vairations, etc.) to generate truly random numbers
+  * TRNGs are slown thus often TRNGs generate seeds and PRNG generate strings of
+    random numbers for practical use
+  * TRNG can be sensitive to tampering or may provide *backdoors*
+* **Physical Unclonable Functions (PUFs)**
+  * Circuit exploiting intrinsic randim physical features to produce a
+    fingerprint *uniquely identifying each chip*
+* **Freshness** and **Nonces**
+  * In **replay attacks**, an adversary intercepts a piece of data and *resends
+    it at a later time*
+  * The authentication and integrity of the message is guaranteed by the fact
+    that the message was a genuine one once first sent - what is misses is
+    **freshnes**
+  * The typical solution is to introduce **nonces**, that is number used only
+    once during the lifetime of the system: if a message contains a previously
+    used nonce, it is not fresh
+  * Nonces can be produced by *monotonic counters* for instance
+* **Homomorphic encryption**
+  * Form of encryption which allows *computing over encrypted data* without to
+    the secret key
+  * Ultimate solution to secure remote computation: user ships encrypted data,
+    they get processed by an untrusted party who does never see data in clear,
+    and user receives back encrypted results
+  * Extremely intellectually appening idea, but, in practive, today there is no
+    general solution except for limited families of computation and with
+    impractiacal performance overheads
+* **Trusted Computing Base** (TCB)
+  * The set of **trusted hardware and software components** which can be object
+    of an attack
+  * Important: what is *trusted* is no necessarily *trustworthy*
+  * The purpose is to separated clearly what is *supposed to be trustworthy* and
+    simply may not be sich because of *bugs or conceptual oversights* from what
+    is *clearly untrustworthy* and against which the system has been designed
+    with explicitely defenses
+* The TCB should be as small as possible
+* Cloud users trust their own apps, thei own guest OSes, and the processor
+  manufacturer, but not the cloud operator
+* **Trusted Processor Chip**
+  * The fact that the cloud operator is not considered trusted means also that
+    **not the whole computer hardware is trusted**
+* **Trusted Execution Environments**
+  * Create environment where **only protected softxare resides and executes**
+    supported by a **minimal TCB**
+  * The main challenge is to protect the software state of the TEE given the
+    fact that its state in inavoidably *dispersed all over the system* and
+    specifically outside of the TCB and inside untrusted software and hardware
+    components
+  * **Confidentiality through encryption**
+    * This usually implies hardware encryption/decryption modules at the edge
+      locally stored keys
+  * **Confidentiality through isolation**
+    * Isolation ca heppen through useal means but *memory managment cannor be
+      under the control of untrused entities*
+    * TEE and their TCB hardware should be in charge of their own page managment
+  * **Confidentiality through State flushing**
+    * Architectural and microarchitectural state accross all parts of the system
+      need to be *flushed* before untrusted entities control the system 
+    * The challenge is to identify all places where there is confidential state
+  * **Integrity through Cryptographic hashing**
+    * *One way hasing* ensures integrity of everything stored outside of the
+      processor
+    * Again, this implies *hardware modules* as the edge and *locally stored
+      nonces and root hashes*
+* **Attestation** : provide a proof that the software running inide the
+  protected environment is genuine and untampered 
+* **Intel SGX**
+  * Data owner *trusts* the hardware running in a remote operated by an
+    *untrusted infrastructure owner*
+  * The trusted hardware establishes a *secure containers (enclave)* and
+    supplies the user with a *proof* that they are accessing a specific piece of
+    software running into the enclave
+  * The data owner *uploads* encrypted data that the software in the enclave
+    decrypts and processes
+  * The enclave software encrypts the resuls and sends them back to the data
+    owner
+  * The system software of the infrastructure owner is in charge of managing
+    resources and devices as in ordinary systems, but has no acces to the code
+    and data enclave
+* **EPC**: Enclave Page Cache = pages allocated by SGX for enclaves
+  * Allocated by kernel or hypervisor, encrypted in hardware with keys generated
+    a boot time
+* **Root of trust**
+  * Security requires many **different cryptographic keys** for multiple
+    purposes
+    * Private and public keys for authentication
+    * Secret keys for confidentiality
+    * Keys for integrity checks
+  * Some can be random and ephemeral (generated at boot)
+  * Most need to depend on a something unique and persistent: a root of trust
+    key stored in the processor and accessible only the the TCB
+    * **Root provisionning key** (RPK), sroted by intel
+    * **Root sealing key (RSK)** that intel declares to erase after
+      manufacturing
+  * Classic security issues: Public key infrastructure, Certificate authority,
+    revocation etc.
+* **ARM TrusZone**
+  * The basic buisiness model and market is very different: ARM does not build
+    chips but lincenses intellectual property, many customer only license the
+    architecture and build the processor themselves (e.g., Apple)
+  * TrustZone is a collection of hardware mechanisms which conceptually
+    partition a system and its resources in a secure and a nonsecure world
+  * Mainly about isolation
+
+## Physical Side-Channel attack
+
+* Possibly the most elusive class of attacks
+* **So far** of moderate concern for general purpose computing but **extremely
+  critical for embedded applications** (e.g., smart cards) and devices not
+  physically located with the owner/user
+* Most worrying for embedded devices where physical access is possible 
+  * Smartcard
+  * IoT is nuturally a growing concern
+* In the case of untrusted datacenters, physical access is to be assumed
+  possible also there
+* And finally, physical presence is not even always needed
+* **Invasive** attacks
+  * Typically VLSI devices are unpackaged, layers removed or tampered with, new
+    connections made
+  * Anything is possible
+  * Extremely expensive and thus farily rare; a serious threat only in extreme
+    cases
+* **Noinvasive** attacks
+  * *Device attacked only through existing interferaces; usually inexpensive*
+    equipment
+  * (Almost) no trace left of the attack
+  * Very serious threat
+* **Passive attacks**
+  * Device operating as usual
+  * Attacker only observes legitimate input/output and physical emmanations
+* **Active attacks**
+  * Device, inputs, and environment are manipulated
+  * Device operating outside specification and abnormally 
+  * Attacker learns from this abnormal behavior
+* **Timing**, one could perhaps see the Evict+TIme cache attack as an
+  unconventional timing side-channel
+* **Power consumption**, Supply the device through a resistor (1-50 $\Omega$)
+  anhd measure voltage drop
+* **Electromagnetic**, measure the RM field with a small, often hand-made coil
+* **Acouistic**, capture the noise of a keyboard or of a laptop (usually through
+  capacitors and coils)
+* **Hardware trojans**
+  * Malicious stealthy circuit, unintented part of an otherwise genuine computer
+  * Typicallu inactive most of the time, until it receives some activation
+    signal and then performs some rogue action
+* **Passive side-channel attacks**
+  * CMOS Power consumption is data dependent
+  * **Electromagnetic attacks** are fundamentally similar to power consumption
+    attacks
+  * **Leakage Models**
+    * To perform an attack, one must *reason about how data* flowing into the
+      circuit *influence the measured emanation*
+    * One needs mathematical approximation and stull allow successfull attacks
+    * Yet, the more accurate is the model, the more efficient (e.g., shorter
+      time, smaller number of runs) is the attack
+* **Simple power attack**
+  * Ussually *visual inspection of a few power traces* or simple
+    template-based analyses
+  * Typically tells something about operation performed but not directly on
+    the data 
+  * Sort of naïve but effective
+* **Differential power attack**
+  * *Statistical analysis* of larger numbers of power traces
+  * Tells directly something about the data being porcessed
+  * Extremely powerful
+  * Instead of looking visually for a difference and interpreting ad-hoc what
+    the difference light tell on the secret, find out *statistical correlation
+    between hypotheses on the secret and actual measurement*
+    * (Almost) only one essetial assumtion: what is the cryptographic algorithm
+      being run
+    * Other assumption are only mildly influenctial on the tresult
+  * Use *many measurements to cancel noise*
+  * Records traces with very many different plaintexts
+    * It is assumed wa can trigger or obaserve many encryptions with know
+      plaintext, for instance
+    * Traces will be very different and *will tell nothing individually*
+  * Make an hypothesis on the key (or part of it) and *compute sime internal
+    signal* (decision or selection function) as a function of the plaintext and
+    of the guess
+    * Divide-and-conquer: choose a decision fucntion which depends only on a few
+      bits ot the key, so that we have less guesses to make
+  * Split the measurements into *two groups base on the decision function*
+    * If the *guess in wrong*, the decision function computed is uncorrelated
+      with the real internal signal and thus with any point of the power traces
+      $\rightarrow$ the *average of the twos sets will be identical*
+      $\rightarrow$ the difference approximately null
+    * If the *guess is right*, the decision function is equal to a real internal
+      signal and thus correlate to something in the power traces $\rightarrow$
+      the *average of the two sets will be different in those instants*
+      $\rightarrow$ the difference will correspong to the effect of the internal
+      signal and thus nonnull
+* **Selection of relevant samples**
+  * Processing a complete trace is very coslty
+  * Use only *relevant information easily extracted with simple power analysis*
+    or some statistical processing
+* **Correlation power attacks**
+  * Use a linear correlation foctor instead of differences
+  * DPA splits measurments in bins based on the decision function and checks if
+    the average of the measurments in the bins differ significantly
+  * CPA measures the lineat correlation factor between the leakage model
+    (applied to the bits of the decision function) one the measurments
+* **Fault injection Attacks**
+  * Semi invasive attacks which use some mean of *creating a disturbance*  on a
+    device of get ir *to reveal secrets*
+  * Secrets are often reavealed by *comparing runs with and without faults*
+* **Fault injection methods**
+  * Vary the **supply voltage**
+    * Lower the supply voltage $\rightarrow$ critical path delay exceeds the
+      clock period
+    * Generate a voltage spike
+  * Vary the **clock frequency**
+    * Increase the frequency $\rightarrow$ clock period too short for the
+      critical path
+    * Generate a glitch $\rightarrow$ critical path violated in a specific
+      instance
+  * **Heat** the device
+    * Again, affect the critical path
+  * Open the VLSI circuit and **shine light on it**
+    * Flash $\rightarrow$  errors all over the place
+    * Laser beams $\rightarrow$  flip individual bits
+  * Countermeasures
+    * Fairly hard to protect, for creating faults is relatively easy
+    * Countermeasures not fundamentally different from technique developed for
+      fault-tolerant computing (the only difference is whether the fault is
+      malicious or not)
+* **Remote side channel attacks**
+  * How can an attacker measure power ? attacker needs only to *measure delay*
+* **Ring oscillator Sensors**
+  * Create a ring oscillator (odd number of inverters in a ring) and measures
+    the frequency by counting and comparing to the transitions in a reference
+    clock
+  * Again, plenty of practical issues to handle properly, nut essentially one
+    gets on a chip digital "oscilloscope"
+* **Countermeasures to physical side channel attack**
+  * **Physical hiding** $\leftarrow$ en engineering approach
+    * Perform the same computation an unprotected device would do 
+    * Recude the correlation between  physical emanations and the secret
+  * **Algorithmic masking** $\leftarrow$ a mathematical approach
+    * Randomized the intermediate values computed in the device
+    * Thus, make it harder to correlate physical emanations with secret key
+      hypotheses through intermediate algorithmic values because the latter are
+      now random
+* **Physical hiding**
+  * Make the **power** consumption **random**
+  * Make the **power** consumption **constant**
+  * Increase the noise 
+  * They can be applied at many levels (software, hardware)
+* **Instruction shuffler**
+  * Prepare the code to know *which instructions can be safely shuffled*
+  * Have a *shuffler unit supply instruction in random order* to the processor
+  * *Architecture independent*
+    * The processor has no clue that instruction are being shuffled
+    * The shuffler know nothing of the semantic of the instruction it is
+      shuffling
+  * Shuffling is an effective countermeasure
+* **Data independent Power consumption**
+  * Switch from single rail ($x$) to communication to *dualt rail* ($x$ and
+    $\bar{x}$)
+    * Every transition comsume the same
+  * Add precharge to 0 or 1
+    * Constatn number of switching events, even when no logic transition
+* **Masking idea** 
+  * Attacks based on the correlation between an attacker hypotheseis and the
+    corresponding value of an internal signal
+  * Change the computation of the cryptographic algorithm to *make all internal
+    signals random*
+    * The final result of the computation must be the same
+    * Apply a masl to the inputs $p_i' = f(p, m_i)$ where $m_i$ is a random
+      variable generated internally, $f$ an appropriate function, and $p$ may
+      represent the plaintext and/or the key
+    * Internal signlas are now $s' = g(s, m_0, \dots, m_n)$ and, due to the
+      random mask $m_0, \dots, m_n$, cannot be computed, for a given hypothesis,
+      by the attacker
+    * Remove masks from the outputs $c_j = h(c_j', m_0, \dots, m_n)$ where $h$
+      is an appropriate function
+  * The challenge is to keep track of how the masks propagate through the
+    algorithm and to be able to "remove" them from the final result
+  * For **linear** cryptographic algorithm we could implement **boolean
+    masking** 
+    * Mask the input with a random mask $m$: $x' = x \oplus m$
+    * Compute $F(x', k)$ which cannot be attacked because $x'$ is unknown
+      (random)
+    * Compute $F(m, k)$ which cannot be attacked because $m$ is unknown (random)
+    * Produce the output $F(x, k)$ as $F(x', k) \oplus F(m, k)$
+  * A lot of cryptographic algorithm are *linear* but not all (e.g., Subbytes in
+    AES)
+  * For linear operations, it is just a question of keeping efficiently track of
+    the masks and *making sure they do not cancel out*
+  * *Theorical security* of masking against first-order DPA attack
+  * But one can perform *second-order DPA attack*
+* **Conclusion**
+  * Physical side channel attacks are probably the most elusive form of security
+    threat for cryptographic devices
+  * There is a variety of countermeasures (both from a mathematical and from an
+    engineering perspectives)
+  * Countermeasures are all quite expensive and non removes the possibility of
+    an attack, they only mitigate the security threats
+  * It look like in practice what works best is the implementation of many
+    simple countermeasures at once
+  * Today, side-channel attacks are key threat to some particular embedded
+    products (e.g., smart card) and not yet of classic computing systems (e.g.,
+    datacenters, laptops, smartphone), but this may change
