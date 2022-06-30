@@ -24,7 +24,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * The *latency* is unmodified
   * The *throughput* is higher
   * Adding resgisters to cut combinatorial logic
-  * Each new register add a bit of latency and increase de power consumption
+  * Each new register add a bit of latency and increase the power consumption
   * **Dependencies** slow down the possibility of pipelining
     * To detect dependencies we can simply have a look to the destination
       registers of intermediaire registers and verify that they are not needed
@@ -56,7 +56,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
 * Dynamic scheduling allow **Binary compatibility**, the same code will work for
   different processors, Parallelism is handle in hardware on not by the compiler
 * **Structural hazars**
-  * Are the required resources available
+  * Are the required resources available ?
   * Previously handled by rigid pipeline
 * **Data hazards**
   * RAW : Are the operands ready to start execution
@@ -70,12 +70,12 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   available (RAW) and that the execution Unit is free (Structural Hazard), then
   starts execution
   * Unavailable operands are identified by the name of the reservation station
-    in charge of thr originating instruction
+    entry in charge of the originating instruction
   * *Tag* keeps track of which instruction will generate the result I am waiting
     for. Tag here are the name of an entry of the reservation station
     * *Tag* cannot be register name since they are not unique
-    * *Tag* cannot be the PC (even tough it looks) since we can have a branch in
-      a loop for example
+    * *Tag* cannot be the PC (even tough it looks unic) since we can have a
+      branch in a loop for example
   * Can find dependencies using the reoder buffer (see later)
     * Reorder buffer keeps track of all instructions that have not been commited
       yet
@@ -84,9 +84,9 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
 * New results are seen at their inputs through special results bus(es)
 * Writeback into the registers can be done in order or out of order
 * **Architectural states** are known by the programer
-* **Microarchitectural states** are know not by the programer, only used by the
+* **Microarchitectural states** are not known by the programer, only used by the
   processor
-* Exception handler should now exactly where a problem has occured, especially
+* Exception handler should know exactly where a problem has occured, especially
   for **non terminating exceptions** (e.g., page fault) so that they handle the
   event and resume exactly where the exception occured
   * *Precise exceptions* : Reordering at commit; user view is that of a fully
@@ -129,8 +129,8 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   station
   * Load queue entries have a pointer to an entry in the store queue to know
     every store that where before the load
-* Last improvment is Superscalar, having several fetch and decode unit as well
-  as several alu and memory unit
+* Last improvment is Superscalar, having several fetch and decode units as well
+  as several alu and memory units
 
 ![Dynamically Scheduled Processor](./dynamically_schedule.png)
 
@@ -168,7 +168,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     * Restore mapping from all squashed ROB entries (from tail to head) as
       *LogDest* $\rightarrow$ *Dest*
     * Reset corresponding *Busy-Bit* (=valid) in the Status Table
-* **State Transition Replaced by Copying in Stand-aloone RFF**
+* **State Transition Replaced by Copying in Stand-alone RFF**
   * Initialization : All Rename registers are "Available"
   * *Available* $\rightarrow$ *Renamed Invalid* : Instruction enter the
     Reservation Stations and/or the ROB: register allocated for the results
@@ -189,19 +189,19 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * Either one outcome is typical and far more frequent : *Static prediction*
   * Or I need to remember some history : *Dynamic prediction*
 * What do I do if the guess was wrong ?
-  * Undo speculatively ececuted instructions ("squash")
+  * Undo speculatively executed instructions ("squash")
     * May or may not cost something
 * **Exceptions**
-  * **Prediction** For every instruction, we have guessed that there will be no
+  * **Prediction**, For every instruction, we have guessed that there will be no
     exception (static prediction)
-  * **Speculation** In case of exception we have used the ROB to squash all
+  * **Speculation**, In case of exception we have used the ROB to squash all
     instructions after the faulty one raising exception
 * General Idea (our ROB does just that) :
   * After a prediction, hold every potential change in state of the processor
     (e.g., register values, memory writes) in a buffer
   * If the prediction turn out to be correct, let the content of the buffer
     affect the state (= commit)
-  * Tf the prediction rusn out to be wrong, simply trash the content of the
+  * If the prediction turns out to be wrong, simply squash the content of the
     buffer
 * **Branch Preciction**
   * *Static* : Maybe we can assume that every backward branch is part of a loop
@@ -235,10 +235,10 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
 * **gshare** : replace concatenation with a better hash function
 * **Return address stack** stores return address in the processor and use them
   for jump predictor without having to deal with the stack
-  * Mispreduction has high cost
+  * Misprediction has high cost
 * **Memory dependencies**
   * **Prediction**
-    * We can optimistically assumen that ther is *no dependence* (it is the only
+    * We can optimistically assume that there is *no dependence* (it is the only
       asssumption that makes us gain time and the opposite assumption never
       leads to a functional mistake ...)
     * One could certainly do better than simply assuming that any potential RAW
@@ -246,7 +246,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     * The goal is to reduce the probability of squashing and replaying (if
       squashing costed nothing, the prediction would be ok, but squashing almost
       invariably has a cost - and definitively in terms of energy)
-    * Essentially one could build **dynamical predictprs** similar in spririt to
+    * Essentially one could build **dynamical predictors** similar in spirit to
       branch predictors (the intuition is that dependences are program specific
       but often **stable** during program execution) $\rightarrow$ learn from
       history and remember what happens on previous visits of a load
@@ -269,14 +269,14 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     * Since we are putting data in the cache (which is not architecturally
       visible), *nothing to do to rollback*
     * Still, prefetching has a *cost* (besides energy, it consumes memory
-      bandwidth) and could be damaging (leads to eveciton os useful stuff)
+      bandwidth) and could be damaging (leads to eviction of useful stuff)
 * **Prefectching**
-  * **Coverage** How many misses prefetching removes
-  * **Accuracy** How many prefetched cache lines are useful over all
+  * **Coverage**: How many misses prefetching removes
+  * **Accuracy**: How many prefetched cache lines are useful over all
     prefetched lines
   * Sort of a trade-off :
     * prefetching very *agressively* improves coverage but reduces accuracy
-      $\rightarrow$ pullutes the cache
+      $\rightarrow$ pollutes the cache
     * prefetching *conservatively* may improve accuracy but reduces coverage
       $\rightarrow$ little benefit
   * Simple idea
@@ -291,14 +291,14 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
       stride
 * **Stream buffer**
   * There may be various streams mixing
-  * Aggressive prefetching of multiple streams lead ot cache pollution
+  * Aggressive prefetching of multiple streams leads to cache pollution
   * Implements multiple Next-N-Line or Stream prefetchers
   * Place the prefetched lines in FIFO buffer instead of the cache
 * Speculation is not necessarily a Run-Time Concept
   * Dynamic : in hardware, no interaction whatsoever from the compiler
     * Binary code in unmodified
   * Static : in software, planned beforehand by the compiler
-    * Binary code is written in such a was as to do speculation (with or withour
+    * Binary code is written in such a way as to do speculation (with or withour
       some harware support in the ISA)
 * **Predicated (= guarded) execution**
   * A special form of static control speculation, "I cannot make a good
@@ -314,16 +314,24 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
 | **Exceptions**   | * Out of order and reordering  |                              |
 |                  | * Imprecise exceptions in DBT  |                              |
 +------------------+--------------------------------+------------------------------+
+|                  |                                |                              |
++------------------+--------------------------------+------------------------------+
 |                  | * Branch prediction            | * Trace Scheduling           |
 | **Control**      |                                | * Hyperblocks                |
 |                  |                                | * Prediction                 |
 |                  |                                | * Prediction                 |
 +------------------+--------------------------------+------------------------------+
+|                  |                                |                              |
++------------------+--------------------------------+------------------------------+
 | **Data**         | * Virtual memory               |                              |
 | **Availability** |                                |                              |
 +------------------+--------------------------------+------------------------------+
+|                  |                                |                              |
++------------------+--------------------------------+------------------------------+
 | **Data**         | * Load/Store Queues            | * Advanced Loads             |
 | **Dependence**   |                                |                              |
++------------------+--------------------------------+------------------------------+
+|                  |                                |                              |
 +------------------+--------------------------------+------------------------------+
 | **Data**         |                                | * Dynamic compilers          |
 | **Value**        |                                |                              |
@@ -339,12 +347,12 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * Memory
 * Either mutltiple resources in the processor or a fast way to switch across
   states
-* **Vertical waste** Complete idle cycle
-* **Horizontal waste** Partially filled cycle
+* **Vertical waste**: Complete idle cycle
+* **Horizontal waste**: Partially filled cycle
 * **Cycle by Cycle interleaving multithreading** (or Fine-Grain multithreading)
   * Round robin selection between a set of threads
   * Requires several Pragram counter and register file
-  * Would allow to remove some forwardind path (since two instructions does not
+  * Would allow to remove some forwarding path (since two instructions does not
     belong to the same thread, they canot depends on each other)
   * The single thread latency is increase by a factor $N$
     * It is no acceptable that single thread performance goes significantly down
@@ -354,8 +362,8 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * No need for forwarding paths if threads supported are more than pipeline
     depth
     * Simpler hardware
-  * Fills wee short vertical waste (other threads hode latencies)
-  * Fills much less will long vertical waste (the thread is rescheduled no
+  * Fills well short vertical waste (other threads hide latencies)
+  * Fills much less well long vertical waste (the thread is rescheduled no
     matter what)
   * Does not reduced significantly horizontal waste (per thread, the instruction
     window is not much different)
@@ -385,7 +393,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     * If several threads want the same resource, round-robin assignment
   * Multiple program counters (= threads) and a policy for the instruction fetch
     units to decide which threads to fetch (*Fetch and decode stage*)
-  * Multiple or larger register files with a least as many registers as logical
+  * Multiple or larger register files with at least as many registers as logical
     registers for all threads (*Commit stage*)
   * Multiple instructions retirement (e.g., per thread squashing)
     * No change needed in the execution path
@@ -410,7 +418,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
 ### VLIW Architecures and Compilers
 
 * **VLIW** Very Long Instruction Word
-* Schedule is to decide WHEN and WHERE each instrction is executed
+* Schedule is to decide WHEN and WHERE each instruction is executed
 * Scheduling happens at run time in superscalars and it happens exclusively at
   compile time in VLIWs
 * Run time scheduling in superscalars requires considerable resources in the
@@ -471,19 +479,18 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * More subtle sources of incompatibility
     * change in instructions latencies
   * No fully satisfactory solution exists today
-  * Partial or resaerch solutions
+  * Partial or research solutions
     * Recompile
     * Special VLIW coding/restrictions
     * Dynamic binary Translation is emerging
 * Latency cannot increase
   * Trivially, higher latendcy may violate data dependencies
 * **Compiler Technology problem**
-  * Parallel exectution is limited byt the need to find independent instructions
+  * Parallel exectution is limited by the need to find independent instructions
   * We need to deal with both data and control dependencies
 * **Control dependencies**
-  * If
-    * We have abundant resources (machine parallelism) and  
-    * We do not care about power dissipation, etc. bu just look for performance
+  * If we have abundant resources (machine parallelism)
+  * and we do not care about power dissipation, etc. but just look for performance
   * We can execute all paths in parallel without making a choice
   * Instructions can be executed in parallel, but they are commited only if the
     relative predicate is true
@@ -497,7 +504,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * **Loop tranformations**
     * Loops are often the most important part of the code (in terms of fraction
       of total code)
-    * Loops bodies can ce transformed so that more parallelism can be exloited
+    * Loops bodies can ce transformed so that more parallelism can be exploited
     * **Loop peeling** remove some iterations of the loops and add them after
       (change the total number of iterations)
     * **Loop fusion** : merge two loops in one (might need loop peeling)
@@ -507,7 +514,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   but aggressive unrolling multiples real instructions
 * **Software pipelining**, goal : restructured the loop, so that ILP can be
   exploited
-  * Prologue, Body and Epilogue  
+  * Prologue, Body and Epilogue
   * **Iterations** advancing in parallel
 * Dependences : Trace Scheduling
   * Optimise the **most probable path** by increasing the size of basic blocks
@@ -526,7 +533,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
 * RAW is the only important one : moving a load above a store
   * At runtime we have more information on memory addresses
   * But a **compile time** we have **more time available**: we can make much
-    more complex analysis which depend on a wider knowledge og the code
+    more complex analysis which depend on a wider knowledge of the code
 * Conclusion on VLIW compilers
   * Many different decisions
     * Which type of region is right? Trace, superblocks, hyperblocks,
@@ -549,7 +556,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     separated from embedded data
   * **Self modifying code** : what to do with it? Additional hardware to allow
     support of source architecture?
-  * **Precise Exceptios** : no 1-to-1 relation between target instructions and
+  * **Precise Exceptions** : no 1-to-1 relation between target instructions and
     source ones
   * **OS** : support of shared librairies and system calls
 * **Dynamic Binary Translation** : merge emulation and translation to get the
@@ -569,7 +576,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     * If we detect the injected code, we can simply jump back to the emulator
       part (in blue in the image)
     * Use the TLB to detect when one writes to the code and thus detect *sefl
-      modifyng code*
+      modifying code*
   * **Asynchronous exception**
     * Can be delayed, no big deal
     * Wait until end of group
@@ -651,7 +658,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     * Constant may be propagated
     * Precision can be tuned (bitwidth analysis)
     * Arithmetic components can be optimized
-    * Arithmetic operations often appeat in groups
+    * Arithmetic operations often appear in groups
     * A literal/sequential implementation may not make the best of the potential
       available
     * A different number representation can be game-changer
@@ -660,7 +667,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * "Give me your application in C, let me zoom in and let me try to find the
     biggest part that I can take so that I convert this into hardware, I put
     them as a functional unit of my processor and whenever you give me that
-    program, instead of going and resortign to the normal functional unit, I do
+    program, instead of going and resorting to the normal functional unit, I do
     it on this special functional unit"
   * Find subgraph
     * having a user-defined maximum number of inputs
@@ -673,20 +680,20 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     of a family of precessors amounts to customization for a set of applications
   * **Little automation**, thought: still moslty a manual design-space
     exploration; glimpses of automation in the 2000s seem lot
-  * Autimatic ISE discovery could be a more promising automatic custimization
+  * Autimatoc ISE discovery could be a more promising automatic customization
     opportunity, but also disapeared in the late 2000s
-    * Pros: Focus on autimatic design of datapath and leave control to manually
+    * Pros: Focus on automatic design of datapath and leave control to manually
       optimized processors (prediction, speculation, etc.)
-    * Cons: Limited scopte of exploitable parallelism (datapath parallelism and
+    * Cons: Limited scope of exploitable parallelism (datapath parallelism and
       convertible control, predication, unrolling)
 
 ### Statically Scheduled High Level Synthesis
 
 * Somehow, ISE is confined to dataflow or convertible control flow, and this
   limits exploitable parallelism
-* Traditional **HLS** gets rid of the processor altogether and uses th C/C++
+* Traditional **HLS** gets rid of the processor altogether and uses the C/C++
   specification to build hardware
-* It represents an attempt to raison the abstraction level of hardware design
+* It represents an attempt to raise the abstraction level of hardware design
   above the classic RTL level (i.e., synthesizable VHDL and Verilog)
 * Same as VLIW scheduling ?
   * Very similar problem but with some notable differences
@@ -713,15 +720,15 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * We need to schedule differently the operations within a loop so that
     operations of different iterations take place simultaneoulsy
   * Remember "software pipelining" How we need it so that a software program
-    reprrepresents a hardware pipeline
+    reprepresents a hardware pipeline
   * HLS needs to implement some form of modulo scheduling
-* Classic HLW and VLIW Compilation
+* Classic HLS and VLIW Compilation
   * Striking resemblance of the two undertakings
     * Both try to produce a **static schedule**  of operations
-    * Both try tp reduce to a minimum **control decisions**
+    * Both try to reduce to a minimum **control decisions**
   * Both suffer from **similar limitations**: they cope poorly with variability
     including varibale latency operations, uncertain events, such as memory
-    dependencies, unpredictable control flowd
+    dependencies, unpredictable control flow
   * Both impose **burdens onto the user**: decisions on how where to apply
     optimizations are not self evident, depend on the particular combination of
     the user constraints (note that the solution space is much wider for HLS),
@@ -730,7 +737,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
 ### Dynamically Scheduled High Level Synthesis
 
 * Limitation of Static Scheduling : When an operation depends on a load, we need
-  the laod to finish to check for dependencies
+  the load to finish to check for dependencies
 * **Asynchronous circuits** : operators triggered when inputs are available
 * Dataflow, latency-insensitive, elastic: the **synchronous** version of it
 * Every components communicates via a pair of handshake signals
@@ -751,7 +758,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
 * Backpressure from slow paths prevents pipelining
   * Insert FIFO into slow paths
 * Dataflow circuits have **no notion of program order**
-  * Which is need for a Load Store Queue and handle memory dependencies
+  * Which is needed for a Load Store Queue and handle memory dependencies
 * An **LSQ for dataflow circuits** whose only difference is in the *allocation
   policy*:
   * *Static knowledge* of memory accesses program order inside each basic block
@@ -762,7 +769,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * Contain speculation in a region of the circuit delimited by special
     components
     * Issue speculative token (pieces of data which might or might not be
-      correct)o
+      correct)
     * Squash and replay in case of misspeculation
     * New components : Speculator, Save units, Commit units
   * Extending dataflow components with a speculative flag
@@ -800,16 +807,16 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * Other computations can advance during stall
   * Howerver, in an in order system, pipeline usage and parallelism may still be
     limited
-* Separate vairble-latency memory accesses and computation
+* Separate varible-latency memory accesses and computation
   * Data is loaded from memory, stored in FIFOs, and sent to execution datapath
     as soon as ready
   * Requires nontrivial **code restructuring** (by user or compiler)
   * Some schemes support **out-of-order** execution
 * Out-of-order **multithread** pipelines
-  * Loop iteartions are tagged iterations which can execute out-of-order
+  * Loop iterations are tagged iterations which can execute out-of-order
   * Suspended thread occupied resources, subsequent threads can continue without
     stalling 
-  * Qualitatively the same results as A/E decouplingn but can be applied to many
+  * Qualitatively the same results as A/E decouplinng but can be applied to many
     variable latency op
 * In addition to operation, the **number of loop iterations** can also be
   variable
@@ -875,10 +882,10 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     * Cost reduction must profit from specialisation
     * Low power, small size, ...
 * **Specificities of Embedded procesors**
-  * Cost usde to be the only concern; now **performance/cost is at premium** and
+  * Cost used to be the only concern; now **performance/cost is at premium** and
     still not performance alone as in PCs; Performance is often a constraints
   * **Binary compatibility** is less of an issue for embedded systems
-  * System-on-chip make **processor volume irrelevant** (moderate motication
+  * System-on-chip make **processor volume irrelevant** (moderate motivation
     toward single processor for all product)
 * **Cost in performance**
   * **Performance is a design constraints**
@@ -887,18 +894,18 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     * *Embedded*: adequately programmed, must just satisfy some minimal
       performance constraints
   * **Cost is the optimisation criteria**
-    * *General purpose*: must be within sime typical range $\rightarrow$ profit
+    * *General purpose*: must be within some typical range $\rightarrow$ profit
       margin can be as high as some factor
     * *Embedded*: must be **minimal** $\rightarrow$ economic margin on the whole
       product can be as low as a few percent points
-* **Typical features ofo DSPs**
+* **Typical features of DSPs**
   * Arithmetic and datapath
     * Fixed-point arithmetic support
     * MAC = multi-accumulate instruction
     * Special registers, not directly accessible
   * Memory Architecture
     * Harvard architecture
-    * Mulatiple data memories
+    * Multiple data memories
   * Addressing modes
     * Special address generators
     * Bit reversal addressing
@@ -910,7 +917,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * In principle, if one adds a fractional point in a fixed position, hardware
     for integers works just as well and there are no additional ISA needs
     * It is just a matter or representation
-  * Multiplication typically intriduces the ned of arithmetic rescaling with
+  * Multiplication typically introduces the need of arithmetic rescaling with
     shifts to the right (multiplicative constant cannot be implicit anymore)
     $\rightarrow$  Choice of accuracy depending on how many bits one can keep
   * Different approximation choices
@@ -921,17 +928,17 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
       the nearest even $\rightarrow$ *no bias*
 * DSP Arithmetic needs
   * Rather than having full floating point support (expensive and slow), one
-    wants in a DSP sime *simple and fast* ad-hoc operations
+    wants in a DSP some *simple and fast* ad-hoc operations
     * MUL + ADD in a *single cycle* (MAC)
-    * *Accumulation* register fater MAC
+    * *Accumulation* register faster MAC
     * *Approximation* mechanism
   * Nouniform precision in the whole architecture
   * MAC operations tend to dominate DSP code (maybe 50% of critical code)
     $\rightarrow$ highly optimised MAC instruction
-* DSPs habe multiple memory ports
+* DSPs have multiple memory ports
 * DSP do not have caches
   * Importance of real time constraints: no data caches
-  * Sometimes caches on the instruction memory but determinism is key ins DSPs
+  * Sometimes caches on the instruction memory but determinism is key in DSPs
     * Caches under programmer control to lock-in some critical instructions
     * Turn caches into fast program memory
   * Once again, one is not after highest performance but just guaranteed minimal
@@ -946,7 +953,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * Dedicated simple datapaths to generate meaningful sequences of addresses,
     ususally 2-4 per DSP
   * AR can be loaded with
-    * *Immediate laod*: constant from the instrucion field into the pointed AR
+    * *Immediate load*: constant from the instrucion field into the pointed AR
     * *Immediate modify*: constant from the instruction field added to the
       pointed AR
     * *Autoincrement*: small constant added to the pointed AR
@@ -972,7 +979,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
       scheduling $\rightarrow$ Register allocation $\rightarrow$ Assembly code
 * **Standard code generation techniques** Standard Code Generation layering: Three fully independent phases
   * **Code selection**: *which* instruction to implement DFG node
-  * **Instructions Scheduling**: *When* instructions will be executed at runtime
+  * **Instructions Scheduling**: *when* instructions will be executed at runtime
     (or considered for execution in dynamically scheduled processors)
   * **Register allocation**: *where* results should be stored
 * **Code selection problem**
@@ -992,7 +999,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
       predecossors are scheduled plus their respective latencies
     * *Resources*: an instruction can be scheduled only if there are available
       resources to execute it
-  * NP-hard problem  
+  * NP-hard problem
   * Exact solutions are usually not practical for instruction scheduling
   * Greedy heuristic algorithm
     * At each step, maintain a ready list containing all the unscheduled
@@ -1022,7 +1029,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * Create an edge-weighted graph
   * An assignment is an Hamiltionian Path (= Path touching all node once)
   * The maximum weighted Hamiltionian Path is the best assignment (largest
-    numbe of free accesses)
+    number of free accesses)
   * NP-hard problem
   * Not one, but a set of $k$ ARs which can be used
   * General problem is much more complex
@@ -1050,7 +1057,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * An assignment is a set of disjoint paths (each path = one register) covering
     the distance graph
   * An assignment with a minimal set of paths is the optimal solution
-* Exploit resgisters in of pipelined datapath
+* Exploit registers in of pipelined datapath
   * Chained operations
     * Pipelined MAC
   * Many special registers
@@ -1065,7 +1072,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * Code selection
   * Register Allocation
   * Scheduling
-* Scheduling and Partioning  
+* Scheduling and Partitioning  
   * Major difficulty is that one simultaneously looks for a partition $P$ and a
     schedule $S$
   * Scheduling problem with limited redources is already NP-hard and need
@@ -1076,13 +1083,13 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * **Irregularity** can be used to make processors more effective in very
     specific situations (e.g., DSPs)
   * Resulting complexity in compilation is often the **need of phase coupling**:
-    leyered back-end complilation phases fail to exploit the specific features
+    layered back-end complilation phases fail to exploit the specific features
     * Special Registers $\rightarrow$ Register allocation, Code selection, and
       Scheduling
     * Multiple Clusters $\rightarrow$ Partitioning and Scheduling 
-    * SIMD Isntructions $\rightarrow$ Register allocation and Code selection
+    * SIMD Instructions $\rightarrow$ Register allocation and Code selection
   * **Regularity** of a processor essentially means creating an architecure
-    where the usefulness of missing information acress phases is minimal (e.g.,
+    where the usefulness of missing information acess phases is minimal (e.g.,
     all registers are equally usable for all instructions)
 
 # Hardware Security
@@ -1122,7 +1129,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     cell
   * Charge **leaks off** the capacitor due to parasitic resitances $\rightarrow$
     every DRAMs cell need a **periodeic refresh** lest it forgets information
-* To increase density (i.e, reduce cost) memory cells have becime incredibely
+* To increase density (i.e, reduce cost) memory cells have become incredibely
   small ($\rightarrow$ *small storage capacitance, smaller noise margin*) and
   extremely close to each other ($\rightarrow$ small crosstalk capacitance)
 * Frequent **activation of word lines** neighbouring particular cells between
@@ -1141,7 +1148,7 @@ code:
 ```
 
 * Rowhammer effectively **violates memory protection** ("if I can read, I can
-  also write") which is a ley ingredient to privilege separation across
+  also write") which is a key ingredient to privilege separation across
   processes
 * By accessing locations in neighbouring rows one could gain unrestricted memory
   access and privilege escalation
@@ -1160,7 +1167,7 @@ code:
     * Shortering the refresh intervals mitigates but does not solve problem;
       implemented in firmware by some vendors
     * Hard or impossible to avoid altogether without **changes in the DRAMs**
-    * Increase electrical nois margins (costly)
+    * Increase electrical noise margins (costly)
     * Count indise the DRAM the number of row activations within a time window,
       **identify potential victims, and refresh** 
 * An aside on DRAMs: Data Remanence
@@ -1180,7 +1187,7 @@ code:
     may allow a rogue programme insidde of the isolated process (a *Trojean
     horse*) to leak secret to some malicious receiver without anyone to notice
     (no conventional communication channel visible)
-* Attacks where the sender is the usnsuspecting **victim** of the attack, who is
+* Attacks where the sender is the unsuspecting **victim** of the attack, who is
   **unknowingly transmitting information through a covert channel**, and the
   receiver is the attacker
 * Sending (or leaking) information is a **side effect fo the normal operation of
@@ -1191,12 +1198,12 @@ code:
     * Based on the *existence* of microarchitectural state, that is state not
       (normally) visible to the programmer, because architecural state is know
       and thus, apart from bugs, inherently protected
-    * based on the *sharing of the hardware components* featuring such
+    * Based on the *sharing of the hardware components* featuring such
       microarchitectural state
     * Physical replication and isolation may solve the problem
   * **Physical**
-    * Based on the physical nature fo the computing system
-    * Potentially more difficult to flight, but also harder to exploit
+    * Based on the physical nature of the computing system
+    * Potentially more difficult to fight, but also harder to exploit
 * **Timing side channel attack**
   * Execution time reveals something on data
   * Blinding through constant time  
@@ -1209,11 +1216,11 @@ code:
   * Victim memory accesses (= where the victim loads or store) reveal secrets
     * Accesses to an AES sbox() depend on the secret key
   * Attacker can run victim code
-* **Evict+Time** Does the victim access location $X$ (in set $Y$)
+* **Evict+Time** Does the victim access location $X$ (in set $Y$) ?
   * Run the victim
   * Run the victim and time it
     * Fast because data are in the cache
-  * Evict contetn from set $Y$ 
+  * Evict content from set $Y$ 
     * By replacing with attacker content
     * Making sure to pollute all ways
   * Run the victim and time it 
@@ -1224,12 +1231,12 @@ code:
     * Repeats the *same execution*, so no variability in the executed code
     * Yet, timing may be affected by *environmental issues* (system call, branch
       prediction, etc.)
-    * It is a small noise but may be comparable to the quantoty being measure 
+    * It is a small noise but may be comparable to the quantity being measure 
     * *Repeat many times*
-* **Prime+Probe** What locatin (set) does the victim access
+* **Prime+Probe** What location (set) does the victim access ?
   * Fill all sets with the attacker content (*prime*)
   * Read all pieces of data for all sets and time each set 
-    * Fast because dara are in the cache
+    * Fast because data are in the cache
   * Run the victim
   * Read all pieces of data for all sets and time each set (*probe*) 
     * If step 4 takes longer than 2 for set $Y$ then victim accessed something
@@ -1246,7 +1253,7 @@ code:
   and/or key hypotheses and ditinguishing between most likely and least likely
   over many attempts
 * The attacker and the victim may be on *different cores*
-  * diffenrent core does not share first caches
+  * Diffenrent core does not share first caches
 * **Inclusion property** 
   * Whatever is in L1D is certainy in L2; whatever is in L2 is certainly in L3,
     etc.
@@ -1259,11 +1266,11 @@ code:
   * Attacker needs administrator rights to set larger pages
     * Not a problem because they have them in their guest OS
 * **Meltdown**
-  * Catastrophci attack making possible **read all memory of a process**
+  * Catastrophic attack making possible **read all memory of a process**
     (included protected data)
   * By product of the way sime microarchitectural features are implemented 
   * Exploits **race condition** between memory access and protection checks
-    * Ultimately exploits the microarchitectural nature of coaches (something is
+    * Ultimately exploits the microarchitectural nature of caches (something is
       left in the cache upon exception because *the cache is not part of the
       architectural state*)
   * The attacker executes a *forbidden access* and speculatively uses the result
@@ -1279,7 +1286,7 @@ code:
   * The obvious solution is to *change the processor design*
     * Test privilege level before making the result of a speculative access
       available
-  * The other line of mitigation os to *better isolate user space and kernel*
+  * The other line of mitigation is to *better isolate user space and kernel*
     space memory
 * **Spectre**
   * Another catastrophic attack making it possible to **read all memory**
@@ -1292,7 +1299,7 @@ code:
   1. leaky code
   3. with non architectural side-effect that raveal secrets
 * Possible mitigation for spectre
-  * hardware 
+  * Hardware 
     * Disable speculative execution
     * Seperate branch predictor per process/thread
   * General software approaches 
@@ -1310,7 +1317,7 @@ code:
   * Some instructions can be *executed only in some privilege levels*
   * Instruction lowering the privilege level do not need to be restricted to a
     particular level: there is no harm in deciding that one can do less
-  * Critical is the *mechanism to raisse the privilege level*, of course
+  * Critical is the *mechanism to raise the privilege level*, of course
     * Link raising the privilege level to a predefined change in control flow
       (i.e., some form of jump): if the privilege level raises, only some
       specific code can be executed
@@ -1322,7 +1329,7 @@ code:
 * **Classic privilege level**
   * Traditionaly **multiple privilege levels** with varying capabilities tuned
     to some particular purposes
-  * Lower levels *add the capabilities* of levles above
+  * Lower levels *add the capabilities* of levels above
   * In practive, most processor evolved to have only two privilege levels:
     **user mode** and **kernel mode** 
 * **Virtual Machines**
@@ -1338,27 +1345,27 @@ code:
 * **Software-base virtualization** 
   * Mostly the ingredient for process virtualisation enable also full
     virtualization:
-    * Memory is accessed via TLBsn violations results exception being raised,
+    * Memory is accessed via TLBs violations results exception being raised,
       etc.
   * Achieving full virtualization on a CPU no meant for it is challenging
-    * If guest OS needs to be isolatedd, they cannor run all in kernel mode
-    * But if *guest OSes run a user mode*, how can they do thier job
+    * If guest OS needs to be isolatedd, they cannot run all in kernel mode
+    * But if *guest OSes run a user mode*, how can they do their job
   * The classic approach is called **trap-and-emulate**
     * Guest OS will create exceptions when trying to do its normal job (loading
       TLB)
-    * Hypervisor will check the pertinence and, aif appropriate, emulate
+    * Hypervisor will check the pertinence and, if appropriate, emulate
     * May key data structures will be replicated (shadow page tables)
-  * But some instructions simply behvae differently in user and kernel mode
+  * But some instructions simply behave differently in user and kernel mode
     * **Dynamic Binary Translation** to rewrite the functionality with user mode
       instruction
 * **Hardware-Assisted virtualisation**
-  * Introduce **ISA extensions and ahardware support** for full virtualization
+  * Introduce **ISA extensions and a hardware support** for full virtualization
     and progressively extend it
     * More privilege levels (Ring-1 Hyoervisor)
     * Another level of address translation (nested paging) supported by the
       hardware page walker
     * Interrupt virtualisation
-    * IOMMU virtualisation 
+    * IOMMU virtualisation (no clue what that is)
 * More **high privilege levels**
   * **System managment mode** (ring-2)
     * Guarantee some managment functionality in firmware even if the OS or the
@@ -1375,7 +1382,7 @@ code:
   * Typically used for integrity: it should be impossible to create a new
     message or modify one such that it results in the same hash at the original
 * **Hash trees** 
-  * recursive application of one-way hashses on a dataset split in blocks
+  * Recursive application of one-way hashses on a dataset split in blocks
   * Useful to keep hashes up to data in case of local changes: one need to
     *recompute the hash of the block where the change took place and of the
     parents*
@@ -1426,7 +1433,7 @@ code:
   * The fact that the cloud operator is not considered trusted means also that
     **not the whole computer hardware is trusted**
 * **Trusted Execution Environments**
-  * Create environment where **only protected softxare resides and executes**
+  * Create environment where **only protected software resides and executes**
     supported by a **minimal TCB**
   * The main challenge is to protect the software state of the TEE given the
     fact that its state in inavoidably *dispersed all over the system* and
