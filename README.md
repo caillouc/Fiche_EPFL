@@ -29,6 +29,6 @@
 
 ## MA3 ETHZ
 
-* [Security Engineering] (Security_Engineering/Security_Engineering.md.pdf)
+* [Security Engineering](Security_Engineering/Security_Engineering.md.pdf)
 
 > Compiled using [*pandoc*](https://pandoc.org/)  
