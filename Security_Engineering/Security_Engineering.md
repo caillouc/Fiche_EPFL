@@ -124,13 +124,13 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * *Use case*: specifies a required system bahavior according to actors' need
     (*textually*, *activity diagram*)
   * Relations beteween actors: *Generalization*/*specialization*
-  * Relations beween use cases: 
+  * Relations beween use cases:
     * *Generalization*/*specialization*
     * *Extend* (one use case extend the functionality of another)
-    * *Include* 
-* **Activity diagrams** 
+    * *Include*
+* **Activity diagrams**
   * *Action*: a single step, not further decomposed
-  * *Activity*: 
+  * *Activity*:
     * Encapsulates a flow of activities and actions
     * May be hierarchically structured
   * *Control flow*: edges ordering activities
@@ -139,26 +139,26 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
 * **Class Diagram**
   * *Class*: describes a set of objects that share the same specifications of
     features, constraints, and semantics
-  * *Attributes*: 
+  * *Attributes*:
     * A structural feature of a class
     * Define the state (date value) of the object
-  * *Operation* (or *mehtods*): 
+  * *Operation* (or *methods*):
     * A behavior feature of a class that specify the name, type, parameters and
       any constraints for invocation
     * Define how objects affect each other
-  * *Association*: 
+  * *Association*:
     * Specifies a semantic relationship between typed instances
     * Relates objects and other instances of a system
     * They can have properties
-  * *Generalization*: 
-    * Relates a specific classifier to a more general classifier 
+  * *Generalization*:
+    * Relates a specific classifier to a more general classifier
     * Relation between a general thing (*superclass*) and a specific thing
       (*subclass*)
   * A *class diagram* describes the **kind of objects** in a system and their
     different **static relationships**
-  * Kind of relationships include: 
+  * Kind of relationships include:
     * *Association* between objects of a class
-    * *Inheritance* between classes themsleves 
+    * *Inheritance* between classes themsleves
 * **Component Diagram**
   * *Component*:
     * Modular part of a system that encapsulates its contents and whose
@@ -177,7 +177,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     messages, typically used to represent network connections
   * An *artifact* is a physical piece of infromation used in deployment and
     operation of a system
-* **Sequence diagrams** 
+* **Sequence diagrams**
   * *Lifeline*: represents an individual participant in the interaction
   * *Message*: communication
 * **Dynamic modeling** models dynamic aspects of systems: **control** and
@@ -192,7 +192,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * *Hierarchy*: nested states used for iterated refinement
   * *Parallelism*: machines are combined via product construction
   * *Time and reactivity*: for modeling reactive systems
-* **Summary** 
+* **Summary**
   * Modeling language used to capture different system views
     * *Static*: e.g. classes and their relationships
     * *Dynamic*: state-oriented behavioral description
@@ -203,7 +203,100 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * Foundation of security analysis and bearer for additional security-related
     information
 
+# Model Driven Security
 
+* **Formal**: has well difined semantics
+* **General**: ideas may be specialized in many ways
+* **Wide spectrum**: Integrates security into overall design process
+* **Tool supported**: Compatible too with UML-based design tools
+* **Scales**: Initial experience positive
+* Components of **Model Driven Security (MDS)**
+  * **Models**:
+    * Modeling languages combine security and design languages
+    * Models specify security and design aspects
+  * **Security Infrastructure**: code + standards conform infrastructure
+  * **Transformation**: parameterized by component standard
+* **M**odel **D**driven **A**rchitecture
+  * A **model** presents a system view useful for conceptual understanding
+    * When the model have *semantics*, they constiture formal specifications and
+      can also be used fro analysis and refinement
+  * MDA is an **O**bject **M**anagement **G**roup standard
+    * *Standard* are political, not scientific, construts
+    * They are valuable for building interoperable tools and for the widespread
+      acceptance of tools and notations used
+  * MDA is based on standard for: 
+    * *Modeling*: The UML, for defining graphical view-oriented models of
+      requirements and designs
+    * *Metamodeling*: the **M**eta-Object **F**acility, for defining modeling
+      languages, like UML
+* **U**nified **M**odeling **L**anguage
+  * Family of graphical languages for OO-modeling
+  * Wide industrial accpetance and considerable tool support
+  * Semantics just for parts. Not yet a *Formal Method*
+  * **Class Diagrams**: describe structural aspects of systems. A *class*
+    specifies a set of objects with common *services*, *properties*, and
+    *behaviors*. Services are described by *methods* and *properties* by
+    *attributes* and *associations*
+  * **Statecharts**: describe the *behavior* of a system or class in terms of
+    *states* and *events* that cause *state transitions*
+* Core UML can be exntended by defining **UML profile**
+* A **metamodel** defines the (abstract) syntax of other models
+  * Its elements, *metaobjects*, describe *types* of model objects
+  * MOF is a standard for defining metamodels
+* **Access Control Policies**, specify which subjects have rights to read/write
+  which objects
+* **Security policies** can be enforced using a **reference monitor** as
+  protection mechanism; checks whether *authenticated* users are *authorized* to
+  perform actions
+* **Access Control**: Two kinds are usually supported
+  * **Declarative** $u \in Users$ has $p \in Permissions$: $\iff (u, p) \in AC$
+    * Authorization is specified by a relation 
+  * **Programmatic**: via assertions at relevant program points; system
+    environment provides information needed for decision
+  * These two kinds are often conbined
+  * **R**ole **B**ased **A**ccess **C**ontrol is a commonly used declarative
+    model
+    * *Roles* group *priviledges*
+* **Secure UML** 
+  * *Abstract syntax* defined by a MOF metamodel
+  * *Concrete syntax* based on UML and defined with a UML profile
+  * Key idea:
+    * An access control policy formalizes the permissions to perform **actions**
+      or **(protected) resources**
+    * We leave *these* open as **types** whose elements are not fixed
+    * Elements specified during combination with design language
+  * **Roles** and **Users** 
+    * Users, Roles, and Groups defined by stereotyped classes
+    * Hierarchies defined using inheritance
+    * Relations defined using stereotyped associations
+  * **Permissions**
+    * Modeling permissions require that actiosn and resources have already been
+      defined
+    * A permission binds one or more actions to a single resource
+    * Specify two relations : Permissions $\iff$ Action and Actions $\iff$
+      Resource
+  * Formalizes two kinds of AC decisions
+    * **Declarative AC** where decisions depend on **static information**: the
+      assignments of users $u$ and permissions (to actions $a$) to roles
+    * **Programmatic AC** where decisions depend on **dynamic inforamtion**: the
+      satisfaction of authorization constraints in current system state.
+* **Generating Security Infrastructure**
+  * Decrease burden on programmer
+  * Faster adaptation to changing requirements
+  * Scales better when porting to different platforms
+  * Correctness of generation can be proved, once and for all 
+* A **controller** defines how a system's behavior may evolve; Definition in
+  terms of *states* and *events*, which cause state transitions
+  * Focus: a language for modeling controllers for *multi-tier architectures*
+  * *Model view controller* is a common patter for such systems
+  * A **statemachine** formalizes the behavior of a controller
+  * The statemachine consist of **states** and **transitions**
+  * Two state sybtypes: 
+    * *SubControllerState* refers to sub-controller
+    * *ViewState* represents a user interaction
+  * A transition is triggered by an *Event* and the assigned
+    *StatemachineAction* is executed during the state transition
+* **Dialect** defines *resources* and *actions*
 
 # Summary
 
