@@ -432,7 +432,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
 * Source of threats
   * *Human* with various motives
   * *Nature*
-  * *Environment*
+  * *Environment* 
   * Not all threats based on a malicious intent
 * **Countermeasures**
   * Means to detect, deter, or deny attacks to threatened assets
@@ -503,7 +503,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * Problems comparing approximate quantities
   * Monetary values give a false impression of precision
   * Instead of probability, use categories (high, medium, low)
-  * *Pros*
+  * *Pros* 
     * Simpler as need not determine exact monetary values of assets or
       probability of different threats succeeding
     * Easy to involve different parties
@@ -511,7 +511,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     * Even more subjective
     * No single number for decision support
     * No basis for cost-benefit analysis
-* **Summary**
+* **Summary** 
   * Risk is a function of assets and threats
     * Value of assets, probability of a threat materializing
     * Existing safeguards
@@ -519,7 +519,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     on lists of existing threats and vulnerabilities
   * Most risk analysis procedures rely on some structured means of identifying
     and evaluating the above items
-  * Quantitative assessments are difficult
+  * Quantitative assessments are difficult 
     * Assignement of probabilities/impact
     * BSI baseline protection on ACTAVE don't even consider probabilities
 
@@ -554,50 +554,5 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * *Procedure*
     1. Define system to be analyzed
     2. Construct block diagrams of systems
-    3. Identify potential item and interface definitions
-    4. Evaluate and rank failures
-    5. Identify possible causes and appropriate actions
-    6. Dorrective design: take actions to eliminate/reduce high-risks FMs
-    7. Documentation
-  * It appears to work well in practice
-  * Like all other techniques, no guarantees
-    * Garbage in $\Rightarrow$ Garbage out
-    * Easy to overlook human error, effect of hostile environments
-  * *Prerequisites*
-    * Understand how the system works
-    * Done when design/architectures is available
-    * Experience with possible problems
-  * Leads to facilitated discussion with different group members
-  * Unique to FMEA: probability of detection (relevant for security)
-* **Fault tree analysis**
-  * *Goal* identify conditions leading to system failure (top level event)
-  * Aims at finding the **sources** of a system failure
-  * Deductive top-down method
-  * Quantitative and qualitative
-  * Graphical representation of causal relationships
-  * *Prerequisites*
-    * Undrestand how the system works
-    * Done when design/architecture is available
-    * Facilitated discussions with different group members
-  * *Procedure*
-    * Input: plan of the system and FMEA, if existent
-    * Determine undesired (top-level) events
-    * Identify event(s) that lead to the top-level event
-    * Leaves: possible causes
-    * Symbols used: AND/OR
-    * Identify cut sets: those events that together lead to system failure
-    * Perform quantitative or qualitative analysis on resulting tree
-  * **Primary event** (leaves)
-    * *Basic events*: no precursor; probabilistic
-    * *Unddeveloped events*: no major effect alone on the system
-    * *External events*: expected to happen; not a fault
-  * **Intermediate events**: Link primary of intermediate events via AND/OR
-    gates
-  * **Expanded events**: Need a separate fault tree to explain
-  * A **cut** is a set of event that, taken together, lead to the top level
-    event 
-  * A **minimal cut** is a cut that is no longer a cut if an element is removed
-  * In general, there are many cuts and many minimal cuts
-
-> Stop at slide 33: Relationship to security
+    3. Identify potential item and interface definition
 
