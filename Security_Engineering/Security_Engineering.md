@@ -549,8 +549,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     * **(Non) Detectability**: Probability that failure will be
       detected/corrected
     * $Criticality = Occurence \times Severity$
-    * **R**isk **P**riority **N**umber $ = Occurence \times Severity \times
-      Detectability$
+    * **R**isk **P**riority **N**umber $= Occurence \times Severity \times Detectability$
   * *Procedure*
     1. Define system to be analyzed
     2. Construct block diagrams of systems
@@ -598,6 +597,182 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     event 
   * A **minimal cut** is a cut that is no longer a cut if an element is removed
   * In general, there are many cuts and many minimal cuts
+* **FMEA** may indicate conditions that are not controllable by the system,
+  e.g., security breach at a particular point
+  * This gives rise to new requirements for the involved components
+  * Closest analogy is *data pathways* where we aggregate requirements as we
+    move from classes to components to systems
+* **TFA** starts with an undesired top-level event representing a violated
+  secutity requirement
+  * Decomposing it into possible causes may lead to lower-level causes and
+    suggest new security requirements
+  * This is the basis of attack trees
+* **Safety**: failures arise from **faults** occuring
+* **Security**: *failures* are the **unwanted events** that occur when a
+  **threat agent** materializes a **threat** through an **attack** that exploits
+  a **vulnerability** in the system
+* **Attack trees**
+  * Nodes are attacks (threats)
+  * Top level goal may be obtained from misuse cases
+  * Refine as needed
+    * Alternative attacks
+    * Composite attacks
+  * Assign attributes to nodes
+    * Probabilities
+    * Estimated impact 
+    * Compute probabilities, impact, or risk of cut sets
+  * Use structure of system and environment
+* **Summary**
+  * System design models help to identify threats
+  * Data pathways as means to
+    * Identify critical system parts and
+    * Support risk assessment
+  * Use of attack trees to capture threats
 
-> Stop at slide 33: Relationship to security
+# Security Design
 
+* **Safeguards and countermeasures**
+  * **Avoidance controls**
+    * Safeguard used to proactively minimize risk of exploits
+    * Either reduce their likelihood or impact
+  * **Assurance**: Tools and strategies to ensure the effectiveness of existing
+    controls and safeguards
+  * **Detection**
+    * Technique and programs to ensure early detection interception, and
+      response to security breaches
+    * Virus scanner and audits
+  * **Recovery**
+    * Planning and response services to rapidly restore a secure environment
+      and investigate sources of a security breach
+* **Security design principles**
+  * Use proven patterns and principles
+    * Avoid security by obscurity
+    * Least priviledge
+    * Keep security mechanism simple
+    * Defense in depth
+    * Detect intrusions
+  * Use **standard** and **best practices**
+  * **Consistent security level**: define a baseline and enforce it everywhere
+  * **Take appropriate measures at right level**
+    * Adopt software where needed ratehr than hacking infrastructure
+    * Use capabilities provided by the given technologies rather then employing
+      additional components
+  * **Use mature libraries**
+  * **Use proprietary solutions as a last resort**
+    * Standard solution are usually more secure, efficient, and robust than
+      home-grown ones
+    * Maintenance ?
+  * **Generate implementation to avoid programming errors**
+    * Access control is a good candidate 
+    * Require high-quality generators
+* **Countermeasures** can be categorized as follows:
+  1. Integrate or configure existing security mechanisms (utilize systen
+     security mechanism)
+  2. Implement security functions in application logic 
+  3. Refactor the software architecture (Reduce "attack surface")
+1. **Security mechanism integration**
+  * Integrate, configure, or employ existing mechanisms
+    * Network: firewalls, VPNs, network-authentication and access control
+    * OS: hardening, file system access control
+    * Application/webserver: transport encryption, authentication, access
+      control
+  * *Pros*
+    * Baseline protection
+    * No application support required, so good for black-box integration
+    * Usually well-undertsood by IT departments and administrators
+  * *Cons*
+    * Application layer attacks cannot be stopped at the network level
+    * Nontrivial
+2. **Implement security in the application**
+  * Some countermeasures best implement within application
+    * I/O validation and application-specific checks
+    * Application-level encryption
+    * Access control
+  * Requires that security design is integrated into the development process
+  * Use of standard security APIs and modules is advisable
+  * *Pros* 
+    * Best fit to application
+    * No additional system components, reduces costs for licensing and operation
+  * *Cons* 
+    * Expensive
+    * Error prone, test intensive
+3. **Refactor software architecture**
+  * Improve/simplify security design
+    * Reduce attack surface
+    * Split systems into highly-critical and less-critical parts
+    * Allocate security-sensitive functions to toher systems
+  * *Pros*
+    * Simplifies security design
+    * Cheaper and less error-prone
+    * Sometime the only way to achieve security goal
+  * *Cons*
+    * Significant impact on overall project
+    * May have negative impact on other functions
+    * Causes strongest resistance and conflicts
+ * **Summary**
+  * Risk can be mitigated, transfered, or accepted
+  * Mitigation based on different safeguards
+  * Security design is a creative process, guided by principles
+  * Measures fall into different categories
+  * Threat model and risk analysis must be synchronized with design
+  * Code generation can improve quality of security implementations
+
+# Code scanning
+
+* **Code scanning** is a verification thechnique
+  * Take code as input
+  * Supplements manual code inspection
+  * Is a countermeasure against implementation problems
+* *Problem categories* (from security perspective) 
+  * **Input validation and representation**: Buffer overflowm injection attacks,
+    etc
+  * **API abuse**: abuse contract between and callee; provide wring input or
+    make too strong assumptions about output
+  * **Security features** e.g., don't hardcode password in source code
+  * **Time and state**: e.g., race conditions
+  * **Error handling**: handle errors poorly or not at all
+  * **Code quality**: dereference null pointers, infinite loops, etc
+  * **Encapsulation**: lack thereof
+* Code scanning = pragmatic static analysis
+* **Flaws** concern problematic behavior  
+  * **Failures**: derivation of bahavior detectable at system interface
+  * **Errors**: deviation of system's behavior from intended one
+* Behavior properties in general undecidable
+  * Termination, reachability of a program point
+* Tools must therefore
+  * *Not always terminate*, or
+  * *Over-approximate* behavior (returning *false positives*), or
+  * *Under-approximate* behaviors (returning *false negatives*)
+* **Semantic analysis and structural rules**
+  * Build symbol table along with AST
+  * This can be used for type checking, which helps find bugs
+  * Types also help in specifying *structural rules* for bug finding
+* Tools build **control flow graph** on top of AST
+  * **Basic block**: sequence of instructions that is always execurted, i.e., no
+    jumps in/out of middle, no branching
+  * **Forward edges**: potential control flow paths between BBs
+  * **Backward edges**: possible loops
+* **Dataflow analysis**
+  * Determine how data moves through program
+    * Traverse control flow graph and note where data generated and used
+  * Implementation trick: convert function to static Single Assignement
+    * Can assign to a variable only once, so make unique with indicies
+    * Make it trivial to determine where value comes from
+  * Simple compiler application: constant propagation
+* **Taint analysis**
+  * *Source rules* defines locations where tainted data enters system
+  * *Sink rules* define locations that should not receive tainted data
+  * *Pass-through rules* define how a function manipulates tainted data
+  * *Clense rules* special pass-through rules that remove taint
+* **Input validation**
+  * *Attack surface*: all places where progran accepts input
+* **Summary**
+  * Code scanning should play a central role in code review
+    * Aids understanding code
+    * Helps finding common bugs
+  * Surprisingly effective
+    * Everyone makes dumb mistakes
+    * Simple patterns can describe remarkable subtle bugs
+    * Threads/crypto/... more complex than most people think
+  * Pragmatic, conservative, static analysis techniques play a major role
+    * Augmetnted with lots of domain knowledge
