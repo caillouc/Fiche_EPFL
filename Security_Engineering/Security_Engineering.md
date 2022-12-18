@@ -123,7 +123,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * *Actor*: users (roles) and other systems that may interact with the system
   * *Use case*: specifies a required system behavior according to actors' need
     (*textually*, *activity diagram*)
-  * Relations beteween actors: *Generalization*/*specialization*
+  * Relations between actors: *Generalization*/*specialization*
   * Relations beween use cases:
     * *Generalization*/*specialization*
     * *Extend* (one use case extend the functionality of another)
@@ -594,7 +594,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     gates
   * **Expanded events**: Need a separate fault tree to explain
   * A **cut** is a set of event that, taken together, lead to the top level
-    event 
+    event
   * A **minimal cut** is a cut that is no longer a cut if an element is removed
   * In general, there are many cuts and many minimal cuts
 * **FMEA** may indicate conditions that are not controllable by the system,
@@ -619,7 +619,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     * Composite attacks
   * Assign attributes to nodes
     * Probabilities
-    * Estimated impact 
+    * Estimated impact
     * Compute probabilities, impact, or risk of cut sets
   * Use structure of system and environment
 * **Summary**
@@ -663,12 +663,12 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
       home-grown ones
     * Maintenance ?
   * **Generate implementation to avoid programming errors**
-    * Access control is a good candidate 
+    * Access control is a good candidate
     * Require high-quality generators
 * **Countermeasures** can be categorized as follows:
   1. Integrate or configure existing security mechanisms (utilize systen
      security mechanism)
-  2. Implement security functions in application logic 
+  2. Implement security functions in application logic
   3. Refactor the software architecture (Reduce "attack surface")
 1. **Security mechanism integration**
   * Integrate, configure, or employ existing mechanisms
@@ -690,10 +690,10 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     * Access control
   * Requires that security design is integrated into the development process
   * Use of standard security APIs and modules is advisable
-  * *Pros* 
+  * *Pros*
     * Best fit to application
     * No additional system components, reduces costs for licensing and operation
-  * *Cons* 
+  * *Cons*
     * Expensive
     * Error prone, test intensive
 3. **Refactor software architecture**
@@ -723,7 +723,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * Take code as input
   * Supplements manual code inspection
   * Is a countermeasure against implementation problems
-* *Problem categories* (from security perspective) 
+* *Problem categories* (from security perspective)
   * **Input validation and representation**: Buffer overflowm injection attacks,
     etc
   * **API abuse**: abuse contract between and callee; provide wring input or
@@ -765,7 +765,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * *Pass-through rules* define how a function manipulates tainted data
   * *Clense rules* special pass-through rules that remove taint
 * **Input validation**
-  * *Attack surface*: all places where progran accepts input
+  * *Attack surface*: all places where program accepts input
 * **Summary**
   * Code scanning should play a central role in code review
     * Aids understanding code
@@ -776,3 +776,117 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     * Threads/crypto/... more complex than most people think
   * Pragmatic, conservative, static analysis techniques play a major role
     * Augmetnted with lots of domain knowledge
+    
+# Security Testing
+
+* **Validation and Verification** (V&V) evaluates the *quality* of software with
+  respect to its *specification* and the overall system *requirements*
+* Target: *Design flaws*:
+  * **Formal methods** (model checking, theorem proving): check the design with
+    respect to the specification
+* Target: *Implementation flaws*:
+  * **Static analysis**: reason about programs without executing them: manual or
+    automated code inspection
+  * **Dynamic analysis**: reason about programs by executing them: *testing*,
+    and run-time analysis
+* Tests are attempted refutation
+* *Black box testing*: Programs map inputs to outputs, but we do not know how
+* *Limitations of testing*:
+  * Observations are finite
+  * Program's input domains are often infinite, while testing amounts to
+    executing a program on finitely many inputs
+    * Thus, testing *cannot refute* $P \vdash \theta$, whith an *existential*
+      $\theta$
+$$ \exists e \in Executions(P) \quad \phi(e) $$
+    * Consequently, testing *cannot verify* $P \vdash \theta$ for a *universal*
+      $\theta$
+$$ \forall e \in Executions(P) \quad \phi(e) $$
+    * $\vdash$ means satisfy where $P$ is a program and $\theta$ its specifications
+* Testing aims at **refuting** the hypothesis that a system satisfy a
+  specification
+* Testing is confined to choosing finitely many inputs, and observing the
+  system's behavior for a finite length of time
+* The finite nature of testing entails that certain specifications are
+  *irrefutable* through tests. Other verification techniques such as static
+  analysis, must be used then
+* **Test Selection Problem**: Which inputs to choose for testing
+  * A test generation method is a *systematic* approach to test selection,
+    ideally amenable to automation
+  * Test generation methods can be classified as
+    * *Random*, requires nothing
+    * *Fault based*, requires a fault model for $P$
+    * *Model-based*, requires a formal model of $P$
+    * *Specification-based*, requires a formal model of $\theta$
+  * *Random testing* is the base-line: Any non worthy test generation method
+    should outperform random testing in terms or relevant **failures**
+* **Fault Model**
+  * **Failure**: a deviation of $P$ from the expected observable behavior
+  * **Fault**: the cause of the failure
+* Testing reveals *failures*
+* Finding and fixing the inderlying *faults* is **debugging**
+* A **fault model** describe a class of (common) faults
+* Testing is searching for failures. The search should ideally be conducted in
+  the light of how faults come about, which suggests how failures are likely
+  found
+* **Fault models** capture repeated programming mistakes
+  * Each fault model reflects a small number of mistakes
+  * **Interaction Rule**: most failures are inducted by single factor faults or
+    by jount combinatorial effect (interaction) or two factors, with
+    progressively fewer failures induced by interactions between three or more
+    factors
+  * *Recipe*:
+    * Identify the input domain
+    * Choose a suitable fault model for the input domain
+    * Partition the input domain using the fault model
+    * Select representative test inputs per partition
+    * Test Orable: system's specification
+* **Test adequacy Criteria**
+  * We select a *finite* subset $S$ of the *infinite* set $D$ of inputs
+  * **Specification coverage**: **Adequacy** of $S$ = the percentage of the
+    specification obligations and prohibitions that are exercised by at least
+    one test in $S$
+  * **Model coverage**: **Adequacy** of $S$ = the percertage of the models
+    components that are exercised by at least one test in $S$
+* **Coverage** and **mutation analysis** are widespread adequacy measures. They
+  both however rely on hypotheses
+  * The relationship between coverage/mutations anlysis and **failure
+    detection** must be empirically validated
+* **Requirements** are about **resources**
+  * We reduce requirements to **specifications** for **systems**
+  * The **reduction** relies on appropriate environment **assumptions**
+* Two types of **Security tests**:
+  * **S-Tests**: Refute $System \vdash SPEC$, e.g. using fault-based tests
+    * *Independant* from the adversary
+  * **E-Tests**: Refute $(Environment || System || adversary) \vdash EA$
+    * *Depend* on the adversary model
+* *Adversary model* itself is not subject to tests
+* **Adequacy** of *S-Tests*: functional adequacy measures, such as *coverage*
+  and *mutation analysis*
+* **Adequacy** of *E-Tests*: Ideal: the validity of each environmental
+  assumption is "adequatly" tested
+* *Challenges*:
+  * EAs are hard to explicit
+  * Hard to say how well a CWA is tested
+* $EA, SPEC \Rightarrow REQ$
+* **Security flaws** revealed throught security tests:
+  * System fails to satisfy SPEC
+    * Revealed through *S-Tests*
+    * Debugging: Fix the system
+  * EA is violated:
+    * Revealed through *E-Tests*
+    * Debugging: Fixing the system falls short. Fix the design, update the
+      security rational
+  * Security testing does not account for flawas rooted in unelicted
+    requirements or weak attacker models
+* **Summary**
+  * **Security testing**'s goal is to invalidate the *requirement*: the protected
+    resources cannot be accessed by unauthorized entities
+  * **Security rationale** support decomposing the requirements into a system
+    *specification* and an environmental *assumption*
+  * **S-Tests** goad is to refute the hypothesis that the system satisfy its
+    *specification*. Functional testing methods and tools apply here
+    * Security testing > testing the system w.r.t. its (security) specification
+  * **E-Tests** goal is to refute the hypothesis that an *assumption* is valid
+    in the system's environment in the presence of an *adversary*
+  * **E-Tests** are hard to generate because environment do not admit
+    delimitation, and environmental *assumptions* are hard to explicate
