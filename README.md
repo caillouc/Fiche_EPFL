@@ -30,8 +30,8 @@
 ## MA3 ETHZ
 
 * [Security Engineering](Security_Engineering/Security_Engineering.pdf)
-* [Network Security](Security_Engineering/Network_Security.pdf)
-* [System Security](Security_Engineering/System_Security.pdf)
+* [Network Security](Network_Security/Network_Security.pdf)
+* [System Security](System_Security/System_Security.pdf)
 
 
 > Compiled using [*pandoc*](https://pandoc.org/)  
