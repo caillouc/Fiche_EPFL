@@ -243,3 +243,120 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * PKI and revocation can result in a powerfull 'kill switch', which can enable
     shouting down part of internet
     * Sovereign PKI continues to be an important research challenge
+
+# Virtual Private Networks (VPNs)
+
+* VPN creates a **Secure channel** between two networks over an **untrusted
+  network** 
+  * **Set-up phase**: the gateways (tunnel endpoints) *authenticate* each other and
+    *set up keys* 
+  * **Tuneling phase**:
+    * Packets are encapsulated at the first gateway
+    * ... and decapsulated at the second
+* Simalar security properties as the TLS record protocol
+  * Authentication of the source (handshake) data integrity (MACs)
+  * Secrecy (symmetric encryption)
+  * Replay suppression (sequence numbers)
+* VPN setup 1: secure connection between two physically separared networks (site
+  to site)
+  * Replace private physical networks and leased lines
+    * Even for leased lines, encryption may be desirable
+* VPN setup 2: secure connection of a remote host to company/university network
+  (host to site)
+  * Remote host can access resources in private network
+    * Private IP addresses can be accessed without port forwarding
+    * Services do not need to be exposed to the Internet
+  * First gateway located at the host
+    * All traffic between host and private network is secure
+* VPN setup 3: VPN as a 'secure' proxy (to get a different IP address)
+  * Circumvent censorship
+  * Avoid trackigng by your ISP or in a public Wi-Fi network
+  * Hide your IP address from websites
+  * Spoof your location
+  * Access restricted content
+  * Downloads torrents  (only legal ones of course)
+* Inportant: VPN provider has access to metadata of all traffic
+* $PVN /neq anonimity$
+* VPNs provide some limited anonimity properties
+  * Local network and ISP only see that you send traffic through some VPN
+    * They do not see which websites you access
+  * Web servers do not see you real IP address
+    * Of course, if you use cookies or log in, anonimity is lost
+* VPN server can monitor and record all traffic
+* Why do we need VPNs when we have TLS?
+  * VPNs protect *all* traffic: *blanket* security
+    * DNS requests
+    * Access to services that do not support TLs
+  * VPNs can give some access to services in private networks or behind
+    firewalls
+* Why do we need TLS when we have VPNs?
+  * Data is only secure in the tunnel: no security outside of it
+  * VPN server can see all uncrypted traffic $\rightarrow$ TLS still necessary
+  * With a VPN it is not possible to authenticate the webserver, only the tunnel
+    endpoint
+* VPNs can *negatively impact performance*
+  * Additional cryptographic operations
+  * Potential detours
+  * Limited bandwidth at VPN server
+* Generally, VPNSs do not provide higher availability
+  * No build in defense against DoD or routing attack
+* VPNs *can defend against targeted packet filtering*
+  * Routers can recognize VPN packets but not content
+  * Would need to drop all VPN packets
+* VPNs themselves can become targets for DoS attacks
+* VPN vs **VLAN** (virtual local area network)
+  * VPN (securely) *connect/combine* two different networks
+    * One virtual network over multiple physical networks
+  * VLAN: set up multiple *isolated virtual networks* on a single physical
+    infrastructure
+    * Virtual networks are identified by tags, which are added to Ethernet
+      frames
+    * Often used in cloud-computing environments for isolating communication
+      betweens VMs
+* **Authentication mechanism**
+  * Pre-shared key (PSK)
+  * Public keys and certificates
+  * Client: username/password 
+* **Tunneling mechanism** (tunnel protocol)
+  * Custom protocols (IPsec)
+  * Tunnel over TLS (SSTP)
+* **Layer of connected networks** (inner protocol)
+  * Layer 3 (Network Layer)
+  * Layer 2 (Link Layer)
+* **Implementation**
+  * User space
+  * Kernel module
+  * Hardware
+* VPN creates **virtual network adapter**
+* Can be used like any other network adapter
+* VPN interface can be used to all traffic or only selectively
+* **IPsec** is a very large and complicated protocol
+  * A typical IPsec session
+    * Set up a security associaction (SA) via IKE
+    * Encapsulate packets and tunnel them between SA endpoints
+* **Wireguard**
+  * No cryptographic agility
+    * Only use state-of-the-art primitives 
+    * Simplify negociation and remove insecure promitives
+  * Very simple configuration - similar to `autorized_keys` file in ssh
+  * Very small codebase, minimal attack surface, formally verifiable
+  * handshake follows the Noise Protocol Framework
+    * Built exclusively on (elliptic curve) Diffie-Hellman exchanges
+  * Each peer has a *static key* pair
+  * Each peer creates *ephemeral key* pair
+  * Derive symmetric keys from four Diffie helman combinations
+  * 1-RTT  handshake
+  * Wireguard does not store state before authentication and does not send
+    responses to unauthenticated packets
+    * Invisible to attackers
+    * Prevent state-exhaustion attacks
+  * Initial message contains a timestamp to prevent replay attacks
+* VPNs create **secure channels** on the network or link layer
+* VPNs and end-to-end security (TLS) **complement each other**
+* Many different VPN protocols and applications
+  * **IPsec has** a long history and *numerous configuration options*
+    * Very versatile but difficult to set up
+  * **WireGuard** is a new VPN protocol with a focus on simplicity
+    * Very few configuration parameters, no cryptographic agility
+    * Simple to set up 
+    * Small codebase $\rightarrow$ small attack surface
