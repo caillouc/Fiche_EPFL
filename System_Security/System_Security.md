@@ -342,9 +342,9 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
 * **UEFI** instead of BIOS
 * Hardware-supported OS-based - Application Security
 
-| . | Hardware support for OS-based Security | 
-| --- | --- | 
-| CPU | Privilege rings 
+| . | Hardware support for OS-based Security |
+| --- | --- |
+| CPU | Privilege rings
 | | Memory Management Unit |
 | Chipset | DMA Remapping tables |
 | Periferals | Trusted Platform Module |
@@ -383,3 +383,144 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     * Static destination addresses
     * Forward edges: switch statements, indirect calls, etc.
     * Backward edges: returns
+
+# Trusted Execution Environment
+
+* **Defense in depth**:
+  * Small Trusted Computing Base (TCB)
+  * Even if the OS/Hypervisor are comprised, code/data can be protected
+* **Confidential computing**:
+  * Client can verify what is running on remote system; operator cannot violate
+    the integrity of the execution
+  * Operator cannot see the code/data of the client
+* Enforced in Hardware (typically via special CPU instructions or co-processor)
+* We need to trust the HW manufacturers: Intel, AMD
+* Vulnerable to some side channel attack
+* **Computing Systems Trust Model**
+  * The **Trusting Computing Base** (TCB) is the set of software and hardware
+    components that need to be trusted for an application to execute securely
+  * For instance, the TCB of a banking application includes the Operating
+    System, the CPU, the DRAM chips, the disk ...
+    * If any of these are malicious the execution integrity and confidentiality
+      cannot be guaranteed
+  * Other applications are not in the TCB
+  * In principle, they can be malicious and the OS (with hardware support) still
+    provides isolation to other benign apps
+    * However some exploit can lead to privilege escalation
+  * **Trusted Execution Environment (TTEs)** usuallly aim to reduce the TCB
+    needed to execute applications
+* *Primitives*: Isolation, Bootstrapping trust, Sealing storage
+* **Isolation** (defense in depth and confidential computing)
+  * CPUs traditionally enforce isolation berween permission levels
+  * More privileged levels control and can modify less privileged levels
+* **Intel SGX** *Isolate 'small' Apps into enclaves*
+  * Design choice
+    * Create isolated environments at the application level, called **enclaves**
+    * Enclaves are isolated from all the other software in the system
+      OS/Hypervisor
+  * Resists a physical attacker (cold boot attack, bus tapping, etc)
+    * Everything outside the CPU die is untrusted
+    * The CPU die is assumed to be secure
+  * The OS and the Hypervisor are still in charge of managing virtual memory and
+    interrupts
+  * The CPU keeps track of whether it is currently executing in enclave-mode and
+    which enclave is executing
+  * Memory reads to enclave memory when not in enclave mode always return `0xff`
+  * Trying to read another enclave memory returns `0xff`
+  * Similarly, not authorized memory writes fail silently
+  * Enclaves can read/write the memory to their untrusted app
+  * New component on the CPU takes care of securing memory, the **Memory
+    Encryption Engine (MEE)**
+  * The CPU is trusted, so data resides in the cache in plain text
+  * While the content of memory pages is protected by SGX and the MEE, page
+    metadata is not, metadata includes:
+    * Access permissions of a page
+    * Accessed bit: whether a memory page was recently accessed
+    * Dirty bit: whether a memory page was recently written
+  * **Controlled Channel attacks**
+    * The os can remove execute or read/write access to memory page
+    * This trigger an exception which contains the address of the memory page
+      that was being accessed
+    * This reveals enough information
+    * Information from the accessed/dirty bits are also enough to leak
+      information
+  * **Side Channel attacks**
+    * Enclaves share resources with other applications in the system: cache,
+      core execution units, branch prediction structure
+    * Monitoring utilization of these resources from another application leaks
+      information
+* **AMD SEV**: *Isolate entire VMS*
+  * Design choices:
+    * Isolate Virtual Machine from Hypervisor. VMs can execute code on ring 3,2
+      and 1
+  * Resists low skilled physical attacker (cold boot, but not bus tampering)
+    * Everything outside the CPU die is untrusted
+  * Comparison with SGX
+    * SEV encrypts data that leaves the CPU die
+    * However, it does not store a MAC tag together with the data (data in
+      memory is not authenticated)
+    * Like SGX, SEV keeps track of the different isolated environments with HW
+      prinitives
+    * While unauthorized writes cannot happen from the CPU, if memory is
+      corrupted some other way VMs will read the wrong value from memory
+  * Key management
+    * SEV uses an ARM co-processor to manage the different encryption key for
+      each VM
+    * At VM creation a new key is created in the co-processor to encrypt the VM
+      memory
+    * Each new VM has a different encryption key
+* **ARM TrustZone**: *The tale of two world*
+  * Design choices:
+    * Have two separate isolated execution environments. These are referred to
+      as the Non secure and the Secure world
+  * No physical attacker
+    * Communication to peripherals is assumed to be trusted
+  * The memory is partition between the Secure and Non-Secure world
+  * The Secure world can read/write the Non-Secure world memory, but the
+    Non-Secure world is restricted to its own memory
+  * The TrustZone Address space is controller (TZASV) is a hardware component that is
+    used to configure which ranges of memory belong to which world
+  * Only the secure world can configure the TZASV
+  * Memory is separated at the physical layer. That is there are two separate
+    physical address ranges, one for the secure world and one for the non-secure
+    world
+  * The CPU keeps track of which world in currently executing
+* **Trusted Isoltation Environments** Trust Model summary
+
+![](./trust_model_summary.png)
+
+* **Bootstrapping trust** (Attestation/Secure boot) (confidential computing)
+  * The isolation provided by TEEs is a useful primitive
+  * However secret need to get into the TEE somehow
+  * How do we make sure that we are sending secret to the right TEE and not the
+    malicious OS
+  * The main way to prove the authenticity of a TEE:
+    * **Secure boot** check that at each boot stage, only trusted software is
+      loaded
+    * **Remote attestation**
+* **Remote Attestation**
+  * Different Enclaves and keys involved
+  * CPU measures the enclave and signs it hash
+  * Enclave invokes measurement, OS is suspended, CPU measures and returns the
+    the signed hash 
+  * This can be done so that client creates a secure channel into the enclave
+* **Sealing storage** (defense in depth and confidential computing)
+  * Enclave has no direct access to disk or IO / no access to persistent storage
+  * No access to trusted clock, limited support for counters
+  * Can do **sealing** - store encrypted confidential data on disk
+    * This data is encrypted and MACed with enclave and processor specific keys
+* **Remote Attestation**
+  * During manufacturing, two keys are burned into the CPU
+    * **Fused Seal key** is used as Processor's secret
+    * **Provisionning key** serve as a proof for remote platform
+    * Remote platform issues an **Attestation key** which is encrypted and
+      stored for future use
+* To prevent attestation key from leaking the platform's identity, Intel
+  introduces the **EPID** scheme
+  * **EPID**: digital signature scheme with anonymity properties
+    * One group public key corresponds to multiple private keys
+    * Each unique private key can be used to generate a signature
+    * Signature can be verified using the group public key
+    * A signature cannot be linked to a private key
+
+

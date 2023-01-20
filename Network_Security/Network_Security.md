@@ -152,3 +152,94 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   compromised, then an attacker cannot passively decrypt future sessions
 * Compare to RSA key transport option in TLS 1.2 and earlier: past and future
   passive interception using compromised server RSA private key
+
+# Public Key Infrastructure (PKI)
+
+* In symmetric cryptography, main challenge is key distribution as keys need to
+  be distributed via **confidential and authentic** channels
+* In public-key system, main challenge is key authentication (i.e., which key
+  belongs to who) as keys need to be distributed via **authentic channel**
+* **Public-key infrastructure (PKIs)** provide a way to validate public keys
+* **CA**: certificate Authority
+* A **public-key certificate** (or simply **certificate**) is signed and dinds a
+  name to a public key
+* **Trust anchor, trust root**: self-signed certificates of public keys that are
+  allowed to sign other certificate
+* **X.509** strandard format of digital certificate
+* **Root of trust** is used to establish trust in other entities
+* *Cryptography operations enable transfer of trust from one entity to another*
+* Trust roots do not scale to the world
+  * *Monopoly model*: single root of trust
+    * Problem: world cannot agree on who controls root of trust
+  * Obligarchy model: numerous roots of trust
+    * Problems: Weakest link security: single compromised enables
+      man-in-the-niddle attack; not trusting some trust roots results in
+      unverifiable entities
+* **Let's Encrypt**
+  * Goal: provide free certificate based on automated domain validation,
+    issurance, and renewal
+  * Based on ACME; Automated Certificate Managment Environment
+* **Certificate Revocation**
+  * Certificate revocation is a mechanism to invalidate certificates
+    * After a private key is disclosed 
+    * Trusted employee / administrator leaves corporation
+    * Certificate expiration time is usually chosen too long
+  * CA periodically publishes Certificate Revocation List (CRL)
+    * Delta CRLs only contains changes
+    * What to do if we miss CRL update? 
+  * What is general problem with revocation
+    * CAP theorem (Consistency, Availability, tolerance to partition):
+      impossible to achieve all 3, must select one to sacrifice
+* **DANE** 
+  * DNS-Based Authentication of Named Entities 
+  * Goal: Authenticate TLS servers without a certificate authority
+  * Idea: use DNSSEC to bind certificate to names
+* **Certificate Transparency**
+  * Will make all public end-entity TLS certificate public knowledge, and will
+    hold CAs publicaly accountable for all certificates they issue
+  * And it will do so withou introducing another trusted third party
+  * A CT log is an append-only list of certificate
+  * The log server verifies the certificate chain
+  * Periodically append all new certificates to the append-only log and sign
+    that list
+  * Publish all updates of the signed list of certificates to the world
+  * A CT log is not a "Super CA"
+    * The log does not testify the goodness of certificates; it merely notes
+      their presence
+    * The log is public: everyone can inspect all the certificates
+    * The log is untrusted: since the log is signed, the face that everyone sees
+      the same list of certificate is cryptographically verifiable
+  * How CT improves security
+    * Browser would require SCT for opening connection
+    * Browser contacts log server to ensure that certificate is listed in the
+      log
+  * Consequence
+    * Attack certificate would have to be listed in public log
+    * Attacks become publicly known
+  * Advantages
+    * CT is fully operational today
+    * No change to domain's web server required
+  * Disadvantages
+    * MitM attacks can still proceed
+    * Browser still needs to contact Log eventually to verify that certificate
+      is listed in log
+    * Current CT does not support revocation
+    * Malicious Log server can add bogous certificate
+    * Management of list of trusted log server can introduce a kill switch
+* **Summary**
+  * Cannot tolerate additional latency of contacting additional server during
+    SSL/TLS handshake
+  * A key has to be immediately usable and verifiable after initial registration
+  * Users shouldn't be bothered in the decision process if certificate is
+    legitimate
+  * Need to cover entire certificate life cycle, including revocation, handing
+    stolen and lost certificate
+  * Secure crypto and secure protocols are insufficient
+    * Numerous failure possibilities
+    * User interface security and certificate management are critically
+      important
+  * The entity who controls the root keys, controls all authentication and
+    verification operations
+  * PKI and revocation can result in a powerfull 'kill switch', which can enable
+    shouting down part of internet
+    * Sovereign PKI continues to be an important research challenge
