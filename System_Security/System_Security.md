@@ -485,6 +485,32 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     physical address ranges, one for the secure world and one for the non-secure
     world
   * The CPU keeps track of which world in currently executing
+* **AMD SEV**
+  * *Advantages*: 
+    * Tolerate strong physical attacker, only CPU in TCB
+  * *Disadvantages*: 
+    * Memory and interrupt management performed by OS
+    * Application need to be adapted to run inside an SGX enclave
+    * Only small applications possible
+* **AMD SEV**
+  * *Advantages*: 
+    * Applications do not need to specifically adapted to run in an isolated SEV
+      environment
+  * *Disadvantages*:
+    * Resilience against physical attackers varies depending on the SEV version
+    * Memory management perfromed by hypervisor
+* **ARM TrustZone**:
+  * *Advantages*:
+    * No page/interrupt management by untrusted code, infrastruture (partially)
+      supports secure state
+    * Availability guarantees for sedure world possible
+  * *Disadvantages*:
+    * No physical attacker
+    * Only one protected state
+    * All software runnin before and under software in secure world need to be
+      trusted
+    * Secure state is often locked for use by device vendors and not generally
+      open for application developpers
 * **Trusted Isoltation Environments** Trust Model summary
 
 ![](./trust_model_summary.png)
