@@ -80,20 +80,20 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * *Key generation*
     1. Chose numbers $p$, $q$ such that $p$ and $q$ are prime and $p \neq q$
     2. Compute $n = pq$
-    3. Compute $\Phi(n) = \Phi(p-1)\Phi(q-1)$
+    3. Compute $\Phi(n) = (p-1)(q-1)$
     4. Chose $e$ such that $e$ and $\Phi(n)$ are relative prime and $1 < e < \Phi(n)$
     5. Compute $d$ as such that $de \mod \Phi(n) = 1$
     6. Public key $PU = \{e, n\}$
     7. Private key $PR = \{d, n\}$
   * *Encryption*
     * Plaintext $m < n$
-    * Ciphertext $C = m^e mod n$
+    * Ciphertext $C = m^e \mod n$
   * *Decryption*
     * Ciphertext $C$
-    * Plaintext $m = C^d mod n$
+    * Plaintext $m = C^d \mod n$
   * *Signature*
     * Plaintext $m < n$
-    * Signature $s = m^d mod n$
+    * Signature $s = m^d \mod n$
   * The *security* of RSA is based on two hard problems
     * The RSA problem, i.e., computing the $e^{th}$ root of $m$ modulo $n$ from
       $C = m^e \mod n$
@@ -233,7 +233,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
 * `seteuid(uid)` set EUID
 * `fork()` functions shall create a new process. The new process (child process)
   shall be an extact copy of the calling process (parent process)
-* Linux uses a DAC security model but **Mandotory Access Control (MAC)** imposes
+* Linux uses a DAC security model but **Mandatory Access Control (MAC)** imposes
   a global security policy on all users
   * User may not set controls weaker than policy
   * Normal admin done with accounts without authority to change the global
@@ -502,7 +502,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * Different Enclaves and keys involved
   * CPU measures the enclave and signs it hash
   * Enclave invokes measurement, OS is suspended, CPU measures and returns the
-    the signed hash 
+    the signed hash
   * This can be done so that client creates a secure channel into the enclave
 * **Sealing storage** (defense in depth and confidential computing)
   * Enclave has no direct access to disk or IO / no access to persistent storage
@@ -523,4 +523,283 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     * Signature can be verified using the group public key
     * A signature cannot be linked to a private key
 
+# Memory vulnerabilities and Exploits
 
+* **x86 Machine Model**
+  * Both code and data are represented as numbers
+  * **Little endian**: least significant bytes is put at lower addresses
+  * **Stack** grows down, other memory accesses move up
+* **OS Model**
+  * Ring-0,runs on behalf of every process
+  * Context switches
+    * On an interrupt, CPU switches control to ring-0
+    * Ring-0 (OS) sets CR3 to another process, then `iret`
+* Stack organization:
+  * Function parameters
+  * Return address
+  * Saved Frame Pointer
+  * Function's data
+* **Integer Overflow**
+* **Use after free**
+* **Double free**
+* **Format string vulnerabilities**
+* **Upcasting**: From a derived class to its parent class
+* **Downcasting**: From a parent class to one of its derived classes
+* Upcasting is always safe, but downcasting is not
+* Hardware does *not give memory and type safety*
+* **Control oriented Exploits**
+  * Goals: Divert or Hijack Control Flow
+  * Main tricks:
+    * Corrupt code pointers
+    * Corrupt non-code pointer
+  * Outcome:
+    * Code injection
+    * Code reuse
+* **Data oriented Exploits**
+  * Goal: Hijack Data flow
+  * Outcomes: Privilege escalation, Data leakage
+* **Code injection**: A memory exploit that hijacks control to jump to
+  attacker's data payload
+  * *Requirements*
+    * Write attack payload in memory
+    * Have Attack Payload Be Executable
+    * Divert control-flow to payload
+* **Code pointers**: A memory address, the value of which is deirectly used as a
+  control-flow transfer (in machine code) under benign inputs
+  * **Code pointer injection**: Forging the runtime value of a code pointer to
+    an invalid one
+* **Type safety for Code Pointers**
+  * Enforce that code pointers point to code-segment only
+  * Enforce that control transfers use code pointers
+  * Defeats code injection
+* **Code reuse**: A memory exploit that hijack contro to jump to attacker's
+  controlled code address
+  * *Requirements*
+    * Have attack payload be excutable
+    * Divert control flow to payload
+  * Type safety of code pointers in not enough
+  * The idea:
+    * Attacker hijacks control flow
+    * Jumps back to the code segment
+* **Control flow integrity**: Each control transfer jumps to a statically known
+  set of locations
+* **Data flow switching**
+  * Manipulate data flows for exploits
+  * Goal:
+    * Information leakage
+    * Privilege escalation
+  * Constraints:
+    * Keep the control flow same
+    * Prevent abrupt termination
+* **Defense goals**
+  * Complete memory safety
+  * Prevent memory writes
+  * Protect all pointers
+  * Protect code pointers
+  * Prevent bad control flow transfers
+  * Protect arbitrary parts/region of memory
+  * Protect data-flow patterns
+  * Complete Type safety
+  * Don't protext, simple randomize
+    
+# Memory Defenses
+
+* Complete **Memory Safety**: Access memory in an intended way
+* **Fault isolation**: Each module only accesses pre-determined data/code
+* **No foreign code**: Execute only predetermined code
+* **Control flow integrity**: Control transfers are to legitimate points only
+* **System call sandboxing**: Access only a subset of system calls
+* **(Code) pointers/Data integrity**: Ensure (code) pointers/date have valid
+  values
+* **Data flow integrity**
+* **Non-executable Data/DEP**
+  * Setting regions of memory non-executable
+  * Use NX bit
+  * *Defense goal*: Prevents Foreign code injection
+* **Software Fault Isolation**
+  * *Goal*: Fault isolation
+    * Confine read/write to certain region $M$
+    * This goal is also called *address sandboxing* (Access memory segments
+      statically verified)
+  * Attacker controls all memory values in $M$
+  * Mechanism: Inline instrumentation of $D$
+  * Limit all memeory acces to region $M$
+  * **Trusted Computing Base (TCB)**: The trusted codebase for ensuring security
+    properties
+  * Smaller the TCB, the better the design
+* **Inline Reference Monitors**: Control flow integrity
+  * Follow the statically determine CFG at runtime
+  * CFI blocks all control flow hijacking exploits
+* **Randomized tags**: Control flow integrity; Each code block must start with a
+  tag
+  * The tag should be a random, secure value
+  * If `f` can jump to block `g`, `h`, ... then these blocks, should have the
+    same tag
+* **Address Space Layout Randomization (ASLR)**
+  * *Assumption*: The attacker can write arbitrary places
+  * *Defense goal*: Attacker can't predict location accessed in attack
+  * *Mechanism*: 
+    * At load time, randomize stack, code, bss, etc.
+    * Randomize heap location at runtime
+* **Instruction Set Randomization (ISR)**
+  * *Goal*: Randomize machine instruction encoding, to defeat foreingn code
+    injection
+* **Stack Canaries** 
+  * Secret Data values, to protect corruption of nearby data
+  * Check: the random canary value is OK at ret
+* **Guard Pages**
+  * *Defense*: Guard Pages
+    * Certain pages with NR, NW, NX inserted
+  * *Assumption*: 
+    * Attacker can only write linearly
+    * All written values are not used in dereferences
+* **Code Checking Tools**
+  * Tools checking for vulnerabilities using static source code analysis
+* **Safe Language and Coding**
+  * Use bug-finding techniques
+  * Safe code techniques
+  * Use safe libraries
+
+# Detection and Prevention
+
+* **Information Flow Policies** Non interference
+  * Differentiate programs with good information flows
+  * Non interference: 'A program is non interfering iff any executions, started
+    with the same L-Inputs, generate the same L-Outputs'
+* **Bell-LaPadula**: No read up, no write down
+* **Kinds of Information flow**
+  * **Direct**: use legitimate channels for data transfer
+  * **Indirect**: use channels not intended for data transfer
+  * **Explicit**: created by the occurence of an event/action
+  * **Implicit**: created by the absence of a specific event/action
+* Application of **Taint-tracking**
+  * A kind of Information Flow Technique 
+  * Runtime Detection/Prevention
+    * Controle flow hijacking
+    * Non control data corruption
+    * XSS, SQL, Command injection
+    * User Kernel Pointer Bugs
+  * Off line Analysis
+    * Malware Analysis
+    * Privacy-leaking Android apps
+  * $f: X \rightarrow Y$
+    * $X$ has some bits in which are private
+  * Aims to detect: Does an output $Y$ reveal some private $X$
+* **Soundness & Completeness**
+  * *Goal*: Given $P$ prove that $P$ satisfies $C$
+  * **Complete**: Identifies all safe $P$s
+  * **Sound**: If $P$ is claimed safe, it does not satisfy $P$ (?)
+* In practice choose 3 between **Sound**, **Complete** and **Termination**
+* **Static tracking**
+  * Relies on CFG/DFG
+  * *Advantages*
+    * No false negative
+* **Dynamic tracking**
+  * Dataflow at runtime
+  * *Advantages*
+    * Can have FPs
+    * But lower FP
+* **Uncertity and Entropy**
+  * **Shanon Entropy**
+
+$$ H(X \mid Y = y) = \sum_{x \in \mathcal{X}} P[X = x \mid Y = y] \log \frac{1}{P[X = x \mid Y = y]} $$ 
+
+* Initial uncertity = Information leaked + Remaining uncertity 
+  ($H[X] = I[X;Y] + H[X \mid Y]$)
+
+* **Symbolic Execution**
+  * Check Safety Properties (Model)
+* **Dynamic Symbolic Execution**
+  * *The main idea*: Analyze One Execution Path
+    * Run the program under one concrete input
+    * Collect the values of all variables at each executed statement. This
+      information often called an 'execution trace'
+    * Mark certain inputs as symbolic
+    * Track the relationship between variables in the execution trace and
+      symbolic inputs as a formula
+    * At symbolic branch conditions, assert that the condition evaluates to the
+      value in the execution trace
+    * Calculate Symbolic Formula for path constraints: The logically comjunction
+      of all the symbolic constraints
+  * **Symbolic input**: Values captured with symbolic formula
+  * **Branch constraints**: A symbolic formula capturing the values that make
+    the branch condition evaluate a specific value
+  * **Path constraints**: A formula over the symbolic inputs that encodes all
+    branch decisions taken up to a certain program point
+  * **Execution path space**: All paths in the program, each captured by its
+    path constraints
+  * **Feasible path** A path which has a satisfiable symbolic formula, there
+    exists one assignement  of values to its symbolic variables that make
+    formula 'True'
+* Testing software for bugs
+  * **Blackbox testing**: no analysis
+  * **Greybox testing**: 
+    * Lightweight analysis
+    * Coverage
+  * **Whitebox testing**:
+    * Heavyweight analysis
+    * Path conditions
+* **Fuzzing**
+  * Automatically generate test cases
+  * Random
+  * Grab & mutate
+  * Grammar based
+* **Greybox fuzzing**
+  * Guide input generation toward a goal
+    * Guidance bsaed on lightweight program analysis
+  * Three main steps:
+    * Randomly generate inputs
+    * get feedback from previous executions
+  * What code is covered? Mutate inputs that have covered new code
+* **American Fuzzy Lop**
+  * Simple yet effective fuzzing tool
+  * Targets C/C++ programs
+  * Inputs are, e.g., files read by the program
+  * Widely used in industry, in particular, to find security-related bugs
+* **Measuring Coverage**
+  * Different coverage metrics
+    * Line/statement/branch/path coverage
+  * Here: Branch coverage
+  * Branches between basic blocks
+  * Rationale: Reaching a code location not enough to trigger a bug, but state
+    also matters
+  * Compromise between
+    * Effort spent on measuring coverage
+    * Guidance it provides to the fuzzer
+* **Detecting new Behaviours**
+  * Inputs that trigger a new edge in the CFG: Considered as new behaviour
+  * Alternative: Consider new paths
+    * More expensive to track
+    * Path explosion problem
+* **Evolving queue of inputs**
+  * Maintain queue of inputs
+    * Initially: Seed inputs provided by user
+    * Once used, keep input if covers new edges
+    * Add new inputs by mutating existing input
+* **Mutation operators**
+  * *Goal*: Create new inputs from existing inputs
+  * Random transformation of bytes in an existing input
+  * Bit flips with varying lengths and stepovers
+  * Additions and substraction of small integers
+  * Insertion of known interesting integers
+* More tricks for fast fuzzing
+  * Time and memory limits
+    * Discard input when execution is too expensive
+  * Prunning the queue
+    * Periodically select subset of inputs that still cover every edge seen so
+      far
+  * Prioritize how many mutants to generate from an input in the queue
+* In-application Isolation Techniques
+  * Page table protection
+  * Software bounds checks
+* **Pointer authentication**: Ensure pointers in memory remain unchanged
+  * General purpose hardware primitive approximation pointer integrity
+  * Adds pointer authentication Code into unused bits of pointer
+  * Keyed, tweakable MAC from pointer address and 64-bits modifier
+  * PA keys protected by hardware, modifier decided where pointer created and
+    used
+  * *Prevent arbirtrary pointer injection*
+    * Modifiers do not need to be confidential
+    * Visible or inferable from the code section/binary
+    * Keys are protected by hardware and set by kernel
+    * Attacker cannot generate PACs

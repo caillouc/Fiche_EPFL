@@ -360,3 +360,238 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     * Very few configuration parameters, no cryptographic agility
     * Simple to set up 
     * Small codebase $\rightarrow$ small attack surface
+
+# Anonymous-Communication Systems
+
+* IP address leak metadata information
+  * Who talks to whom, at what time, for how long, how frequently
+  * NSA can log connection metadata, and later incriminate Snowden
+* **Anonimity** and related concepts is tricky
+  * Anonimity is not a property of individual messages or flows; *You cannot be
+    anonymous on your own*
+* **Sender anonimity**
+  * Adversary knows/is receiver
+  * Adversary may learn message
+  * Sender is unknown
+  * **Sender anonimity set**
+    * Set of all senders/individuals indistinguishable from real sender
+    * Can be used as a rough metric
+    * Small set $\implies$ little anonimity
+  * **Return address** Tolen provided by the sender
+* **Receiver anonimity**
+  * Adversary knows/is sender
+  * Adversary may choose message
+  * Receiver is unknow
+  * How does destination receive traffic
+    * **Onion service** (pseudonym known)
+* **Unlinkability**
+  * Adversary knows senders
+  * Adversary knows receivers
+  * Link between senders and receivers is unknown
+  * Multiple users need to communicate at the same time 
+* **Unobservability**
+  * Adersary cannot tell whether any communication is taking place
+  * Always send traffic
+* Plausible deniability
+  * Adersary cannot prove that any particular individual was responsible for a
+    message
+* **Threat models**
+  * There are various types of adversaries that can be considered
+  * Degree of control: *local* or *global*
+  * Type of contorl: *network* or *compromised infrastructure*
+  * Tyoe of behavior: *passive* or *active*
+* User multiple proxies to avoit single point of failure (*cascade*)
+  * Each proxy only sees addresses of two neighbors
+  * Should work if the message addresse traverses at least one honest proxy
+* Message and forwarding information is encrypted multiple times (onion)
+  * All keys are necessary to decrypt
+* **Mix-nets**
+  * Intented for sending anonymous emails
+    * Latency is not a big concern
+    * No connection setup, only individual messages
+  * Built on asymmetric cryptography
+  * Each mix has a public/private key pair
+  * Public keys and addresses are known to the sender
+  * Problem: network attacker can observe in and outgoing messages
+    * Each proxy should perform **batching**: Collect several messages before
+      forwarding
+    * Additionally, the proxies should change the order of (**mixing**) the
+      messages, this is called **threshold mix**
+    * Important: messages need to be padded to a *fixed length* to make them
+      indistinguishable
+  * To achive full Unobservability, user **cover traffic**
+  * How to send reply?
+    * Idea: Inlcudes an *untraceable* path return address in its message
+  * Problems of mix-nets: high latency dut to batching and mixing; overhead due
+    to asymmetric cryptography
+* **Forward Security**: if long term keys are compromised, anonimity of
+  previously establisged circuits is preserved
+* **Circuit-based anonimity networks** (onion routing)
+  * *Layered encryption*, no batching and mixing, no cover traffic
+  * Flow-based: establish a *virtual circuit* (keys) once per flow, reuse it for
+    all packets in the flow using only *symmetric key crypto*
+  * The *nodes* are called **relays**
+  * The virtual circuit is also called **tunnel**
+  * **Circuit setup**
+    * Initially, sendre knows long-term public keys or relays
+    * The sender negociates shared keys with all relays on the path; this
+      require (expensive) *asymmetric cryptography*
+    * The relays store the necessary state
+  * **Direct circuit setup**: Establish state on relays by using a normal packet
+    as for mixes
+    * Message for each node contains address of next node and ephemeral
+      Diffie-Helman share
+    * Each node replies with its own ephemeral Diffie-Helman share
+    * Ecnryption of setup packet uses long-term Diffie-Helman share
+    * Relatively fast
+    * Does not provide (immediate) forward security for long between
+      communication patners
+  * **Telescopic circuit setup**
+    * Keys are negociated one relay at a time
+    * The circuit is 'extended' by one hop at the tine
+    * The setup is slower but it offers immediate forward security
+  * **Data forwarding**
+    * Packets for one or more flows are forwarded along the circuit
+    * Only *symmetric cryptography* is used (AES)
+  * **Circuit tear-down**
+    * The circuit is destroyed to free state on relays or to prevent attacks
+    * Can be both by sender and by intermediate ralays
+    * Circuits have a limited lifetime, so they will eventually be destroyed
+
+| . | Mix-net | Onion routing |
+| --- | --- | --- |
+| Forwarding system | Messag-based | Circuit based |
+| Layered encryption | yes (asymmetric) | yes (symmetric) |
+| Mixing and batching | yes | no |
+| Cover traffic | yes (optional) | no |
+| Forward Security | no | yes (Telescopic setup) |
+| Latency | high | low/medium |
+
+* **Tor**
+  * Most widely used anonymous-communicatioin system
+  * Circuits established over *3 relays*
+  * *Telescopic setup*
+  * *Per-hop TCP*, established on the fly
+    * Avoid TCP stack fingerprints
+  * *Per-hop TLS* (except on the last hop)
+    * Multiple circuits over the same TLS connection
+    * End to end HTPPS is possible
+  * Exit policies (exit can restrict the destinations they connect to)
+  * **Onion services**
+    * Provide receiver anonimity
+    * Use `.onion` URL (not in DNS)
+    * How can we authenticate the onion service if that wants to be anonymous?
+      The hash of Bob's public key is the identifier of his hiddent service
+    * Bod has conenctions to a set of special ralays called *introduction
+      points* (IP)
+    * To communicate, Alice connects to an IP and suggest a *rendez vous*
+    * Bob can connect to the *rendezvous* and start the communication
+  * **Tor cells**
+    * Basic unit is the cell (512 bytes)
+    * It contains a circuit ID and ac ommand field (cleartext)
+    * Same for cells in both directions
+  * A *relay* cell's payload is decrypted and its digest is checked
+    * If correct (this means the current relay is the intended recipient) check
+      command
+    * Otherwise (it is an intermediate node just forwarding the cell): replace
+      circuit ID and forward cell along
+    * Only exit relays sees unencrypted payload
+  * **Directry authorities**
+    * How do the clients know what relays there are?
+    * *10 directory authorities* running a consensus algorithm
+    * The authorities track the state of relays, store their public keys
+    * Client software comes with a list of the authorities's key
+    * The centralized authorities are an *important weakness* or Tor
+    * Every relay periodically reports a signed statement
+    * DAs also act as bandwidth authorities: verify bndwidth of nodes
+  * Censorship resistance in Tor
+    * Relay nodes are publicaly listed and can be blocked
+    * The Tor network contains several *bridge relays* (or *bridges*); not
+      listed in main Tor directory, downloaded on demand; use to circumvent
+      censors which block IP address of Tor delays
+
+# Border Gateway Protocol (BGP) Security
+
+* **Rerouting attacks** issues
+  * Not all traffic is encrypted/authenticated: DNS, HTTP
+  * Even encryptted traffic leaks timing information
+  * Rerouting can cause dropped packages and widespread outages
+  * Hard to notice and impossible to solve without ISP cooperation
+  * Undermine and invalidate other security protocols (can get a fake
+    certificate using acme $\rightarrow$ TLS becomes useless)
+* **IP prefeix origination** into BGP
+  * Prefix advertised/announced by the AS who owns the prefix
+* **IP prefix hijacking**
+  * A malicious (or misconfigured) AS announces a prefix it does not own
+  * Today, no proper verification in place
+* **BGP does not validate the origin of advertisements**
+* **BGP Interception**
+  * Selectively announcement of hijack prefix only to some neighbors
+    * Problem: neighbors may still learn hijacked routes from their peers
+  * Use **BGP poisonning**
+    * Only some of the neighbors use hijacked route
+  * Use BGP communities to ensure the announcement only reaches certain ASes
+    * Can tell ans AS not to forward announcement to specific other ASes using
+      the 'NoExportSelected' action
+  1. Set up an AS and border router or compromise someone else's router
+  2. Configure router to originate the target (sub-)prefix
+  3. Get other ASes to accept the wrong route
+* **BGP does not validate the content of advertisements**
+* ASes can modify the BGP path
+  * *Remove ASes from the AS path*; Motivation: 
+    * Attrack traffic by making path look shorter
+    * Attrack sources that try to avoid a specific AS
+  * *Add ASes to the AS path*; Motivation
+    * Trigger loop detection in specific AS (DoS, BGP poisonning)
+    * Make your AS look like it has richer connectivity
+* *Security Goal*
+  * Only an AS that owns an IP prefix is allowed to announce it
+    * Can be proven cryptographically
+  * Routing message are authenticated by all ASes on the path
+    * Cryptographic protection
+    * ASes cannot add or remove other ASes in BGP announcements
+* Applying **Best Current Practices** (BCPs)
+  * Securing the BGP peering session between routers (authentication, priority
+    over other traffic)
+  * Filtering routes by prefix and AS path
+  * Filters to block unexpected control traffic
+* Enter prefices into Internet Routing Registries and filter based on these
+  entries
+* **Resource Public Key Infrastructure (RPKI)** 
+  * *Required*: ability to prove ownership of resources
+  * RPKI cryptographically asserts the cryptographic keys of ASes and the AS
+    numbers and IP prefixes they own
+  * Root of trusts are ICANN and the five regional Internet registries
+  * Enables the issuance of *Route Origination Authorizations* (ROAs)
+  * ROA can states which AS is authorized to annouce certain IP prefixes
+    * Can specify the maximum length of the prefix that the AS is allowed to
+      advertise $\rightarrow$ avoid sub-prefix hijacking
+    * Certificates follow same delegation as IP addresses from RIRs
+  * ROAs are signed, distributed, and checked out-of-band
+  * *Distribution of ROAs*
+    * ASes and/or RIRs create ROAs and upload them to repositories
+    * Each AS periodically fetches repositories
+    * All BGPs routers of an AS periodically fetch a list of ROAs from the local
+      cache
+    * When a BGP update message arrives, the router can check wheter a ROA
+      exisits and it is consistent with the first AS entry of the BGP message
+* **BGPsec**
+  * Secure version of BGP
+  * Secures the AS-PATH attribute on BGP announcements
+  * Idea: Origin authentication + cryptographic signatures
+  * Include Next AS in the signature so that both ASes confirm the link between
+    them
+  * Path prepending is no longer possible
+  * *Problems*
+    * Routing policies can interact in ways that can cause BGP wedgies
+    * Still vulnerable to protocol downgrade attacks
+    * Performance degradation
+  * Unless security is the first priority or BGPsec deployment is very large,
+    security benefits from partially deployed BGPsec are meager
+  * Deployement is challenging
+* **BGP** was not designed with security in mind
+* **SCION** Scalability, Control, and Isolation on Next Generation Networks
+  (Replacement of BGP)
+* *"BGP is one of the largest threats on the internet"*
+* Proposals to improve BGP or competely replace it are emerging, but large-scale
+  deployment is difficult
