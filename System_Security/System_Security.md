@@ -732,7 +732,6 @@ $$ H(X \mid Y = y) = \sum_{x \in \mathcal{X}} P[X = x \mid Y = y] \log \frac{1}{
 
 * Initial uncertity = Information leaked + Remaining uncertity 
   ($H[X] = I[X;Y] + H[X \mid Y]$)
-
 * **Symbolic Execution**
   * Check Safety Properties (Model)
 * **Dynamic Symbolic Execution**
