@@ -178,20 +178,20 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
 * **Let's Encrypt**
   * Goal: provide free certificate based on automated domain validation,
     issurance, and renewal
-  * Based on ACME; Automated Certificate Managment Environment
+  * Based on ACME; Automated Certificate Management Environment
 * **Certificate Revocation**
   * Certificate revocation is a mechanism to invalidate certificates
-    * After a private key is disclosed 
+    * After a private key is disclosed
     * Trusted employee / administrator leaves corporation
     * Certificate expiration time is usually chosen too long
   * CA periodically publishes Certificate Revocation List (CRL)
     * Delta CRLs only contains changes
-    * What to do if we miss CRL update? 
+    * What to do if we miss CRL update?
   * What is general problem with revocation
     * CAP theorem (Consistency, Availability, tolerance to partition):
       impossible to achieve all 3, must select one to sacrifice
-* **DANE** 
-  * DNS-Based Authentication of Named Entities 
+* **DANE**
+  * DNS-Based Authentication of Named Entities
   * Goal: Authenticate TLS servers without a certificate authority
   * Idea: use DNSSEC to bind certificate to names
 * **Certificate Transparency**
@@ -240,16 +240,16 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
       important
   * The entity who controls the root keys, controls all authentication and
     verification operations
-  * PKI and revocation can result in a powerfull 'kill switch', which can enable
+  * PKI and revocation can result in a powerful 'kill switch', which can enable
     shouting down part of internet
     * Sovereign PKI continues to be an important research challenge
 
 # Virtual Private Networks (VPNs)
 
 * VPN creates a **Secure channel** between two networks over an **untrusted
-  network** 
+  network**
   * **Set-up phase**: the gateways (tunnel endpoints) *authenticate* each other and
-    *set up keys* 
+    *set up keys*
   * **Tuneling phase**:
     * Packets are encapsulated at the first gateway
     * ... and decapsulated at the second
@@ -316,7 +316,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
 * **Authentication mechanism**
   * Pre-shared key (PSK)
   * Public keys and certificates
-  * Client: username/password 
+  * Client: username/password
 * **Tunneling mechanism** (tunnel protocol)
   * Custom protocols (IPsec)
   * Tunnel over TLS (SSTP)
@@ -336,7 +336,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     * Encapsulate packets and tunnel them between SA endpoints
 * **Wireguard**
   * No cryptographic agility
-    * Only use state-of-the-art primitives 
+    * Only use state-of-the-art primitives
     * Simplify negociation and remove insecure promitives
   * Very simple configuration - similar to `autorized_keys` file in ssh
   * Very small codebase, minimal attack surface, formally verifiable
@@ -358,7 +358,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     * Very versatile but difficult to set up
   * **WireGuard** is a new VPN protocol with a focus on simplicity
     * Very few configuration parameters, no cryptographic agility
-    * Simple to set up 
+    * Simple to set up
     * Small codebase $\rightarrow$ small attack surface
 
 # Anonymous-Communication Systems
@@ -388,7 +388,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * Adversary knows senders
   * Adversary knows receivers
   * Link between senders and receivers is unknown
-  * Multiple users need to communicate at the same time 
+  * Multiple users need to communicate at the same time
 * **Unobservability**
   * Adersary cannot tell whether any communication is taking place
   * Always send traffic
@@ -538,7 +538,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   3. Get other ASes to accept the wrong route
 * **BGP does not validate the content of advertisements**
 * ASes can modify the BGP path
-  * *Remove ASes from the AS path*; Motivation: 
+  * *Remove ASes from the AS path*; Motivation:
     * Attrack traffic by making path look shorter
     * Attrack sources that try to avoid a specific AS
   * *Add ASes to the AS path*; Motivation
@@ -557,7 +557,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * Filters to block unexpected control traffic
 * Enter prefices into Internet Routing Registries and filter based on these
   entries
-* **Resource Public Key Infrastructure (RPKI)** 
+* **Resource Public Key Infrastructure (RPKI)**
   * *Required*: ability to prove ownership of resources
   * RPKI cryptographically asserts the cryptographic keys of ASes and the AS
     numbers and IP prefixes they own
@@ -595,3 +595,398 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
 * *"BGP is one of the largest threats on the internet"*
 * Proposals to improve BGP or competely replace it are emerging, but large-scale
   deployment is difficult
+  
+# Firewall, Intrusion Detection and Evasion
+
+* A **Firewall** is a system used to protect or separate the *trusted network*
+  from an *untrusted network*, while *allowing authorized communications* to
+  pass from on side to the other
+* **Firewall** enforce an access control policy between two networks
+* **Network firewall** are a software appliance running on specitfic hardware or
+  as virtual instance taht filter traffic between two or more network
+  * *Protect differect network segement*
+* **Host firewall** provide a layer of software on one host that controls
+  network traffic in and out of that single machine
+  * *Protect single host*
+* **Ingress**:
+  * Filter incoming traffic
+  * From low security to high security net
+* **Egress**:
+  * Filter outgoing traffic
+  * From high security to low security net / outside
+  * Gets often forgotten
+* **Default policy**:
+  * Define what to do when no rule matches
+  * *Default accept* versus *default reject* policy
+* **Deny Access**:
+  * Techniques to deny access
+    * *DROP*: Silently drop the packet
+    * *REJECT*: Drop packet and inform sender
+* **Stateless Firewall**
+  * Examine a packet at the network layer
+  * Decision is based on packet header information
+  * *Pros*:
+    * Application independant
+    * Good performance and scalability
+  * *Cons*:
+    * No state or application context
+* **Statefull Firewall**
+  * Keep also track of the state of the network connections
+  * Decision also based on session state
+  * *Pros*:
+    * More powerful rules
+  * *Cons*:
+    * State for UDP?
+    * Inconsistent state: Host vs Firewall
+    * State explosion
+* Enforcing access control is not enough
+* Firewall can't block all malicious traffic
+  * Many ports must be kept open for legitimate applications to run
+  * Users unwittingly download dangerous applications or other forms of
+    malicious code
+  * Peer-to-peer and instant messaging have introduced new injection vectors
+* The lagacy firewall technology is effectively blinded by this evolution
+* **Next Generation of Firewall** (NGFW)
+  * Deep packet (content) inspection
+  * Take aplication and protocol state into account
+  * *Pros*:
+    * Even more powerful rules
+    * Application & protocol awarness
+  * *Cons*:
+    * Need to support many application protocols
+    * Performance, scalability
+    * Inconsistent state: host vs firewall
+* **Web Application Firewall** (WAF)
+  * Protect web-based applications from malicious requests
+  * *Request filtering*
+    * Request patterns (signature)
+    * SQL injection, cross-site scripting, buffer overflow atttempts, checking
+      number of form parameters
+    * Static or dynamic blacklisting/whitelisting
+  * *Authentication*
+    * User authentication
+    * Session management
+  * *TLS Endpoint*
+    * WAFs are often implemented as a reverse proxy to protect public facing web
+      applications
+    * Reverse proxy: client is outside the internal network
+* **Deployemnt Challenges**
+  * **Scaling**: protecting large number of hosts, endpoints, network segments
+    is not trivial
+  * **Complexity**:
+    * Firewall rulesets are complex and grow over time
+    * Thousands of rule on a single firewall are no exception
+    * Detection between channels of sync
+  * **Management**:
+    * Tools are needed to mange hundreds of firewalls and their rules securely
+    * What is the process to change rulesets
+    * Who has permission, monitoring of changes
+  * **Incentives**:
+    * Infrastructure Team: paid for providing connectivity blamed for disruptions
+    * Security Team: paid to protect and disrupt connectivity
+* **Firewall attacks**
+  * Firewalls are just complex machine, with vulnerabilities and assumptions
+  * **IP Source spoofing**: Spoofing the IP address to bypass filters (Works for
+    stateless protocols)
+  * **Artificial Fragmentation**:
+    * Fragment packets to bypass rules
+    * Without proper reassembly at the firewall the atteck gets through
+    * Attack sent in multiple packets
+    * Out of sequence packets
+    * Fragmentation overlap
+  * **Vulnerabilities**:
+    * Exploiting vulnerabilities in firewall software/firmware/OS
+    * Exploit vulnerabilities in target application
+  * **Denial of Service**: Firewall state explosion
+    * Data in ICMP ping packets, or use DNS requests as channel
+    * Attack through VPN
+* **Payload encoding**
+  * Different encodings or mapping confuse detection
+  * Different encoding and obfuscation schemas can be combined with noise
+    insertion in millions ways
+  * Encoding are not necessarily unique
+  * Undefined or border cases are very effective for detection evasion
+  * Different implementation of decoding on target application vs detection
+    engine decoding
+* Being a security product from a security vendor does not imply better code
+  quality
+* **False Positive**: I raised an alert but it was nothing
+* **Attack Detection**
+  * Basic detection approaches
+  * **Reactive**: System can only detect already known attacks
+  * **Proactive**: System can detect known and new, yes unknown attacks
+  * **Deterministic**:
+    * System always performs the same given the same input
+    * The same stimuli always result in same action
+    * Reason for alert in known
+  * **Non-deterministic**
+    * System detection is fuzzy (heuristic, machine learning, sandboxing) and
+      depends on current state of the world
+    * Reason for alert typically not known
+  * **Static**
+    * Signature based detction
+    * Static analysis and identification of known malware
+    * Create and distribute signature of known malware
+    * *Pros*: Reliable, low rate of false positives
+    * *Cons*: Reactive, only known malware can be detected; Problem of large
+      scale distribution of signatures
+  * **Behavior**
+    * Catatlogue and identify suspicious behavior
+    * Run samples in sandbox/device
+    * Classify upon observed behavior
+    * *Pros*: Proactive, detection on inknown malware
+    * *Cons*: Complex and computationally expensive; higher rate of false
+      positives
+  * **Protocol analysis**:
+    * Analysis and decoding of protocols
+    * Reassembly and normalization of traffic
+  * **Signatures**: Compare attributes of observables
+    * to a deny list or allow list
+    * to patterns of known attacks/exploits/malware
+  * **Sandboxing**:
+    * Suspicious file is executed within a virtual environment
+    * Specific actions are categorized and labeled as good or bad
+  * **Machine learning**
+    * Recognize complex patterns
+    * Make decisions based on the data and assumptions formed from previous data
+* **Signature based detection**
+  * Deterministic and non-proactive
+  * Signature-based concepts still lie at the heart of all modern detection
+    systems ... and will continue to be integral for the foreseeable future
+  * Able to promptly identify and label a threat
+  * Different signature systems used together to accurately label a known
+    threat
+  * Different signature systems used together to accurately label a known
+    threat
+  * For each new threat, a unique signature needs to be created
+  * Frequent updates to signature database or online lookups
+  * Progression and sophistication of signature-based detection systems depend
+    upon human signature writers
+* **Sandboxing Based Detection**
+  * Run malware in detonation chamber
+  * Proactive and mostly deterministic
+  * Sandoxing product typically run a samples in a (instrumented) sandbox
+    environment
+  * Examine/monitor runtime behavior of sample
+  * Compare the behovior agains a list of rules previously developed by the
+    vendor in their lab and applly machine learning for behavior
+    classification
+  * *Pros*:
+    * Proactive, can detect unknown threats;
+    * No signature updates required
+  * *Cons*:
+    * Resource intensive
+    * High latency
+    * Difficult to scale
+* **Machine learning**
+  * Proactive and partially deterministic
+  * Security vendors are now applying increasingly sophisticated machine
+    learning elements into their cloud-based analysis and classification
+    systems, and into theri products
+  * *Proven*: These techniques have already proven their value in Internet
+    search, targeted advertsing, and social networking
+  * *No humans*: Machine learning largely removes humans and their biases to the
+    developmen of an dimesional signature (or classification model)
+  * Machine learning estimates probability distribution it approximates from
+    training data
+  * *Golden rule*
+    * Data you are going to work on needs to come from approximately the same
+      distribution as the data you are training on
+* **Detection Evasion by Design**
+* **Malware Developtment Lifecycle**
+  * Develop new malware with desired functionality
+  * Automatically create numerous permutated samples of the initial malware at
+    massive scale
+  * Protect samples from analysis
+  * Make samples aware of sandboxing/detection technologies
+  * Quality Assurance: Test sample against current anti-malware solutions before
+    deployment
+  * Malware used in a target attack will not be detected by anti-malware tools
+    at the time of attack
+  * Because it was tested for detection beforehand
+* **Polymorphism Techniques**
+  * Tools manipulate the structure of the source code of the malware by
+    reordering and replacing common programmatic routing
+  * Swapping of equivalent code constructs
+  * Changing the order of the code
+  * Inserting noise
+  * Compiler modulation
+* Challenges and limitations of **intrusion detection**
+  * Unable to inspect encrypted traffic
+  * High number of false positive
+  * Packet capturing and analysis at high link speed
+  * Latency introduced by inspection engine
+  * Application level attack
+  * Policy/signature management
+* **Accuracy**: how close the measured values are to the target value
+* **Precision**: Values of repeated measurements are clustered and have little
+  scatter
+* "It is better to be roughly right than precisely wrong" *John Maynard Keynes*
+* **True Positive**: alert on true intrusion
+* **False Positive**: alert but no intrusion
+* **False Negative**: Intrusion but no aler
+* **True Negative**: No alert on non-intrusion
+* Perfect detection
+  * Difficulty: Built a detector with optimal balance between FPs and FN
+  * Costs of detection errors
+    * False Positive: Mobilize incident response team, stop service, interrupt
+      business
+    * False Negative: Getting compromised, forensics, downtime, cleanup
+* Detection Performance
+  * A high number of false positives is a major challenge for detection system
+  * Accurate detection is very challenging when rate of attacks is very low
+  * Different detecton techniques achieve different sensitivity and specificity
+  * Vendors claims to detect almost 100% of the sample are meaningless without
+    indicating rate of false positives
+  * Use a combination of diverse tests to increase precesion
+  * Context is important
+* **What to remember**
+  * 100% protection is an illusion: assume you're already compromised, and get
+    compromised over again
+  * A successful breach shoud be planned for, and handled in controlled process
+    (rather than being treated as an execption)
+  * Deploy tools and processes to quickly detect and remediate successful
+    breaches
+  * We need anti-virus, anti-malware, intrusion detection et al, butl we also
+    need to know their limitations
+  * Most devices can achieve a high detection rate
+    * At the price of an unacceptably high rate of false positives
+  * *An installed security patch/update is better than millions of detection
+    signatures*
+    
+# Botnets & Internet of Things (IoT)
+
+* The word **botnet** is a combination of the words 'robots' and 'network'. The
+  term is usually used with a negative or malicious connotation
+  * **Numerous devices**: Build and manage a large network of compromised
+    machines or devices
+  * **Command and Control** (CnC): Controlling a massive number of bots is a key
+    requirement and challenge
+* **Bot agents**
+  * *Targets*
+    * Criminals compromise an array of victim computers
+    * A *boot agent* is installed on every victim/target
+  * **Challenge**: how to communicate with the bot master
+    * To receive commands and new payloads
+    * To exfiltrate data
+* **Proxy layer**
+  * A distributed and redundent layer of *proxy agents*
+  * *Proxy agent* are itself compromised machines
+  * *Bot agents* connects to proxies to:
+    * Receive commands
+    * Downloads payloads
+    * Exfiltrate data
+* **Bot master**
+  * Control server
+    * The *bot master* connects to **crntrol server**, which communicate with
+      proxy agents
+    * *Asynchronous communication* between bot master and control server
+  * *Drop Zone*: Host where exfiltrated data is stored until pickup by bot
+    master
+* **Botnet Command Models**
+  * *No Control*
+    * Default malicious behavior
+    * Less flexible, detected by signatures
+    * Most resistant to global shutdown
+  * *Public infrastructure*
+    * Use common application API's
+    * Generally reliable and 'anonymous'
+    * Mostly IRC, some P2P & micro blogging
+    * Majority of today's botnets
+  * *Resilient hybrids*
+    * Default malicious behavior
+    * Fallback plans id CnC unavailable
+    * Pre-programmed contact points
+  * *Private channels*
+    * Custom and covert channels
+    * Abuse & alteration of common protocols
+    * Short-term stealth
+    * Signature detection easy once CnC observed
+* Locate the Command and Control Infrastructure
+  * The ability of a bot agent to locate the CnC infrastructure is a critical
+    requirement for maintaining control of the entire botnet
+  * A *bot agent* that cannot connect to the control infrastructure cannot be
+    controlled
+  * The bot has to somehow identify the CnC infrastructure
+  * The CnC communication can be intercepted by competitors and/or law
+    enforcement to
+    * Shutdown ot take over the botnet
+    * Identify the bot master
+* **Fast Flux**: A CnC resource with a given Fully Qualified Domain Name (FQDN)
+  is mapped to a new set of IP addresses as often as every few minutes
+* Key methods for robust communication
+  * Typical methods for a bot agent to locate and connect to a command and
+    control instance or the bot net
+  * Use *fixed ip*:
+    * Easy to identify bot agent
+    * Easy to identify controller
+    * No flexibility
+    * Easy to block botnet
+  * Use *fixed domain*:
+    * Easy to identify bot agent
+    * Harder to identify controller
+    * Harder to shut down botnets
+    * More flexibility
+  * Use *IP or domain flux*
+    * Domain names and/or IP addresses change frequently
+    * Very dynamic, moving target
+    * Hard to shut down botnet
+* **Sinkholing**: A botnet defense
+  * A technique that is used to redirect the traffic from bots to an analysis
+    server
+  * A **Sinkhole** server gathers analytics and controls bots (if the
+    authentication is also reverse engineered)
+  * Reverse engineering of infected machines enables security researchers to
+    replicate the DGA
+  * This allow the identification and registration of some of the 'rendez vous'
+    domains, and thereby redirect traffic of infected bots to the sinkhole
+    server
+  * Sinkhole server gather valuable telemetry and control bots (if the
+    authentication is also reverse-engineered)
+* Bot configuration files control key bot agent functionality on the target
+  system
+  * **Blacklists**: An array of domains that the botnet permanently blocks on
+    the target host
+    * Prevent the victim from automatically, or manually, updating the machien
+      or any anti-malware solutions
+    * The victims machine can no longer get security protection
+  * **Web Injects**: Specific HTML code injectd into victims browser session to
+    exfiltrate sensitive data
+    * When accessing a site of interest, the attackers html code is injected
+      into the session
+    * Exfiltration of user names & passwords upon authentication, or hidden
+      inserstion of fraudulent transactions
+* **Safety** is the protectionm against random, unwanted incidents - resulting
+  from coincidences or driven by the environment
+  * The environment does not adapt to bypass safety measures
+* **Security** is the protection against intended incidents - resulting from a
+  deliberate and planned act
+  * Driven by targeted attacker
+  * Deliberate acts driven by an adaptative attacker
+* *When is the last time you updated your connected fridge or your printer ?*
+  $\rightarrow$ problems
+* No perceptiohn of risk
+  * People need highly visible incidents before they act
+  * Insecure systems cannot be identified without extensive testing
+    $\rightarrow$ Illusion of control
+  * We face considerabe difficulty to get resources (from C-level) to protect
+    against abstract risks $\rightarrow$ Accumulation of risks
+* **Internet of Things** (IoT)
+  * System of interrelated and connected computing devices
+  * Global network of 'smart' physical objects of various kinds for monitoring,
+    data gathering, reporting, remote control etc...
+  * Ability to transfer data without requiring interaction
+* *Industrial Internet of Things* (IIoT): Subset of IoT specific to industry
+* *Critival Infrastructure* (CI): Processes, facilities, technologies, networks
+  and systems that control and manage essential services
+* **Operational Technology** (OT) and **Information Technology** (IT) systems
+  have different operational requirements which impact their ability to respond
+  and adapt to these threats
+  * **Operational Technology**
+    * High availability & integrity are vital with less stringent
+      confidentiality requirements
+  * **Information Technology**
+    * Confidentiality & Integrity are vital while availability is important
+* Security issues in IoT because their are such small devices that it is not
+  always possible to fulfill the security requirement (e.g. not enough
+  computatiom power for cryptography or random number generators)
