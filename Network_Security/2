@@ -1231,46 +1231,6 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     * Publicly accessible servers
     * Ideally: response is (much) larger than request $\rightarrow$
       amplification
-  1. Choose open service (e.g. open DNS resolver) as reflector 
-  2. Craft request that triggers (much) larger response
-  3. Send packet where source address is set to victim's address
-  4. Reflector sends reply to victim
-* **Mitigations**
-  * Prevetn address spoofing
-  * Perform access control
-    * For example, DNS servers deployed within an organization or ISP should
-      only server server clients from this organization
-  * Implement response rate limiting
-    * Limit the number of responses to a client IP
-  * Ensure small emplification factors (ideally < 1)
-    * Examples: WireGuard ensures that the responders's first message is smaller
-      than the iniator's
-
-## Specific Attacks and Defense Mechanisms
-
-* **Shrew attacks**
-  * Exploits TCP congestion control feature
-  * Sends periodically short burst to the target link/router
-    * $\rightarrow$ Low traffic volume 
-  * Denies the bandwidth of legitimate TCP flows as it makes TCP believe there
-    is a long-term congestion
-  * *The attacker forces TCP flows to repeatedly enter a retransmission timeout
-    state by sending high-rate but short-duration bursts*
-* **Temporal Lensing**
-  * Idea: 'multiple rounds simultaneously impact'
-  * Concentrate a flow in time
-  * Even a low-bandwidth source can perfrom shrew attack
-* Volumetric attack: **Coremelt and Crossfire**
-* **Coremelt attack**
-  * Adversaty controls many bots distributed accross the Internet
-  * Bots send traffic between each other, thus all traffic is desired by
-    destination
-    * Traffic is not sent to victim as in regular DDoS attacks
-  * Adversary can exhaust bandwidth on victim link
-  * Result: attack traffic exhausts bandwidth in per-flow fair sharing systems
-* **Crossfire attack**
-  * Adversary controls distributed bot army
-  * Observation: dut to route optimization, few links are actually used to
-    connect a target region to rest of Internet
-  * Adversaty can contact selected servers to overload target links
-  * Result: disconnect target region from ramainder of Internet
+  * Typical reflectors
+    * DNS (up to ~180)
+    * NTP (up to ~500)
