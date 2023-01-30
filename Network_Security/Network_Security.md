@@ -588,7 +588,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     * Performance degradation
   * Unless security is the first priority or BGPsec deployment is very large,
     security benefits from partially deployed BGPsec are meager
-  * Deployement is challenging
+  * Deployment is challenging
 * **BGP** was not designed with security in mind
 * **SCION** Scalability, Control, and Isolation on Next Generation Networks
   (Replacement of BGP)
@@ -670,7 +670,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     * WAFs are often implemented as a reverse proxy to protect public facing web
       applications
     * Reverse proxy: client is outside the internal network
-* **Deployemnt Challenges**
+* **Deployment Challenges**
   * **Scaling**: protecting large number of hosts, endpoints, network segments
     is not trivial
   * **Complexity**:
@@ -1231,7 +1231,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     * Publicly accessible servers
     * Ideally: response is (much) larger than request $\rightarrow$
       amplification
-  1. Choose open service (e.g. open DNS resolver) as reflector 
+  1. Choose open service (e.g. open DNS resolver) as reflector
   2. Craft request that triggers (much) larger response
   3. Send packet where source address is set to victim's address
   4. Reflector sends reply to victim
@@ -1251,7 +1251,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
 * **Shrew attacks**
   * Exploits TCP congestion control feature
   * Sends periodically short burst to the target link/router
-    * $\rightarrow$ Low traffic volume 
+    * $\rightarrow$ Low traffic volume
   * Denies the bandwidth of legitimate TCP flows as it makes TCP believe there
     is a long-term congestion
   * *The attacker forces TCP flows to repeatedly enter a retransmission timeout
@@ -1261,6 +1261,7 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * Concentrate a flow in time
   * Even a low-bandwidth source can perfrom shrew attack
 * Volumetric attack: **Coremelt and Crossfire**
+  * Hard to monetize for an attacker
 * **Coremelt attack**
   * Adversaty controls many bots distributed accross the Internet
   * Bots send traffic between each other, thus all traffic is desired by
@@ -1268,9 +1269,116 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     * Traffic is not sent to victim as in regular DDoS attacks
   * Adversary can exhaust bandwidth on victim link
   * Result: attack traffic exhausts bandwidth in per-flow fair sharing systems
+  * Bots talk to each others
 * **Crossfire attack**
   * Adversary controls distributed bot army
   * Observation: dut to route optimization, few links are actually used to
     connect a target region to rest of Internet
   * Adversaty can contact selected servers to overload target links
   * Result: disconnect target region from ramainder of Internet
+  * Bot engage a communication with an external servers
+* Protocol attack **DNS Flooding**
+* **NXDOMAIN attack**
+  * *Goal*: overhelm victim's authoritative name servers
+  * *Idea*: query many non-existent subdomains of victim domain
+  * Resolver queries all authotitative name servers in turn
+  * Can use multiple DNS resolvers
+  * Can be sent from distributed botnet and via namy different DNS resolvers
+  * *Result*: name server can no longer reply to legitimate requests
+* Protocol attack **Session State Exhaustion**
+  * *communication channel*
+    * In a two-way communication, a channel between peers is identified with a
+      unique session number (sessio state)
+    * Each channel needs a unique session number
+    * The session number must be known at the server to match subsequent
+      requests to the right session/channel
+  * *Attack*
+    * Exhausting the session state table of the server
+  * *Result*
+    * Server can no longer accept new connections
+    * Existing connections are dropped
+    * Maybe the server/service crashes
+* **SYN Flood attack**
+  * TCP uses a three-way handshake to establish a connection
+  * *Attack*
+    * Resource starvation of session table at server
+    1. SYN flood with spoofed source addresses
+    2. Server tries to keep state, *eventually state table overflows*
+    3. Server unable to accept new legitimate connections
+  * *Mitigation - SYN cookies*
+    * Particular choise of initial TCP sequence number - no state table needed
+    * Encode state in a unique but determined way that allows the server to
+      validate the state in the reply
+    * No need to store session state at the server
+    * Ensure the encoding cannot be tampered (use crypto-hashes, unique data
+      known to server only)
+    * Server generates $B = Hash(salt, A)$ where $salt$ is known to server only
+      and changes over time
+    * Server only needs to store a few salt values to validate replies
+* **IP spoofing defense**
+  * Objecitve: Prevent IP address spoofing, or identify attacker
+  * **Ingress filtering**
+    * Gateway device (router, firewall, NAT) drops packets with an 'invalid'
+      source IP address field
+    * *Advantages*: Eliminates source IP spoofing
+    * *Disadvantages*: Source-based solution, no deployment incentives,
+      everybody has to deploy to be effective
+  * **iTrace**
+    * One in 20 000 packets 'triggers' a router to send a special packet with
+      route information
+    * *Advantages*: DDoS victim can reconstruct 'attack' paths
+    * *Disadvantages*: extra packets waste bandwidth
+  * **Packet Marking**:
+    * Routers mark 16-bit IP ID field with information that enables
+      reconstruction of IP address
+    * *Advantages*: No extra overhead
+    * *Disadvantages*: Probabilistic marking often requires ~1000 packets
+* Application-Layer attack **Algorithmic Complexity**
+  * Introduce worst-case behavior in a vulnerable algorithm
+  * The larger the differnce between the worst case and average case, the more
+    vulnerable the algorithm
+  * *Examples*:
+
+| Algorithm | Average case | Worst case |
+| --- | --- | --- |
+| Quicksort | $\mathcal{O}(n \log n)$ | $\mathcal{O}(n^2)$ |
+| Hash table lookup | constant | $\mathcal{O}(n)$ |
+
+* *Universal hashing*: hash functions guarantees 0 or low collision for any
+  input
+* **Slowloris**
+  * Allows a single machine to take down another machine's web server with
+    minimal bandwidth
+  * Tries to keep many connections to the targert web server open and hold them
+    open as long as possible
+  * Opens connections to the target web server and sends partial requests
+  * Periodically, it will send subsequent HTTP headers, adding to - but never
+    completing - the request
+  * Affected server will keep these connections open, filling their maximum
+    concurrent connection pool, eventually denying additional connection
+    attempts from legitimate clients
+  * *Mitigations*
+    * Increasing the maximum number of clients the webserver will allow
+    * Limiting the number of connections from single IP address
+    * Require minimum transfer speed per connection
+    * Restrict the length of time a client is allowed to stay connected
+    * Other mitigation techniques involve setting up reverse proxies, firewalls,
+      load balancers or content switches
+* **DDoS Defense Mechanisms**
+  * **Ingress filtering**: Removes packets with illegitimate source IPs
+  * **Computational puzzles**: Slows down attacks, achieves per-computation
+    fairness
+  * **Cloud- or ISP-based filtering**: Delegates defense to cloud of ISP
+  * **Network capabilities**: Allows victim to block unwanted traffic closer to
+    the source
+  * **IP traceback**: Reveals the real source IP of packets
+* **In-network and Cloud-bassed DDoS Mitigation Services**
+  * By changing BGP or DNS of web server, the traffic is redirected to a cloud
+    provider for filtering or content delivery
+  * Some provide Content Delivery Network (CDN service to serve requests from
+    many locations)
+* **ISP based DDoS Mitigation Service**
+  * ISP redirect traffic to scrubbing center, then send filtered traffic back to
+    destination
+  * Scrubbing center uses Deep packet inspection (DPI) and  connection patterns
+    to filter malicious traffic
