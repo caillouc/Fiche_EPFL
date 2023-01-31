@@ -1398,39 +1398,3 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
   * Performing formal verification from the begenning avoids
     'difficult-to-verify' components
     * Many design aspect of SCION facilitate formal verification
-* Approach for Scalibility: **Isolation Domain** (ISD)
-  * **Isolation Domain** (ISD): grouping of Autonomous Systems (AS)
-  * **ISD core**: ASes that manages the ISD and provide global connectivity
-  * **Core AS**: AS that is part of ISD core
-* **Path based Network Architecture**
-  * **Control plane** - routing
-    * Constructs and disseminates path segments
-  * **Data plane** - packet forwarding
-    * Combine path segments to path
-    * Packet contain path
-    * Routers forward packets based on path
-* **SCION** Drawbacks
-  * Initial latency inflation
-    * Additional latency to obtain paths
-    * But amortized by caching & path reuse
-  * Bandwidth Overhead
-    * Due to paths in the packets
-    * About 80 additional bytes
-    * Enables path control, simplier data plane
-  * Increase Complexity in Key management
-    * New certificates
-    * High security design
-  * Initial setup cost
-    * Training network operators
-    * Installing new infrastructure
-    * Offers methods to facilitate deployment
-* A global high-security public Internet is possible
-  * Sovereign operation, yet globally connected
-  * Global available communication is possible on public networsk
-  * Guarantedd DDoS resilience is possible
-  * Protocol and code verification are necessary to obtain strong properties for
-    large-scale distributed systems
-* Static paths + multi-path routing enables powerful concepts
-  * Fast failover: do not rely on netword-based active failover but on
-    redundancy with simultaneously use
-  * Possible to unlock additional network capacity
