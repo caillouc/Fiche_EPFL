@@ -427,6 +427,10 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
 * **Forward Security**: if long term keys are compromised, anonimity of
   previously establisged circuits is preserved
 * **Circuit-based anonimity networks** (onion routing)
+  * Messages are encrypted with keys of the onion routers and them send through
+    several onion routers. Each router removes a layer of encryption to uncover
+    routing instructions, and sends the message to the next router where this is
+    repeated until the message reaches the destination
   * *Layered encryption*, no batching and mixing, no cover traffic
   * Flow-based: establish a *virtual circuit* (keys) once per flow, reuse it for
     all packets in the flow using only *symmetric key crypto*
@@ -1148,8 +1152,8 @@ Compiled using [*pandoc*](https://pandoc.org/) and [*`gpdf` script*](https://git
     * IP protocol has only 65 536 possible source port (16 bits)
     * Implementation with no random source port
 * One standard to ensure integrity and authenticity: **DNSSEC Extensions**
-  * DNSSEc is aset of security extensions for verifying the identity of DNS root
-    and aithoritative nameservers
+  * DNSSEc is a set of security extensions for verifying the identity of DNS root
+    and authoritative nameservers
   * Designed to prevent DNS cache poisoning & other attacks
   * It does not encrypt communications
   * DNS over TLS or HTTPS (DoT & DoH) do encrypt DNS queries
